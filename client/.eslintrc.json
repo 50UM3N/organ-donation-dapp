@@ -16,7 +16,15 @@
     },
     "plugins": ["react"],
     "rules": {
+        "react/no-unescaped-entities": 0,
+        "react/display-name": "off",
+        "react/react-in-jsx-scope": "off",
         "no-unused-vars": ["warn", { "args": "none" }],
         "react/prop-types": 0
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
 }
