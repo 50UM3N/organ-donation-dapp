@@ -25,6 +25,8 @@ const useStyles = createStyles((theme) => ({
     header: {
         paddingLeft: theme.spacing.md,
         paddingRight: theme.spacing.md,
+        position: "sticky",
+        top: "0px",
     },
 
     inner: {
@@ -83,7 +85,7 @@ export function TopNav({ links = [], setNavOpen, navOpen }) {
     ));
 
     return (
-        <Header height={56} className={classes.header} mb={120}>
+        <Header height={56} className={classes.header}>
             <div className={classes.inner}>
                 <Group>
                     <Burger
