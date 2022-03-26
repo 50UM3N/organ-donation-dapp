@@ -53,7 +53,7 @@ const Home = () => {
                     }`}
                 >
                     <TopNav navOpen={navOpen} setNavOpen={setNavOpen} />
-                    <Container>
+                    <Container my={"md"}>
                         <p>
                             Lorem ipsum dolor sit amet consectetur adipisicing
                             elit. Debitis vero nam ullam dolorem necessitatibus
