@@ -2,7 +2,6 @@ import React from "react";
 import {
     createStyles,
     Header,
-    Autocomplete,
     Group,
     Burger,
     Avatar,
@@ -14,12 +13,15 @@ import {
     Logout,
     Message,
     PlayerPause,
-    Search,
     Settings,
     Star,
     SwitchHorizontal,
     Trash,
+    Sun,
+    MoonStars,
 } from "tabler-icons-react";
+
+import { ActionIcon, useMantineColorScheme } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -72,7 +74,8 @@ const useStyles = createStyles((theme) => ({
 
 export function TopNav({ links = [], setNavOpen, navOpen }) {
     const { classes, theme } = useStyles();
-
+    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+    const dark = colorScheme === "dark";
     const items = links.map((link) => (
         <a
             key={link.label}
@@ -99,6 +102,14 @@ export function TopNav({ links = [], setNavOpen, navOpen }) {
                     <Group ml={50} spacing={5} className={classes.links}>
                         {items}
                     </Group>
+                    <ActionIcon
+                        variant="outline"
+                        color={dark ? "yellow" : "blue"}
+                        onClick={() => toggleColorScheme()}
+                        title="Toggle color scheme"
+                    >
+                        {dark ? <Sun size={18} /> : <MoonStars size={18} />}
+                    </ActionIcon>
                     <Menu
                         control={
                             <Avatar radius="xl" style={{ cursor: "pointer" }} />
