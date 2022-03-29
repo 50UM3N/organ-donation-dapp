@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import eslintPlugin from "vite-plugin-eslint";
 import dotenv from "dotenv";
-
+import svgr from "vite-plugin-svgr";
 const dotEnvReplacement = (envSource) => {
     const replacements = Object.entries(envSource).reduce((obj, [key, val]) => {
         obj[`process.env.${key}`] = `"${val}"`;
@@ -34,6 +34,6 @@ export default defineConfig(({ mode }) => {
         css: {
             preprocessorOptions: { scss: { charset: false } },
         },
-        plugins: [react(), eslintPlugin(), dotEnvReplacement(env)],
+        plugins: [react(), eslintPlugin(), dotEnvReplacement(env), svgr()],
     };
 });

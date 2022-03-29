@@ -24,12 +24,14 @@ contract Migrations {
         uint256 uidai;
         uint256 age;
         uint256 weight;
-        string gender;
-        string address_line;
         uint256 height;
         uint256 bmi;
         string blood_group;
+        string gender;
         string state;
+        string district;
+        uint256 postal_code;
+        string address_line;
     }
 
     uint256 organ_id = 0;
