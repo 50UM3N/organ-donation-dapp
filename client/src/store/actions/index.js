@@ -5,6 +5,7 @@ import {
     contractSuccess,
 } from "./contract-action";
 import { userAdd, userRemove } from "./user-action";
+import { toggleTheme } from "./theme-action";
 export {
     userAdd,
     userRemove,
@@ -14,4 +15,5 @@ export {
     contractError,
     contractLoading,
     contractSuccess,
+    toggleTheme,
 };

@@ -158,6 +158,10 @@ contract DonationContract {
         emit Register(donor);
     }
 
+    function getUser() public view returns (User memory) {
+        return user_map[msg.sender];
+    }
+
     function add_organ(uint256 id, Organ memory organ) private {
         organ_map[id] = organ;
     }

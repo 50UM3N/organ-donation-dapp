@@ -21,7 +21,9 @@ import {
     MoonStars,
 } from "tabler-icons-react";
 
-import { ActionIcon, useMantineColorScheme } from "@mantine/core";
+import { ActionIcon } from "@mantine/core";
+import { connect } from "react-redux";
+import { toggleTheme } from "../../store/actions";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -72,9 +74,8 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-export function TopNav({ links = [], setNavOpen, navOpen }) {
+const TopNav = ({ links = [], setNavOpen, navOpen, setTheme, colorScheme }) => {
     const { classes, theme } = useStyles();
-    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const dark = colorScheme === "dark";
     const items = links.map((link) => (
         <a
@@ -86,7 +87,6 @@ export function TopNav({ links = [], setNavOpen, navOpen }) {
             {link.label}
         </a>
     ));
-
     return (
         <Header height={56} className={classes.header}>
             <div className={classes.inner}>
@@ -105,7 +105,9 @@ export function TopNav({ links = [], setNavOpen, navOpen }) {
                     <ActionIcon
                         variant="outline"
                         color={dark ? "yellow" : "blue"}
-                        onClick={() => toggleColorScheme()}
+                        onClick={() =>
+                            setTheme(colorScheme === "dark" ? "light" : "dark")
+                        }
                         title="Toggle color scheme"
                     >
                         {dark ? <Sun size={18} /> : <MoonStars size={18} />}
@@ -168,4 +170,17 @@ export function TopNav({ links = [], setNavOpen, navOpen }) {
             </div>
         </Header>
     );
-}
+};
+
+const mapStateToProps = (state) => {
+    return {
+        colorScheme: state.themeReducer,
+    };
+};
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setTheme: (theme) => dispatch(toggleTheme(theme)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TopNav);

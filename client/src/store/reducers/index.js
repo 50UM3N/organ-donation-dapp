@@ -1,4 +1,6 @@
 import web3Reducer from "./web3-reducer";
 import contractReducer from "./contract-reducer";
 import userReducer from "./user-reducer";
-export { web3Reducer, contractReducer, userReducer };
+import themeReducer from "./theme-reducer";
+
+export { web3Reducer, contractReducer, userReducer, themeReducer };

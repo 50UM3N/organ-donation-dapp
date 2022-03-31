@@ -1,7 +1,7 @@
 import { Container, createStyles } from "@mantine/core";
 import { useState } from "react";
 import SideNav from "./SideNav";
-import { TopNav } from "./TopNav";
+import TopNav from "./TopNav";
 const Nav = ({ children }) => {
     const useStyles = createStyles((theme) => ({
         closeSideBar: {

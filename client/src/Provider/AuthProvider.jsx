@@ -8,9 +8,9 @@ import {
     contractSuccess,
     userAdd,
 } from "../store/actions";
-import eVotingArtifact from "../artifact/evoting.json";
+import donationArtifact from "../artifact/DonationContract.json";
 import Web3 from "web3";
-import { Loader } from "../Components/Loader";
+import Loader from "../Components/Loader";
 
 function AuthProvider({
     web3,
@@ -22,9 +22,9 @@ function AuthProvider({
     let location = useLocation();
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        (async function () {
-            const { abi, networks } = eVotingArtifact;
-            let web3 = null;
+        (async () => {
+            const { abi, networks } = donationArtifact;
+            let _web3 = null;
             let accounts;
             if (window.ethereum) {
                 accounts = await window.ethereum.request({
@@ -38,34 +38,30 @@ function AuthProvider({
                     await window.ethereum.request({
                         method: "eth_requestAccounts",
                     });
-                    web3 = new Web3(window.ethereum);
+                    _web3 = new Web3(window.ethereum);
                 } catch (e) {
                     web3Error(e.message);
                     setLoading(false);
                     return;
                 }
             } else if (window.web3) {
-                web3 = new Web3(window.web3.currentProvider);
-            } else web3 = new Web3("http://127.0.0.1:9545/");
-            let contract = new web3.eth.Contract(abi, networks[5777].address);
-            let voter = await contract.methods
-                .getVoter()
+                _web3 = new Web3(window.web3.currentProvider);
+            } else _web3 = new Web3("http://127.0.0.1:9545/");
+            let contract = new _web3.eth.Contract(abi, networks[5777].address);
+            let user = await contract.methods
+                .getUser()
                 .call({ from: accounts[0] });
-            if (voter.email)
+
+            if (user.email)
                 userAdd({
-                    dob: new Date(Number(voter.dob)),
-                    email: voter.email,
-                    fname: voter.fname,
-                    lname: voter.lname,
-                    mobile: voter.mobile,
-                    role: voter.role,
-                    uidai: voter.uidai,
-                    verified: voter.verified,
-                    vote: Number(voter.vote),
-                    voted: voter.voted,
+                    name: user.name,
+                    email: user.email,
+                    mobile: user.mobile,
+                    verified: user.verified,
+                    role: user.role,
                 });
             contractSuccess(contract);
-            web3Success(web3);
+            web3Success(_web3);
             setLoading(false);
         })();
     }, [contractSuccess, web3Success, web3Error, userAdd]);

@@ -1,30 +1,32 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./Routes/Home";
-import { useState } from "react";
-import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import RegisterDonner from "./Routes/Register/RegisterDonner";
 import Login from "./Routes/Auth/Login";
-function App() {
-    const [colorScheme, setColorScheme] = useState("light");
-    const toggleColorScheme = (value) =>
-        setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+import AuthProvider from "./Provider/AuthProvider";
+import { connect } from "react-redux";
+function App({ colorScheme }) {
     return (
-        <ColorSchemeProvider
-            colorScheme={colorScheme}
-            toggleColorScheme={toggleColorScheme}
-        >
-            <MantineProvider theme={{ colorScheme }}>
-                <Routes>
+        <MantineProvider theme={{ colorScheme }}>
+            <Routes>
+                <Route element={<AuthProvider />}>
                     <Route path="/" element={<Home />} />
                     <Route
                         path="/register-donner"
                         element={<RegisterDonner />}
                     />
-                    <Route path="/login" element={<Login />} />
-                </Routes>
-            </MantineProvider>
-        </ColorSchemeProvider>
+                </Route>
+                <Route path="/login" element={<Login />} />
+            </Routes>
+        </MantineProvider>
     );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        colorScheme: state.themeReducer,
+        web3: state.web3Reducer,
+    };
+};
+
+export default connect(mapStateToProps)(App);
