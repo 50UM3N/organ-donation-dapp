@@ -24,12 +24,14 @@ contract Migrations {
         uint256 uidai;
         uint256 age;
         uint256 weight;
-        string gender;
-        string address_line;
         uint256 height;
         uint256 bmi;
         string blood_group;
+        string gender;
+        string address_line;
         string state;
+        string district;
+        string postal_code;
     }
 
     uint256 organ_id = 0;
@@ -81,11 +83,67 @@ contract Migrations {
         uint256 request_raise_time;
     }
 
+    struct User {
+        string name;
+        string address_road;
+        string email;
+        string mobile;
+        string role;
+        bool verified;
+    }
+    address admin;
+    mapping(address => User) user_map;
+
     mapping(uint256 => Donor) donor_map; // For mapping the donor
     mapping(uint256 => Organ) organ_map; // For mapping the organs donated by the donor
     mapping(uint256 => Requestor) requestor_map; //For mapping the requestor
     mapping(uint256 => Requestor_hospital) requestor_hospital_map; //For mapping the requestor hospital
     mapping(uint256 => Requestor_organ) requestor_organ_map; //For mapping the requestor organ
+
+    function userSet(address key, User memory user) private {
+        user_map[key] = user;
+    }
+
+    constructor(
+        string memory name,
+        string memory address_road,
+        string memory email,
+        string memory mobile
+    ) {
+        admin = msg.sender;
+        User memory user = User(
+            name,
+            address_road,
+            email,
+            mobile,
+            "admin",
+            true
+        );
+        userSet(admin, user);
+    }
+
+    function add_user(uint256 id, Donor memory donor) private {
+        donor_map[id] = donor;
+    }
+
+    event Register(User _user);
+
+    function userRegister(User memory u) public {
+        address user_address = msg.sender;
+        u.role = "user";
+        u.verified = false;
+        User memory user = u;
+        userSet(user_address, user);
+        emit Register(user);
+    }
+
+    event UserVerified(string _message);
+
+    function approve_user(address _address) public restricted {
+        User storage user = user_map[_address];
+        user.verified = true;
+        emit UserVerified("Voter update success");
+    }
 
     function add_donor(uint256 id, Donor memory donor) private {
         donor_map[id] = donor;
