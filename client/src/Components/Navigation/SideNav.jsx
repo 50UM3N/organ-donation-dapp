@@ -1,6 +1,22 @@
 import React, { useState } from "react";
-import { createStyles, Navbar, Group, Code, Burger } from "@mantine/core";
-import { BellRinging, Fingerprint, Receipt2, Logout } from "tabler-icons-react";
+import {
+    createStyles,
+    Navbar,
+    Group,
+    Code,
+    Burger,
+    Avatar,
+    Text,
+} from "@mantine/core";
+import {
+    BellRinging,
+    Fingerprint,
+    Receipt2,
+    Logout,
+    At,
+    PhoneCall,
+} from "tabler-icons-react";
+import { connect } from "react-redux";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef("icon");
@@ -19,7 +35,6 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
         header: {
             paddingBottom: theme.spacing.md,
-            marginBottom: theme.spacing.md * 1.5,
             borderBottom: `1px solid ${
                 theme.colorScheme === "dark"
                     ? theme.colors.dark[4]
@@ -96,6 +111,16 @@ const useStyles = createStyles((theme, _params, getRef) => {
                 },
             },
         },
+        icon: {
+            color:
+                theme.colorScheme === "dark"
+                    ? theme.colors.dark[3]
+                    : theme.colors.gray[5],
+        },
+
+        name: {
+            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+        },
     };
 });
 
@@ -105,7 +130,7 @@ const data = [
     { link: "", label: "Register Authority", icon: Fingerprint },
 ];
 
-export default function SideNav({ setNavOpen, navOpen }) {
+const SideNav = ({ setNavOpen, navOpen, user }) => {
     const { classes, cx } = useStyles();
     const [active, setActive] = useState("Billing");
 
@@ -129,7 +154,7 @@ export default function SideNav({ setNavOpen, navOpen }) {
     return (
         <Navbar p="md" className={classes.navbar}>
             <Navbar.Section grow>
-                <Group className={classes.header} position="apart">
+                <Group className={classes.header} mb="md" position="apart">
                     <Code className={classes.version}>v3.1.2</Code>
                     <Burger
                         className={classes.burger}
@@ -137,6 +162,37 @@ export default function SideNav({ setNavOpen, navOpen }) {
                         onClick={() => setNavOpen(!navOpen)}
                         size="sm"
                     />
+                </Group>
+                <Group noWrap mb="md">
+                    <Avatar size={94} radius="md" />
+                    <div>
+                        <Text
+                            size="xs"
+                            sx={{ textTransform: "uppercase" }}
+                            weight={700}
+                            color="dimmed"
+                        >
+                            {user.role}
+                        </Text>
+
+                        <Text size="lg" weight={500} className={classes.name}>
+                            {user.name}
+                        </Text>
+
+                        <Group noWrap spacing={10} mt={3}>
+                            <At size={16} className={classes.icon} />
+                            <Text size="xs" color="dimmed">
+                                {user.email}
+                            </Text>
+                        </Group>
+
+                        <Group noWrap spacing={10} mt={5}>
+                            <PhoneCall size={16} className={classes.icon} />
+                            <Text size="xs" color="dimmed">
+                                {user.mobile}
+                            </Text>
+                        </Group>
+                    </div>
                 </Group>
                 {links}
             </Navbar.Section>
@@ -153,4 +209,12 @@ export default function SideNav({ setNavOpen, navOpen }) {
             </Navbar.Section>
         </Navbar>
     );
-}
+};
+
+const mapStateToProps = (state) => {
+    return {
+        user: state.userReducer,
+    };
+};
+
+export default connect(mapStateToProps)(SideNav);

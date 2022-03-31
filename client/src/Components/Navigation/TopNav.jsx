@@ -74,7 +74,15 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const TopNav = ({ links = [], setNavOpen, navOpen, setTheme, colorScheme }) => {
+const TopNav = ({
+    links = [],
+    setNavOpen,
+    navOpen,
+    setTheme,
+    colorScheme,
+    user,
+}) => {
+    console.log(user);
     const { classes, theme } = useStyles();
     const dark = colorScheme === "dark";
     const items = links.map((link) => (
@@ -175,6 +183,7 @@ const TopNav = ({ links = [], setNavOpen, navOpen, setTheme, colorScheme }) => {
 const mapStateToProps = (state) => {
     return {
         colorScheme: state.themeReducer,
+        user: state.userReducer,
     };
 };
 const mapDispatchToProps = (dispatch) => {
