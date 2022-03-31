@@ -2,7 +2,9 @@ import {
     Text,
     Paper,
     Group,
-    Divider,
+    Center,
+    Anchor,
+    Space,
     Container,
     useMantineTheme,
     Grid,
@@ -13,7 +15,7 @@ import { ReactComponent as WalletIllo } from "../../Assets/wallet-illo.svg";
 import eVotingArtifact from "../../artifact/DonationContract.json";
 import { setWeb3 } from "../../store/thunk/setWeb3";
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { connect } from "react-redux";
 const Login = ({ setWeb3, web3 }) => {
     const theme = useMantineTheme();
@@ -40,9 +42,12 @@ const Login = ({ setWeb3, web3 }) => {
                         <WalletIllo style={{ width: "100%" }} />
                     </Grid.Col>
                     <Grid.Col md={7}>
-                        <Text size="lg" weight={500}>
-                            Connect with metamask
+                        <Space h="md" />
+                        <Text size="xl" weight={400}>
+                            Connect your Ethereum wallet to{" "}
+                            <b>Balance Manager</b>
                         </Text>
+                        <Space h="md" />
                         <Text color={theme.colors.gray[6]}>
                             Lorem ipsum dolor sit, amet consectetur adipisicing
                             elit.
@@ -50,11 +55,6 @@ const Login = ({ setWeb3, web3 }) => {
 
                         <Group grow mb="md" mt="md"></Group>
 
-                        <Divider
-                            label="Or continue with email"
-                            labelPosition="center"
-                            my="lg"
-                        />
                         <Button
                             leftIcon={<CurrencyEthereum />}
                             size="xl"
@@ -64,6 +64,21 @@ const Login = ({ setWeb3, web3 }) => {
                         >
                             Connect with Metamask
                         </Button>
+                        <Space h="md" />
+                        <Center>
+                            <Text color={theme.colors.gray[6]}>
+                                Chrome, Firefox, Safari, Edge, Brave
+                            </Text>
+                        </Center>
+                        <Space h="md" />
+                        <Center>
+                            <Text color={theme.colors.gray[6]}>
+                                Confused by these options?{" "}
+                                <Anchor component={Link} to="/learn-more">
+                                    Learn More
+                                </Anchor>
+                            </Text>
+                        </Center>
                     </Grid.Col>
                 </Grid>
             </Paper>
