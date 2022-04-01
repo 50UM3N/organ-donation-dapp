@@ -50,6 +50,7 @@ const Register = ({ contract, user }) => {
             showNotification({
                 title: "Success",
                 message: "Registration successful waiting for conformation",
+                onClose: () => navigate("/"),
             });
         } catch (err) {
             console.log(err.message);
