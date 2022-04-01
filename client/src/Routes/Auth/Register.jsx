@@ -13,8 +13,9 @@ import useValidate from "../../Hooks/useValidate";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
+import { userAdd } from "../../store/actions";
 
-const Register = ({ contract, user }) => {
+const Register = ({ contract, user, userAdd }) => {
     const navigate = useNavigate();
     const theme = useMantineTheme();
     const [loading, setLoading] = useState(false);
@@ -37,7 +38,7 @@ const Register = ({ contract, user }) => {
         });
         const data = validator.generalize();
         try {
-            await contract.methods
+            let response = await contract.methods
                 .registerUser([
                     data.name,
                     data.address,
@@ -52,8 +53,15 @@ const Register = ({ contract, user }) => {
                 message: "Registration successful waiting for conformation",
                 onClose: () => navigate("/"),
             });
+            let user = response.events.Register.returnValues[0];
+            userAdd({
+                name: user[0],
+                email: user[1],
+                mobile: user[2],
+                verified: user[3],
+                role: user[4],
+            });
         } catch (err) {
-            console.log(err.message);
             showNotification({
                 color: "red",
                 title: "Error",
@@ -134,4 +142,11 @@ const mapStateToProps = (state) => {
         user: state.userReducer,
     };
 };
-export default connect(mapStateToProps)(Register);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        userAdd: (user) => {
+            dispatch(userAdd(user));
+        },
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
