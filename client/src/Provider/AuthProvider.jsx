@@ -1,4 +1,4 @@
-import { Navigate, useLocation, Outlet } from "react-router-dom";
+import { Navigate, useLocation, Outlet, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
@@ -21,6 +21,7 @@ function AuthProvider({
 }) {
     let location = useLocation();
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
     useEffect(() => {
         (async () => {
             const { abi, networks } = donationArtifact;
@@ -52,6 +53,8 @@ function AuthProvider({
                 .getUser()
                 .call({ from: accounts[0] });
 
+            contractSuccess(contract);
+            web3Success(_web3);
             if (user.email)
                 userAdd({
                     name: user.name,
@@ -60,8 +63,11 @@ function AuthProvider({
                     verified: user.verified,
                     role: user.role,
                 });
-            contractSuccess(contract);
-            web3Success(_web3);
+            else {
+                navigate("/register");
+                setLoading(false);
+                return;
+            }
             setLoading(false);
         })();
     }, [contractSuccess, web3Success, web3Error, userAdd]);

@@ -1,12 +1,13 @@
 import { connect } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 /**
- * Register Provider that helps to redirect to profile page if the user is
- * already register
+ * Route Provider that helps to redirect to profile page if the user is
+ * already Route
  * @param {Object} {user} get from state
+ * @param {Array} {access} list of the role admitted to the route
  * @returns {JSX}
  */
-const RegisterProvider = ({ user, access = ["admin"] }) => {
+const RouteProvider = ({ user, access = ["admin"] }) => {
     if (user && access.includes(user.role)) {
         return <Outlet />;
     } else {
@@ -16,4 +17,4 @@ const RegisterProvider = ({ user, access = ["admin"] }) => {
 const mapStateToProps = (state) => {
     return { user: state.userReducer };
 };
-export default connect(mapStateToProps)(RegisterProvider);
+export default connect(mapStateToProps)(RouteProvider);

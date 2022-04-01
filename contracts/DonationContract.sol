@@ -126,7 +126,7 @@ contract DonationContract {
 
     event Register(User _user);
 
-    function userRegister(User memory u) public {
+    function registerUser(User memory u) public {
         address user_address = msg.sender;
         u.role = "user";
         u.verified = false;
