@@ -120,6 +120,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
         name: {
             fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+            color: theme.colorScheme === "dark" ? "white" : "black",
         },
     };
 });
