@@ -16,7 +16,7 @@ function App({ colorScheme }) {
                     <Route element={<AuthProvider />}>
                         <Route path="/" element={<Home />} />
                         <Route
-                            path="/register-donner"
+                            path="/register-doner"
                             element={<RegisterDonner />}
                         />
                         <Route path="/register" element={<Register />} />
