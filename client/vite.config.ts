@@ -6,7 +6,7 @@ import svgr from "@honkhonk/vite-plugin-svgr";
 import * as path from "path";
 
 const dotEnvReplacement = (env) => {
-    let newProcess = { env: env };
+    const newProcess = { env: env };
     return {
         name: "dotenv-replacement",
         config(obj) {

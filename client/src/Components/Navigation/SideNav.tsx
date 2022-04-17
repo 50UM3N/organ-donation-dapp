@@ -160,7 +160,7 @@ const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
             </Navbar.Section>
 
             <Navbar.Section className={classes.footer}>
-                <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+                <a href="/" className={classes.link} onClick={(event) => event.preventDefault()}>
                     <Logout className={classes.linkIcon} />
                     <span>Logout</span>
                 </a>

@@ -48,10 +48,10 @@ const RegisterDonner: React.FC<props> = ({ contract, user, donerAdd }) => {
     };
 
     const getAge = (dateString: string) => {
-        let today = new Date();
-        let birthDate = new Date(dateString);
+        const today = new Date();
+        const birthDate = new Date(dateString);
         let age = today.getFullYear() - birthDate.getFullYear();
-        let m = today.getMonth() - birthDate.getMonth();
+        const m = today.getMonth() - birthDate.getMonth();
         if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
@@ -65,8 +65,8 @@ const RegisterDonner: React.FC<props> = ({ contract, user, donerAdd }) => {
             return;
         }
         setLoading(true);
-        let date = new Date(form.dob.value).getTime();
-        let age = getAge(form.dob.value);
+        const date = new Date(form.dob.value).getTime();
+        const age = getAge(form.dob.value);
         const accounts = await window.ethereum.request({
             method: "eth_accounts",
         });
@@ -75,14 +75,14 @@ const RegisterDonner: React.FC<props> = ({ contract, user, donerAdd }) => {
         data.age = age;
         data.id = 0;
         try {
-            let response = await contract?.methods.registerDoner(data).send({ from: accounts[0] });
+            const response = await contract?.methods.registerDoner(data).send({ from: accounts[0] });
             showNotification({
                 title: "Success",
                 autoClose: false,
                 message: "Doner registration successful waiting for conformation",
                 onClose: () => navigate("/"),
             });
-            let doner = response.events.Register.returnValues[0];
+            const doner = response.events.Register.returnValues[0];
             console.log(doner);
             // userAdd({
             //     id: doner.id,

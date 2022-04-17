@@ -50,7 +50,7 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
                 message: "Registration successful waiting for conformation",
                 onClose: () => navigate("/"),
             });
-            let user = response.events.Register.returnValues[0];
+            const user = response.events.Register.returnValues[0];
             userAdd({
                 name: user[0],
                 email: user[1],
@@ -70,7 +70,7 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
     };
     useEffect(() => {
         if (user) navigate("/");
-    }, []);
+    }, [navigate, user]);
 
     return (
         <Container size={"xs"} py="xl">

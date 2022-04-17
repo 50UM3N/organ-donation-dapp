@@ -20,7 +20,7 @@ interface props {
 }
 
 const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web3Error, userAdd }) => {
-    let location = useLocation();
+    const location = useLocation();
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     useEffect(() => {
@@ -49,8 +49,8 @@ const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web
             } else if (window.web3) {
                 _web3 = new Web3(window.web3.currentProvider);
             } else _web3 = new Web3("http://127.0.0.1:9545/");
-            let contract = new _web3.eth.Contract(abi as AbiItem[], networks[5777].address);
-            let user = await contract.methods.getUser().call({ from: accounts[0] });
+            const contract = new _web3.eth.Contract(abi as AbiItem[], networks[5777].address);
+            const user = await contract.methods.getUser().call({ from: accounts[0] });
 
             contractSuccess(contract);
             web3Success(_web3);
@@ -69,7 +69,7 @@ const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web
             }
             setLoading(false);
         })();
-    }, [contractSuccess, web3Success, web3Error, userAdd]);
+    }, [navigate, contractSuccess, web3Success, web3Error, userAdd]);
     if (loading) {
         return <Loader />;
     } else if (web3.error) {

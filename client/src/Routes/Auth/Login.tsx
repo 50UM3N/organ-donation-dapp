@@ -40,15 +40,15 @@ interface props {
 const Login: React.FC<props> = ({ setWeb3, web3, color, setTheme }) => {
     console.log(color);
     const theme = useMantineTheme();
-    let location = useLocation();
-    let navigate = useNavigate();
+    const location = useLocation();
+    const navigate = useNavigate();
     const handleLogin = () => {
         setWeb3();
     };
     useEffect(() => {
         (() => {
             // @ts-ignore
-            let { from } = location.state || {
+            const { from } = location.state || {
                 from: { pathname: "/" },
             };
             if (web3.loading === false && web3.web3 !== null) {
