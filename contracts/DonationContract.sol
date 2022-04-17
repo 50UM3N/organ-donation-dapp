@@ -11,8 +11,8 @@ contract DonationContract {
         _;
     }
 
-    uint256 donor_id = 0;
-    struct Donor {
+    uint256 doner_id = 0;
+    struct Doner {
         uint256 id;
         string fname;
         string lname;
@@ -35,7 +35,7 @@ contract DonationContract {
     uint256 organ_id = 0;
     struct Organ {
         uint256 id;
-        uint256 donor_id; // Foreign Key to Primary Key in Donor
+        uint256 doner_id; // Foreign Key to Primary Key in Doner
         string organ_name;
         string description;
         uint256 valid_time;
@@ -92,15 +92,11 @@ contract DonationContract {
     address admin;
     mapping(address => User) user_map;
 
-    mapping(uint256 => Donor) donor_map; // For mapping the donor
-    mapping(uint256 => Organ) organ_map; // For mapping the organs donated by the donor
+    mapping(uint256 => Doner) doner_map; // For mapping the doner
+    mapping(uint256 => Organ) organ_map; // For mapping the organs donated by the doner
     mapping(uint256 => Requestor) requestor_map; //For mapping the requestor
     mapping(uint256 => Requestor_hospital) requestor_hospital_map; //For mapping the requestor hospital
     mapping(uint256 => Requestor_organ) requestor_organ_map; //For mapping the requestor organ
-
-    function userSet(address key, User memory user) private {
-        user_map[key] = user;
-    }
 
     constructor(
         string memory name,
@@ -120,11 +116,13 @@ contract DonationContract {
         userSet(admin, user);
     }
 
-    function add_user(uint256 id, Donor memory donor) private {
-        donor_map[id] = donor;
-    }
-
     event Register(User _user);
+    event UserVerified(string _message);
+    event Register(Doner _doner);
+    event Register(Organ _organ);
+    event Register(uint256 id, Requestor _requestor);
+    event Register(uint256 id, Requestor_hospital _requestor_hospital);
+    event Register(uint256 id, Requestor_organ _request_organ);
 
     function registerUser(User memory u) public {
         address user_address = msg.sender;
@@ -135,95 +133,91 @@ contract DonationContract {
         emit Register(user);
     }
 
-    event UserVerified(string _message);
-
-    function approve_user(address _address) public restricted {
+    function approveUser(address _address) public restricted {
         User storage user = user_map[_address];
         user.verified = true;
         emit UserVerified("Voter update success");
     }
 
-    function add_donor(uint256 id, Donor memory donor) private {
-        donor_map[id] = donor;
+    // For registering the doner
+    function registerDoner(Doner memory d) public {
+        d.id = ++doner_id;
+        Doner memory doner = d;
+        addDoner(doner_id, doner);
+        emit Register(doner);
     }
 
-    event Register(Donor _donor);
+    // For registering the organ doner is donating
+    function registerOrgan(Organ memory o) public {
+        o.id = ++organ_id;
+        o.doner_id = doner_id; // This is to map which doner donating which organ
+        // last_donerID is o.doner_id
+        Organ memory organ = o;
+        addOrgan(organ_id, organ);
+        emit Register(organ);
+    }
 
-    // For registering the donor
-    function register_donor(Donor memory d) public {
-        d.id = ++donor_id;
-        Donor memory donor = d;
-        // donor_id++;
-        add_donor(donor_id, donor);
-        emit Register(donor);
+    // For registering the request from requestor
+    function registerRequestor(Requestor memory r) public {
+        r.id = ++requestor_id;
+        Requestor memory requestor = r;
+        addRequestor(requestor_id, requestor);
+        emit Register(requestor_id, requestor);
+    }
+
+    // For adding the requestor hospital details
+    function registerRequestorHospital(Requestor_hospital memory rh) public {
+        rh.id = ++requestor_hospital_id;
+        rh.requestor_id = requestor_id;
+        Requestor_hospital memory requestor_hospital = rh;
+        addRequestorHospital(requestor_hospital_id, requestor_hospital);
+        emit Register(requestor_hospital_id, requestor_hospital);
+    }
+
+    // For adding the requestor organs details
+    function registerRequestorOrgans(Requestor_organ memory ro) public {
+        ro.requestor_id = requestor_id;
+        ro.requestor_hospital_id = requestor_hospital_id;
+        ro.organ_id = ++requestor_organ_id;
+        Requestor_organ memory request_organ = ro;
+        addRequestOrgan(requestor_organ_id, request_organ);
+        emit Register(requestor_organ_id, request_organ);
     }
 
     function getUser() public view returns (User memory) {
         return user_map[msg.sender];
     }
 
-    function add_organ(uint256 id, Organ memory organ) private {
+    function addUser(uint256 id, Doner memory doner) private {
+        doner_map[id] = doner;
+    }
+
+    function addDoner(uint256 id, Doner memory doner) private {
+        doner_map[id] = doner;
+    }
+
+    function addOrgan(uint256 id, Organ memory organ) private {
         organ_map[id] = organ;
     }
 
-    event Register(Organ _organ);
-
-    // For registering the organ donor is donating
-    function register_organ(Organ memory o) public {
-        o.id = ++organ_id;
-        o.donor_id = donor_id; // This is to map which donor donating which organ
-        // last_donorID is o.donor_id
-        Organ memory organ = o;
-        add_organ(organ_id, organ);
-        emit Register(organ);
-    }
-
-    function add_requestor(uint256 id, Requestor memory requestor) private {
+    function addRequestor(uint256 id, Requestor memory requestor) private {
         requestor_map[id] = requestor;
     }
 
-    event Register(uint256 id, Requestor _requestor);
-
-    // For registering the request from requestor
-    function register_requestor(Requestor memory r) public {
-        r.id = ++requestor_id;
-        Requestor memory requestor = r;
-        add_requestor(requestor_id, requestor);
-        emit Register(requestor_id, requestor);
-    }
-
-    function add_requestor_hospital(
+    function addRequestorHospital(
         uint256 id,
         Requestor_hospital memory requestor_hospital
     ) private {
         requestor_hospital_map[id] = requestor_hospital;
     }
 
-    event Register(uint256 id, Requestor_hospital _requestor_hospital);
-
-    // For adding the requestor hospital details
-    function register_requestor_hospital(Requestor_hospital memory rh) public {
-        rh.id = ++requestor_hospital_id;
-        rh.requestor_id = requestor_id;
-        Requestor_hospital memory requestor_hospital = rh;
-        add_requestor_hospital(requestor_hospital_id, requestor_hospital);
-        emit Register(requestor_hospital_id, requestor_hospital);
+    function userSet(address key, User memory user) private {
+        user_map[key] = user;
     }
 
-    function add_request_organ(uint256 id, Requestor_organ memory request_organ)
+    function addRequestOrgan(uint256 id, Requestor_organ memory request_organ)
         private
     {
         requestor_organ_map[id] = request_organ;
-    }
-
-    event Register(uint256 id, Requestor_organ _request_organ);
-
-    function register_requestor_organs(Requestor_organ memory ro) public {
-        ro.requestor_id = requestor_id;
-        ro.requestor_hospital_id = requestor_hospital_id;
-        ro.organ_id = ++requestor_organ_id;
-        Requestor_organ memory request_organ = ro;
-        add_request_organ(requestor_organ_id, request_organ);
-        emit Register(requestor_organ_id, request_organ);
     }
 }

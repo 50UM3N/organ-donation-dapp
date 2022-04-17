@@ -7,13 +7,17 @@ import { useNavigate } from "react-router-dom";
 import { IRootState } from "../../store";
 import { InitialUserState } from "../../store/reducers/user-reducer";
 import { Contract } from "web3-eth-contract";
+import { userAdd } from "../../store/actions";
+import { ThunkDispatch } from "redux-thunk";
+import { AnyAction } from "redux";
 
 interface props {
     contract: Contract | null;
     user: InitialUserState;
+    userAdd: (user: object) => void;
 }
 
-const Register: React.FC<props> = ({ contract, user }) => {
+const Register: React.FC<props> = ({ contract, user, userAdd }) => {
     const navigate = useNavigate();
     const theme = useMantineTheme();
     const [loading, setLoading] = useState(false);
@@ -38,13 +42,21 @@ const Register: React.FC<props> = ({ contract, user }) => {
         });
         const data: any = validator.generalize();
         try {
-            await contract?.methods
+            const response = await contract?.methods
                 .registerUser([data.name, data.address, data.email, data.phone, "", false])
                 .send({ from: accounts[0] });
             showNotification({
                 title: "Success",
                 message: "Registration successful waiting for conformation",
                 onClose: () => navigate("/"),
+            });
+            let user = response.events.Register.returnValues[0];
+            userAdd({
+                name: user[0],
+                email: user[1],
+                mobile: user[2],
+                verified: user[3],
+                role: user[4],
             });
         } catch (err: any) {
             showNotification({
@@ -127,4 +139,11 @@ const mapStateToProps = (state: IRootState) => {
         user: state.userReducer,
     };
 };
-export default connect(mapStateToProps)(Register);
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
+    return {
+        userAdd: (user: object) => {
+            dispatch(userAdd(user));
+        },
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

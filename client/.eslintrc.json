@@ -24,11 +24,11 @@
         "react/no-unescaped-entities": 0,
         "react/display-name": "off",
         "react/react-in-jsx-scope": "off",
-        "no-unused-vars": ["warn", { "args": "none" }],
         "react/prop-types": 0,
         "@typescript-eslint/no-explicit-any": ["off"],
         "prefer-const": ["warn"],
-        "@typescript-eslint/ban-ts-comment": ["off"]
+        "@typescript-eslint/ban-ts-comment": ["off"],
+        "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }]
     },
     "settings": {
         "react": {
