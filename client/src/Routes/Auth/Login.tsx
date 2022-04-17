@@ -1,3 +1,4 @@
+import React from "react";
 import {
     Text,
     Paper,
@@ -11,13 +12,33 @@ import {
     Button,
 } from "@mantine/core";
 import { CurrencyEthereum } from "tabler-icons-react";
-import { ReactComponent as WalletIllo } from "../../Assets/wallet-illo.svg";
+import WalletIllo from "../../Assets/wallet-illo.svg?component";
 import eVotingArtifact from "../../artifact/DonationContract.json";
 import { setWeb3 } from "../../store/thunk/setWeb3";
 import { useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { connect } from "react-redux";
-const Login = ({ setWeb3, web3 }) => {
+import { IRootState } from "../../store";
+import { ThunkDispatch } from "redux-thunk";
+import { AnyAction } from "redux";
+import { AbiItem } from "web3-utils";
+import { InitialWeb3State } from "../../store/reducers/web3-reducer";
+import { InitialThemeState } from "../../store/reducers/theme-reducer";
+import { toggleTheme } from "../../store/actions";
+import { ThemeActionType } from "../../store/actions/theme-action";
+
+interface props {
+    web3: InitialWeb3State;
+    setWeb3: () => void;
+    color: InitialThemeState;
+    setTheme: (theme: "dark" | "light") => {
+        type: ThemeActionType;
+        payload: "dark" | "light";
+    };
+}
+
+const Login: React.FC<props> = ({ setWeb3, web3, color, setTheme }) => {
+    console.log(color);
     const theme = useMantineTheme();
     let location = useLocation();
     let navigate = useNavigate();
@@ -26,6 +47,7 @@ const Login = ({ setWeb3, web3 }) => {
     };
     useEffect(() => {
         (() => {
+            // @ts-ignore
             let { from } = location.state || {
                 from: { pathname: "/" },
             };
@@ -44,13 +66,11 @@ const Login = ({ setWeb3, web3 }) => {
                     <Grid.Col md={7}>
                         <Space h="md" />
                         <Text size="xl" weight={400}>
-                            Connect your Ethereum wallet to{" "}
-                            <b>Balance Manager</b>
+                            Connect your Ethereum wallet to <b>Balance Manager</b>
                         </Text>
                         <Space h="md" />
                         <Text color={theme.colors.gray[6]}>
-                            Lorem ipsum dolor sit, amet consectetur adipisicing
-                            elit.
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
                         </Text>
 
                         <Group grow mb="md" mt="md"></Group>
@@ -66,9 +86,7 @@ const Login = ({ setWeb3, web3 }) => {
                         </Button>
                         <Space h="md" />
                         <Center>
-                            <Text color={theme.colors.gray[6]}>
-                                Chrome, Firefox, Safari, Edge, Brave
-                            </Text>
+                            <Text color={theme.colors.gray[6]}>Chrome, Firefox, Safari, Edge, Brave</Text>
                         </Center>
                         <Space h="md" />
                         <Center>
@@ -82,24 +100,23 @@ const Login = ({ setWeb3, web3 }) => {
                     </Grid.Col>
                 </Grid>
             </Paper>
+            <Button onClick={() => setTheme(color === "dark" ? "light" : "dark")}>color</Button>
         </Container>
     );
 };
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: IRootState) => {
     return {
         web3: state.web3Reducer,
+        color: state.themeReducer,
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<IRootState, any, AnyAction>) => {
     return {
         setWeb3: () =>
-            dispatch(
-                setWeb3(
-                    eVotingArtifact.abi,
-                    eVotingArtifact.networks[5777].address
-                )
-            ),
+            dispatch(setWeb3(eVotingArtifact.abi as AbiItem[], eVotingArtifact.networks[5777].address)),
+
+        setTheme: (theme: "dark" | "light") => dispatch(toggleTheme(theme)),
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

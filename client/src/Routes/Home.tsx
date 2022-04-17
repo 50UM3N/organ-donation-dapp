@@ -1,3 +1,4 @@
+import React from "react";
 import Nav from "../Components/Navigation/Nav";
 
 const Home = () => {

@@ -1,8 +1,9 @@
 import { Container, createStyles } from "@mantine/core";
-import { useState } from "react";
+import React, { useState } from "react";
 import SideNav from "./SideNav";
 import TopNav from "./TopNav";
-const Nav = ({ children }) => {
+
+const Nav: React.FC = ({ children }) => {
     const useStyles = createStyles((theme) => ({
         closeSideBar: {
             left: "-300px !important",
@@ -33,23 +34,14 @@ const Nav = ({ children }) => {
             marginLeft: "0px",
         },
         mainBackground: {
-            backgroundColor:
-                theme.colorScheme === "dark"
-                    ? theme.colors.dark[6]
-                    : theme.colors.gray[0],
+            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
         },
     }));
     const { classes, theme } = useStyles();
-    const [navOpen, setNavOpen] = useState(
-        window.innerWidth <= theme.breakpoints.md ? true : true
-    );
+    const [navOpen, setNavOpen] = useState(window.innerWidth <= theme.breakpoints.md ? true : true);
     return (
         <div className={classes.layout}>
-            <aside
-                className={` ${navOpen ? classes.closeSideBar : ""} ${
-                    classes.sideBar
-                }`}
-            >
+            <aside className={` ${navOpen ? classes.closeSideBar : ""} ${classes.sideBar}`}>
                 <SideNav navOpen={navOpen} setNavOpen={setNavOpen} />
             </aside>
             <main
