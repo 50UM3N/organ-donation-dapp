@@ -7,22 +7,15 @@ import { Contract } from "web3-eth-contract";
 import { Col, Divider, Grid, NumberInput, Paper, TextInput, Title, Select, Button } from "@mantine/core";
 import { useState } from "react";
 import { connect } from "react-redux";
-import { userAdd } from "../../store/actions";
 import { useNotifications } from "@mantine/notifications";
-
 import { useNavigate } from "react-router-dom";
 import { IRootState } from "../../store";
-import { ThunkDispatch } from "redux-thunk";
-import { AnyAction } from "redux";
-import { InitialUserState } from "../../store/reducers/user-reducer";
 
 interface props {
     contract: Contract | null;
-    user: InitialUserState;
-    donerAdd: (user: object) => void;
 }
 
-const RegisterDonner: React.FC<props> = ({ contract, user, donerAdd }) => {
+const RegisterDonner: React.FC<props> = ({ contract }) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { showNotification } = useNotifications();
@@ -75,34 +68,13 @@ const RegisterDonner: React.FC<props> = ({ contract, user, donerAdd }) => {
         data.age = age;
         data.id = 0;
         try {
-            const response = await contract?.methods.registerDoner(data).send({ from: accounts[0] });
+            await contract?.methods.registerDoner(data).send({ from: accounts[0] });
             showNotification({
                 title: "Success",
                 autoClose: false,
                 message: "Doner registration successful waiting for conformation",
                 onClose: () => navigate("/"),
             });
-            const doner = response.events.Register.returnValues[0];
-            console.log(doner);
-            // userAdd({
-            //     id: doner.id,
-            //     fname: doner.fname,
-            //     lname: doner.lname,
-            //     email: doner.email,
-            //     dob: doner.dob,
-            //     mobile: doner.mobile,
-            //     uidai: doner.uidai,
-            //     age: doner.age,
-            //     weight: doner.weight,
-            //     height: doner.height,
-            //     bmi: doner.bmi,
-            //     blood_group: doner.blood_group,
-            //     gender: doner.gender,
-            //     state: doner.state,
-            //     district: doner.district,
-            //     postal_code: doner.postal_code,
-            //     address_line: doner.address_line,
-            // });
         } catch (err: any) {
             showNotification({
                 color: "red",
@@ -344,14 +316,6 @@ const RegisterDonner: React.FC<props> = ({ contract, user, donerAdd }) => {
 const mapStateToProps = (state: IRootState) => {
     return {
         contract: state.contractReducer.contract,
-        user: state.userReducer,
     };
 };
-const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
-    return {
-        donerAdd: (user: object) => {
-            dispatch(userAdd(user));
-        },
-    };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterDonner);
+export default connect(mapStateToProps)(RegisterDonner);

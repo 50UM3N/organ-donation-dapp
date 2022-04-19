@@ -3,23 +3,16 @@ import { At } from "tabler-icons-react";
 import Nav from "../../Components/Navigation/Nav";
 import { DatePicker } from "@mantine/dates";
 import { useValidate } from "pangolin-hooks";
-// import { Contract } from "web3-eth-contract";
+import { Contract } from "web3-eth-contract";
 import { Col, Divider, Grid, NumberInput, Paper, TextInput, Title, Select, Button } from "@mantine/core";
-// import { userAdd } from "../../store/actions";
 import { useState } from "react";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
 import { IRootState } from "../../store";
-import { InitialContractState } from "../../store/reducers/contract-reducer";
-// import { ThunkDispatch } from "redux-thunk";
-// import { AnyAction } from "redux";
-// import { InitialUserState } from "../../store/reducers/user-reducer";
 
 interface props {
-    contract: InitialContractState;
-    // user: InitialUserState;    
-    // requestorAdd: (user: object) => void;
+    contract: Contract|null;
 }
 const RegisterRequestor: React.FC<props> = ({contract}) => {
     const [loading, setLoading] = useState(false);
@@ -45,7 +38,6 @@ const RegisterRequestor: React.FC<props> = ({contract}) => {
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);
     };
-    console.log(contract)
     const getAge = (dateString: string) => {
         const today = new Date();
         const birthDate = new Date(dateString);
@@ -58,8 +50,6 @@ const RegisterRequestor: React.FC<props> = ({contract}) => {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-
-        console.log(contract);
         e.preventDefault();
         if (!validator.validate()) {
             console.log("validate error");
@@ -75,19 +65,14 @@ const RegisterRequestor: React.FC<props> = ({contract}) => {
         data.dob = date;
         data.age = age;
         data.id = 0;
-        // console.log(user);
-        // console.log(requestorAdd);
         try {
-            // @ts-ignore
-            const response = await contract?.methods.registerRequestor(data).send({ from: accounts[0] });
+            await contract?.methods.registerRequestor(data).send({ from: accounts[0] });
             showNotification({
                 title: "Success",
                 autoClose: false,
                 message: "Requestor registration successful waiting for conformation",
                 onClose: () => navigate("/"),
             });
-            const requestor = response.events.Register.returnValues[0];
-            console.log(requestor);
         } catch (err: any) {
             showNotification({
                 color: "red",
@@ -327,7 +312,7 @@ const RegisterRequestor: React.FC<props> = ({contract}) => {
 };
 const mapStateToProps = (state: IRootState) => {
     return {
-        contract: state.contractReducer,
+        contract: state.contractReducer.contract,
         // user: state.userReducer,
     };
 };

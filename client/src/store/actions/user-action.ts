@@ -1,6 +1,6 @@
 export enum UserActionType {
-  USER_ADD,
-  USER_REMOVE,
+  USER_ADD="USER_ADD",
+  USER_REMOVE="USER_REMOVE",
 }
 
 export const userRemove = () => {

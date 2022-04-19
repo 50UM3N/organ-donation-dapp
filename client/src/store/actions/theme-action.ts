@@ -1,5 +1,5 @@
 export enum ThemeActionType {
-  TOGGLE_THEME,
+  TOGGLE_THEME="TOGGLE_THEME",
 }
 export const toggleTheme = (theme: "dark" | "light") => {
   return {
