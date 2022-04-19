@@ -11,6 +11,7 @@ import Test from "./Components/test";
 import { NotificationsProvider } from "@mantine/notifications";
 import { IRootState } from "./store";
 import { InitialThemeState } from "./store/reducers/theme-reducer";
+import RegisterRequestor from "./Routes/Register/RegisterRequestor";
 
 interface props {
     colorScheme: InitialThemeState;
@@ -25,6 +26,7 @@ const App: React.FC<props> = ({ colorScheme }) => {
                         <Route path="/" element={<Home />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/register-doner" element={<RegisterDoner />} />
+                        <Route path="/register-requestor" element={<RegisterRequestor />} />
                         <Route path="/test" element={<Test />} />
                     </Route>
                     <Route path="/login" element={<Login />} />
