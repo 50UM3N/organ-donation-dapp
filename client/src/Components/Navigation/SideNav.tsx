@@ -4,6 +4,7 @@ import { BellRinging, Fingerprint, Receipt2, Logout, At, PhoneCall } from "table
 import { connect } from "react-redux";
 import { IRootState } from "../../store";
 import { InitialUserState } from "../../store/reducers/user-reducer";
+import { NavLink } from "react-router-dom";
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef("icon");
@@ -86,7 +87,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
 });
 
 const data = [
-    { link: "", label: "Register Donner", icon: BellRinging },
+    { link: "/register-doner", label: "Register Doner", icon: BellRinging },
     { link: "", label: "Register Requestor", icon: Receipt2 },
     { link: "", label: "Register Authority", icon: Fingerprint },
 ];
@@ -102,20 +103,20 @@ const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
     const [active, setActive] = useState("Billing");
 
     const links = data.map((item) => (
-        <a
+        <NavLink
             className={cx(classes.link, {
                 [classes.linkActive]: item.label === active,
             })}
-            href={item.link}
+            to={item.link}
             key={item.label}
-            onClick={(event) => {
-                event.preventDefault();
+            onClick={(event:React.FormEvent) => {
+                // event.preventDefault();
                 setActive(item.label);
             }}
         >
             <item.icon className={classes.linkIcon} />
             <span>{item.label}</span>
-        </a>
+        </NavLink>
     ));
 
     return (

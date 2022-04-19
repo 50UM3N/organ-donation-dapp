@@ -100,7 +100,6 @@ const Login: React.FC<props> = ({ setWeb3, web3, color, setTheme }) => {
                     </Grid.Col>
                 </Grid>
             </Paper>
-            <Button onClick={() => setTheme(color === "dark" ? "light" : "dark")}>color</Button>
         </Container>
     );
 };

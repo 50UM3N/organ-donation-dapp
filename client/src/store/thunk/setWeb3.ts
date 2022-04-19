@@ -21,7 +21,7 @@ export const setWeb3 = (abi: AbiItem | AbiItem[], address?: string | undefined) 
             }
         else if (window.web3) web3 = new Web3(window.web3.currentProvider);
         else web3 = new Web3("http://127.0.0.1:9545/");
-        let contract = new web3.eth.Contract(abi, address);
+        const contract = new web3.eth.Contract(abi, address);
         dispatch(contractSuccess(contract));
         dispatch(web3Success(web3));
     };
