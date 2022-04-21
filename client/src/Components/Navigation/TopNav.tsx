@@ -78,7 +78,6 @@ interface props {
 }
 
 const TopNav: React.FC<props> = ({ setNavOpen, navOpen, setTheme, colorScheme, user }) => {
-    console.log(user);
     const { classes, theme } = useStyles();
     const dark = colorScheme === "dark";
 

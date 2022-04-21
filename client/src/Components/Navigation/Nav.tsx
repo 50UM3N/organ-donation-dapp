@@ -38,7 +38,7 @@ const Nav: React.FC = ({ children }) => {
         },
     }));
     const { classes, theme } = useStyles();
-    const [navOpen, setNavOpen] = useState(window.innerWidth <= theme.breakpoints.md ? true : true);
+    const [navOpen, setNavOpen] = useState(window.innerWidth <= theme.breakpoints.md ? true : false);
     return (
         <div className={classes.layout}>
             <aside className={` ${navOpen ? classes.closeSideBar : ""} ${classes.sideBar}`}>

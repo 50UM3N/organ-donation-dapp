@@ -1,70 +1,53 @@
 import React from "react";
 import Nav from "../Components/Navigation/Nav";
-import {
-    Card,
-    Text,
-    Badge,
-    Button,
-    Group,
-    useMantineTheme,
-} from "@mantine/core";
+import { Text, Badge, Group, Paper, Container, Title } from "@mantine/core";
+import { IRootState } from "../store";
+import { connect } from "react-redux";
+import { InitialUserState } from "../store/reducers/user-reducer";
 
-const Home = () => {
-    const theme = useMantineTheme();
-
-    const secondaryColor =
-        theme.colorScheme === "dark"
-            ? theme.colors.dark[1]
-            : theme.colors.gray[7];
-
+const Home: React.FC<{ user: InitialUserState }> = ({ user }) => {
     return (
         <Nav>
-            <div style={{ width: 1000, margin: "auto" }}>
-                <Card shadow="sm" p="lg">
-                    <Group
-                        position="apart"
-                        style={{
-                            marginBottom: 5,
-                            marginTop: theme.spacing.sm,
-                        }}
-                    >
-                        <Text weight={500}>USER NAME (user)</Text>
-                        <Badge color="pink" variant="light">
-                            Not-Verified
-                        </Badge>
+            <Container>
+                <Paper withBorder p="md">
+                    <Group position="apart">
+                        <Title order={3} mb="xs">
+                            {user?.name} ({user?.role})
+                        </Title>
+                        {user?.verified && (
+                            <Badge color="green" variant="light">
+                                Verified
+                            </Badge>
+                        )}
+                        {!user?.verified && (
+                            <Badge color="red" variant="light">
+                                Verified
+                            </Badge>
+                        )}
                     </Group>
 
-                    <Text
-                        size="sm"
-                        style={{ color: secondaryColor, lineHeight: 1.5 }}
-                    >
-                        Phone No.: 9876543210
+                    <Text color="dimmed" mb={0} size="sm">
+                        Address:
                     </Text>
-                    <Text
-                        size="sm"
-                        style={{ color: secondaryColor, lineHeight: 1.5 }}
-                    >
-                        Email : soumen@gmail.com
+                    <Text mb={3}>{user?.address}</Text>
+                    <Text color="dimmed" mb={0} size="sm">
+                        Email:
                     </Text>
-                    <Text
-                        size="sm"
-                        style={{ color: secondaryColor, lineHeight: 1.5 }}
-                    >
-                        Address : 123 Road, kol-21
+                    <Text mb={3}>{user?.email}</Text>
+                    <Text color="dimmed" mb={0} size="sm">
+                        Mobile:
                     </Text>
-
-                    <Button
-                        variant="light"
-                        color="blue"
-                        fullWidth
-                        style={{ marginTop: 14 }}
-                    >
-                        Organ
-                    </Button>
-                </Card>
-            </div>
+                    <Text mb={3}>{user?.mobile}</Text>
+                </Paper>
+            </Container>
         </Nav>
     );
 };
 
-export default Home;
+const mapStateToProps = (state: IRootState) => {
+    return {
+        user: state.userReducer,
+    };
+};
+
+export default connect(mapStateToProps)(Home);

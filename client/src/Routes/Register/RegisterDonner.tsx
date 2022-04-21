@@ -87,7 +87,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
     };
     return (
         <Nav>
-            <Paper p={"md"}>
+            <Paper withBorder p={"md"}>
                 <Title order={4}>Add new donner</Title>
                 <Divider my={"sm"} />
                 <form onSubmit={handleSubmit}>

@@ -51,7 +51,6 @@ const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web
             } else _web3 = new Web3("http://127.0.0.1:9545/");
             const contract = new _web3.eth.Contract(abi as AbiItem[], networks[5777].address);
             const user = await contract.methods.getUser().call({ from: accounts[0] });
-
             contractSuccess(contract);
             web3Success(_web3);
             if (user.email)
@@ -61,6 +60,7 @@ const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web
                     mobile: user.mobile,
                     verified: user.verified,
                     role: user.role,
+                    address: user.user_address,
                 });
             else {
                 navigate("/register");

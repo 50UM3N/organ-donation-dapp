@@ -1,5 +1,5 @@
 import { createStyles, Navbar, Group, Code, Burger, Avatar, Text } from "@mantine/core";
-import { BellRinging, Receipt2, Logout, At, PhoneCall } from "tabler-icons-react";
+import { BellRinging, Receipt2, Logout, At, PhoneCall, Home, NewSection } from "tabler-icons-react";
 import { connect } from "react-redux";
 import { IRootState } from "../../store";
 import { InitialUserState } from "../../store/reducers/user-reducer";
@@ -86,6 +86,8 @@ const useStyles = createStyles((theme, _params, getRef) => {
 });
 
 const data = [
+    { link: "/", label: "Home", icon: Home },
+    { link: "/new-request", label: "Request", icon: NewSection },
     { link: "/register-doner", label: "Register Doner", icon: BellRinging },
     { link: "/register-requestor", label: "Register Requestor", icon: Receipt2 },
 ];
@@ -101,9 +103,11 @@ const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
 
     const links = data.map((item) => (
         <NavLink
-            className={(navData)=>cx(classes.link, {
-                [classes.linkActive]: navData.isActive,
-            })}
+            className={(navData) =>
+                cx(classes.link, {
+                    [classes.linkActive]: navData.isActive,
+                })
+            }
             to={item.link}
             key={item.label}
         >

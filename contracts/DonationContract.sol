@@ -81,9 +81,10 @@ contract DonationContract {
         uint256 request_raise_time;
     }
 
+    address[] USER_IDX_ARR; // store the inserted address
     struct User {
         string name;
-        string address_road;
+        string user_address;
         string email;
         string mobile;
         string role;
@@ -100,14 +101,14 @@ contract DonationContract {
 
     constructor(
         string memory name,
-        string memory address_road,
+        string memory user_address,
         string memory email,
         string memory mobile
     ) {
         admin = msg.sender;
         User memory user = User(
             name,
-            address_road,
+            user_address,
             email,
             mobile,
             "admin",
@@ -212,6 +213,7 @@ contract DonationContract {
     }
 
     function userSet(address key, User memory user) private {
+        USER_IDX_ARR.push(key);
         user_map[key] = user;
     }
 
@@ -219,5 +221,25 @@ contract DonationContract {
         private
     {
         requestor_organ_map[id] = request_organ;
+    }
+
+    function getUnverifiedUser() public view returns (User[] memory) {
+        uint256 counter = 0;
+
+        for (uint256 i = 0; i < USER_IDX_ARR.length; i++) {
+            User memory item = user_map[USER_IDX_ARR[i]];
+            if (!item.verified) counter++;
+        }
+
+        User[] memory users = new User[](counter);
+        uint256 j = 0;
+        for (uint256 i = 0; i < USER_IDX_ARR.length; i++) {
+            User memory item = user_map[USER_IDX_ARR[i]];
+            if (!item.verified) {
+                users[j] = item;
+                j++;
+            }
+        }
+        return users;
     }
 }

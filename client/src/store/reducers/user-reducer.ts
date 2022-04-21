@@ -3,7 +3,14 @@ import { UserActionType } from "../actions/user-action";
 
 export type InitialUserState =
     | null
-    | (object & { role: string; name: string; email: string; mobile: string });
+    | (object & {
+          role: string;
+          name: string;
+          email: string;
+          mobile: string;
+          address: string;
+          verified: boolean;
+      });
 
 export interface UserDispatchAction extends Action<UserActionType> {
     payload: Partial<InitialUserState>;

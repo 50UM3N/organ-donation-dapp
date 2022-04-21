@@ -11,6 +11,7 @@ import { NotificationsProvider } from "@mantine/notifications";
 import { IRootState } from "./store";
 import { InitialThemeState } from "./store/reducers/theme-reducer";
 import RegisterRequestor from "./Routes/Register/RegisterRequestor";
+import JoinRequest from "./Routes/JoinRequest";
 
 interface props {
     colorScheme: InitialThemeState;
@@ -26,6 +27,7 @@ const App: React.FC<props> = ({ colorScheme }) => {
                         <Route path="/register" element={<Register />} />
                         <Route path="/register-doner" element={<RegisterDoner />} />
                         <Route path="/register-requestor" element={<RegisterRequestor />} />
+                        <Route path="/new-request" element={<JoinRequest />} />
                     </Route>
                     <Route path="/login" element={<Login />} />
                 </Routes>
