@@ -3,56 +3,117 @@ import React, { useEffect, useState } from "react";
 import { IRootState } from "../store";
 import { Contract } from "web3-eth-contract";
 import Nav from "../Components/Navigation/Nav";
-import { Grid,_ } from "gridjs-react";
+import { Grid, _ } from "gridjs-react";
 import "gridjs/dist/theme/mermaid.css";
-// import { h } from "gridjs";
-import { Button } from "@mantine/core";
+import { Button, Center, Container, Divider, Loader, Paper, Text, Title } from "@mantine/core";
+import { handleRPCError } from "../utils/handleError";
+import { showNotification, updateNotification } from "@mantine/notifications";
+import { Circle, X } from "tabler-icons-react";
+import useGridStyle from "../Components/Grid.style";
 
 interface props {
     contract: Contract | null;
 }
 
-
-
 const JoinRequest: React.FC<props> = ({ contract }) => {
-    const [data, setData] = useState([])
+    const { classes } = useGridStyle();
+    const [data, setData] = useState<null | []>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<null | string>(null);
     useEffect(() => {
         (async () => {
             const accounts = await window.ethereum.request({
                 method: "eth_accounts",
             });
-            const unverifiedUser = await contract?.methods.getUnverifiedUser().call({ from: accounts[0] });
-            setData(unverifiedUser);
+            try {
+                const unverifiedUser = await contract?.methods
+                    .getUnverifiedUser()
+                    .call({ from: accounts[0] });
+                if (unverifiedUser.length === 0) throw new Error("There is no unverified hospital/agency!");
+                setData(unverifiedUser);
+                setLoading(false);
+            } catch (err: any) {
+                setError(handleRPCError(err).message);
+                setLoading(false);
+            }
         })();
     }, [contract?.methods]);
-
-    const approveUser=()=>{
-        console.log("User Approved")
-    }
+    const approveUser = async (address: string) => {
+        const accounts = await window.ethereum.request({
+            method: "eth_accounts",
+        });
+        showNotification({
+            id: "approved-user",
+            loading: true,
+            autoClose: false,
+            disallowClose: true,
+            title: "Approved User",
+            message: "Wait approving the user..",
+        });
+        try {
+            await contract?.methods.approveUser(address).send({ from: accounts[0] });
+            updateNotification({
+                id: "approved-user",
+                color: "teal",
+                title: "Approved User",
+                message: "Successfully approved user..",
+                icon: <Circle />,
+                autoClose: 2000,
+            });
+        } catch (err: any) {
+            updateNotification({
+                id: "approved-user",
+                color: "red",
+                title: "Approved User",
+                message: handleRPCError(err).message,
+                icon: <X />,
+                autoClose: 2000,
+            });
+        }
+    };
     return (
         <Nav>
-            {data && data.length !== 0 ? (
-                <Grid
-                                columns={[
-                                    "#","Name","Address","Email Address","Mobile Number","Action"
-                                ]}
-                                data={data.map((item, index) => [
-                                    index+1,
-                                    item["name"],
-                                    item["user_address"],
-                                    item["email"],
-                                    item["mobile"],
-                                    _(<Button color={"green"} onClick={()=>approveUser()}>
+            <Container>
+                <Paper p="md" withBorder>
+                    <Title order={4}>List of new hospital/agency</Title>
+                    <Divider my="sm" />
+                    {loading && (
+                        <Center>
+                            <Loader />
+                        </Center>
+                    )}
+                    {error && <Text color="red">{error}</Text>}
+                    {data && (
+                        <Grid
+                            className={{
+                                header: classes.tableHead,
+                                container: classes.tableContainer,
+                                footer: classes.tableFooter,
+                                th: classes.tableTh,
+                                td: classes.tableTd,
+                            }}
+                            columns={["#", "Name", "Address", "Email Address", "Mobile Number", "Action"]}
+                            data={data.map((item, index) => [
+                                index + 1,
+                                item["name"],
+                                item["user_address"],
+                                item["email"],
+                                item["mobile"],
+                                _(
+                                    <Button color={"green"} size="xs" onClick={() => approveUser(item["id"])}>
                                         Approve
-                                    </Button>)
-                                ])}
-                                search={false}
-                                pagination={{
-                                    enabled: true,
-                                    limit: 5,
-                                }}
-                            />):
-            (<div>No user request to display</div>)}
+                                    </Button>
+                                ),
+                            ])}
+                            search={false}
+                            pagination={{
+                                enabled: true,
+                                limit: 5,
+                            }}
+                        />
+                    )}
+                </Paper>
+            </Container>
         </Nav>
     );
 };

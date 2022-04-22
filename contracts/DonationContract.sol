@@ -83,6 +83,7 @@ contract DonationContract {
 
     address[] USER_IDX_ARR; // store the inserted address
     struct User {
+        address id;
         string name;
         string user_address;
         string email;
@@ -107,6 +108,7 @@ contract DonationContract {
     ) {
         admin = msg.sender;
         User memory user = User(
+            admin,
             name,
             user_address,
             email,
@@ -137,7 +139,7 @@ contract DonationContract {
     function approveUser(address _address) public restricted {
         User storage user = user_map[_address];
         user.verified = true;
-        emit UserVerified("Voter update success");
+        emit UserVerified("User update success");
     }
 
     // For registering the doner
@@ -214,6 +216,7 @@ contract DonationContract {
 
     function userSet(address key, User memory user) private {
         USER_IDX_ARR.push(key);
+        user.id = key;
         user_map[key] = user;
     }
 
@@ -223,7 +226,12 @@ contract DonationContract {
         requestor_organ_map[id] = request_organ;
     }
 
-    function getUnverifiedUser() public view returns (User[] memory) {
+    function getUnverifiedUser()
+        public
+        view
+        restricted
+        returns (User[] memory)
+    {
         uint256 counter = 0;
 
         for (uint256 i = 0; i < USER_IDX_ARR.length; i++) {

@@ -10,6 +10,7 @@ import { Contract } from "web3-eth-contract";
 import { userAdd } from "../../store/actions";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
+import { handleRPCError } from "../../utils/handleError";
 
 interface props {
     contract: Contract | null;
@@ -43,7 +44,15 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
         const data: any = validator.generalize();
         try {
             const response = await contract?.methods
-                .registerUser([data.name, data.address, data.email, data.phone, "", false])
+                .registerUser([
+                    "0x9332d7652828B818E5C0587b26c29e895CcB02BB", // sample address for registration
+                    data.name,
+                    data.address,
+                    data.email,
+                    data.phone,
+                    "",
+                    false,
+                ])
                 .send({ from: accounts[0] });
             showNotification({
                 title: "Success",
@@ -52,6 +61,7 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
             });
             const user = response.events.Register.returnValues[0];
             userAdd({
+                id: "",
                 name: user[0],
                 email: user[1],
                 mobile: user[2],
@@ -62,7 +72,7 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
             showNotification({
                 color: "red",
                 title: "Error",
-                message: err.message,
+                message: handleRPCError(err).message,
                 autoClose: false,
             });
         }
