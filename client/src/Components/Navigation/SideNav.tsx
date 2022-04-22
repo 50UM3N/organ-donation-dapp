@@ -1,4 +1,4 @@
-import { createStyles, Navbar, Group, Code, Burger, Avatar, Text } from "@mantine/core";
+import { createStyles, Navbar, Group, Code, Burger, Avatar, Text, ScrollArea } from "@mantine/core";
 import { BellRinging, Receipt2, Logout, At, PhoneCall, Home, NewSection } from "tabler-icons-react";
 import { connect } from "react-redux";
 import { IRootState } from "../../store";
@@ -16,7 +16,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
         navbar: {
             width: "300px",
             top: "0",
-            height: "auto",
+            height: "100%",
             minHeight: "100%",
         },
 
@@ -117,8 +117,8 @@ const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
     ));
 
     return (
-        <Navbar p="md" className={classes.navbar}>
-            <Navbar.Section grow>
+        <Navbar p="xs" className={classes.navbar}>
+            <Navbar.Section>
                 <Group className={classes.header} mb="md" position="apart">
                     <Code>v3.1.2</Code>
                     <Burger
@@ -154,9 +154,11 @@ const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
                         </Group>
                     </div>
                 </Group>
-                {links}
             </Navbar.Section>
 
+            <Navbar.Section grow component={ScrollArea} mx="-xs" px="xs">
+                {links}
+            </Navbar.Section>
             <Navbar.Section className={classes.footer}>
                 <a href="/" className={classes.link} onClick={(event) => event.preventDefault()}>
                     <Logout className={classes.linkIcon} />
