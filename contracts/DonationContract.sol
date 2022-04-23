@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+[9:54 PM, 4/23/2022] Arnab Mondal (CMSA VC): // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
 contract DonationContract {
@@ -11,7 +11,49 @@ contract DonationContract {
         _;
     }
 
-    uint256 doner_id = 0;
+    uint256 DONER_IDX = 0;
+    struct Doner {
+        uint256 id;
+        string fname;
+        string lname;
+        string email;
+        uint256 dob;
+        uint256 mobile;
+        uint256 uidai;
+        uint256 age;
+        uint256 weight;
+        uint256 height;
+        uint256 bmi;
+        string blood_group;
+        string gender;
+        string address_line;
+        string state;
+        string district;
+        string postal_code;
+    }
+
+    uint25…
+[10:25 PM, 4/23/2022] Arnab Mondal (CMSA VC): // SPDX-License-Identifier: MIT
+pragma solidity >=0.4.22 <0.9.0;
+
+contract DonationContract {
+    address public owner = msg.sender;
+    modifier restricted() {
+        require(
+            msg.sender == owner,
+            "This function is restricted to the contract's owner"
+        );
+        _;
+    }
+    modifier restrictedIndex() {
+        require(
+            DONER_IDX > 0,
+            "There is no doner available yet !"
+        );
+        _;
+    }
+
+    uint256 DONER_IDX = 0;
     struct Doner {
         uint256 id;
         string fname;
@@ -43,7 +85,7 @@ contract DonationContract {
         bool available;
     }
 
-    uint256 requestor_id = 0;
+    uint256 REQUESTOR_ID = 0;
     struct Requestor {
         uint256 id;
         string fname;
@@ -64,7 +106,7 @@ contract DonationContract {
 
     uint256 requestor_hospital_id = 0;
     struct Requestor_hospital {
-        uint256 requestor_id;
+        uint256 REQUESTOR_ID;
         uint256 id;
         string address_line;
         string city;
@@ -74,7 +116,7 @@ contract DonationContract {
 
     uint256 requestor_organ_id = 0;
     struct Requestor_organ {
-        uint256 requestor_id;
+        uint256 REQUESTOR_ID;
         uint256 requestor_hospital_id;
         uint256 organ_id;
         bool critical;
@@ -127,11 +169,11 @@ contract DonationContract {
     event Register(uint256 id, Requestor_hospital _requestor_hospital);
     event Register(uint256 id, Requestor_organ _request_organ);
 
-    function registerUser(User memory u) public {
+    function registerUser(User memory _user) public {
         address user_address = msg.sender;
-        u.role = "user";
-        u.verified = false;
-        User memory user = u;
+        _user.role = "user";
+        _user.verified = false;
+        User memory user = _user;
         userSet(user_address, user);
         emit Register(user);
     }
@@ -139,47 +181,64 @@ contract DonationContract {
     function approveUser(address _address) public restricted {
         User storage user = user_map[_address];
         user.verified = true;
-        emit UserVerified("User update success");
+        emit UserVerified("Voter update success");
     }
 
     // For registering the doner
-    function registerDoner(Doner memory d) public {
-        d.id = ++doner_id;
-        Doner memory doner = d;
-        addDoner(doner_id, doner);
+    function registerDoner(Doner memory _doner) public {
+        _doner.id = ++DONER_IDX;
+        Doner memory doner = _doner;
+        addDoner(DONER_IDX, doner);
         emit Register(doner);
     }
 
+    function getDoner() public view restrictedIndex returns(Doner[] memory){
+        Doner[] memory doner = new Doner[](DONER_IDX);
+        uint256 j = 0;
+        for(uint256 i=1;i<=DONER_IDX;i++)
+            doner[j++] = doner_map[i];
+        return doner;
+    }
+
+    function getDonerById(uint id) public view restrictedIndex returns(Doner memory) {
+        require(
+            id <= DONER_IDX && id>0, 
+            "Check the donor id !"
+        );
+        Doner memory doner = doner_map[id];
+        return doner;
+    }
+
     // For registering the organ doner is donating
-    function registerOrgan(Organ memory o) public {
-        o.id = ++organ_id;
-        o.doner_id = doner_id; // This is to map which doner donating which organ
-        // last_donerID is o.doner_id
-        Organ memory organ = o;
+    function registerOrgan(Organ memory _organ) public {
+        _organ.id = ++organ_id;
+        _organ.doner_id = DONER_IDX; // This is to map which doner donating which organ
+        // last_donerID is _organ.doner_id
+        Organ memory organ = _organ;
         addOrgan(organ_id, organ);
         emit Register(organ);
     }
 
     // For registering the request from requestor
-    function registerRequestor(Requestor memory r) public {
-        r.id = ++requestor_id;
-        Requestor memory requestor = r;
-        addRequestor(requestor_id, requestor);
-        emit Register(requestor_id, requestor);
+    function registerRequestor(Requestor memory _requestor) public {
+        _requestor.id = ++REQUESTOR_ID;
+        Requestor memory requestor = _requestor;
+        addRequestor(REQUESTOR_ID, requestor);
+        emit Register(REQUESTOR_ID, requestor);
     }
 
     // For adding the requestor hospital details
-    function registerRequestorHospital(Requestor_hospital memory rh) public {
-        rh.id = ++requestor_hospital_id;
-        rh.requestor_id = requestor_id;
-        Requestor_hospital memory requestor_hospital = rh;
+    function registerRequestorHospital(Requestor_hospital memory _rh) public {
+        _rh.id = ++requestor_hospital_id;
+        _rh.REQUESTOR_ID = REQUESTOR_ID;
+        Requestor_hospital memory requestor_hospital = _rh;
         addRequestorHospital(requestor_hospital_id, requestor_hospital);
         emit Register(requestor_hospital_id, requestor_hospital);
     }
 
     // For adding the requestor organs details
     function registerRequestorOrgans(Requestor_organ memory ro) public {
-        ro.requestor_id = requestor_id;
+        ro.REQUESTOR_ID = REQUESTOR_ID;
         ro.requestor_hospital_id = requestor_hospital_id;
         ro.organ_id = ++requestor_organ_id;
         Requestor_organ memory request_organ = ro;
@@ -216,7 +275,7 @@ contract DonationContract {
 
     function userSet(address key, User memory user) private {
         USER_IDX_ARR.push(key);
-        user.id = key;
+        user.id=key;
         user_map[key] = user;
     }
 
@@ -226,12 +285,7 @@ contract DonationContract {
         requestor_organ_map[id] = request_organ;
     }
 
-    function getUnverifiedUser()
-        public
-        view
-        restricted
-        returns (User[] memory)
-    {
+    function getUnverifiedUser() public restricted view returns (User[] memory) {
         uint256 counter = 0;
 
         for (uint256 i = 0; i < USER_IDX_ARR.length; i++) {

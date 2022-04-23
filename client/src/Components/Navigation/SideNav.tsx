@@ -89,6 +89,7 @@ const data = [
     { link: "/", label: "Home", icon: Home },
     { link: "/new-request", label: "Request", icon: NewSection },
     { link: "/register-doner", label: "Register Doner", icon: BellRinging },
+    { link: "/donors", label: "Donors", icon: BellRinging },
     { link: "/register-requestor", label: "Register Requestor", icon: Receipt2 },
 ];
 

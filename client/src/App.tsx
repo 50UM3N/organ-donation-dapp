@@ -12,6 +12,8 @@ import { IRootState } from "./store";
 import { InitialThemeState } from "./store/reducers/theme-reducer";
 import RegisterRequestor from "./Routes/Register/RegisterRequestor";
 import JoinRequest from "./Routes/JoinRequest";
+import Donors from "./Routes/Donors";
+import Doner from "./Routes/Doner";
 
 interface props {
     colorScheme: InitialThemeState;
@@ -28,6 +30,8 @@ const App: React.FC<props> = ({ colorScheme }) => {
                         <Route path="/register-doner" element={<RegisterDoner />} />
                         <Route path="/register-requestor" element={<RegisterRequestor />} />
                         <Route path="/new-request" element={<JoinRequest />} />
+                        <Route path="/donors" element={<Donors />} />
+                        <Route path="/doner/:donerId" element={<Doner />} />
                     </Route>
                     <Route path="/login" element={<Login />} />
                 </Routes>
