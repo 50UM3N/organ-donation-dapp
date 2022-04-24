@@ -91,6 +91,7 @@ const data = [
     { link: "/register-doner", label: "Register Doner", icon: BellRinging },
     { link: "/donors", label: "Donors", icon: BellRinging },
     { link: "/register-requestor", label: "Register Requestor", icon: Receipt2 },
+    { link: "/requestors", label: "Requestor", icon: Receipt2 },
 ];
 
 interface props {

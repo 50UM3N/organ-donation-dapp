@@ -10,8 +10,12 @@ contract DonationContract {
         );
         _;
     }
-    modifier restrictedIndex() {
+    modifier restrictedDonerIndex() {
         require(DONER_IDX > 0, "There is no doner available yet !");
+        _;
+    }
+    modifier restrictedRequestorIndex() {
+        require(REQUESTOR_IDX > 0, "There is no requestor available yet !");
         _;
     }
 
@@ -47,23 +51,25 @@ contract DonationContract {
         bool available;
     }
 
-    uint256 REQUESTOR_ID = 0;
+    uint256 REQUESTOR_IDX = 0;
     struct Requestor {
         uint256 id;
         string fname;
         string lname;
-        string email;
+        string gender;
         uint256 dob;
+        uint256 age;
+        string email;
         uint256 mobile;
         uint256 uidai;
-        uint256 age;
         uint256 weight;
-        string gender;
-        string address_line;
         uint256 height;
         uint256 bmi;
         string blood_group;
+        string address_line;
         string state;
+        string district;
+        string postal_code;
     }
 
     uint256 requestor_hospital_id = 0;
@@ -154,7 +160,12 @@ contract DonationContract {
         emit Register(doner);
     }
 
-    function getDoner() public view restrictedIndex returns (Doner[] memory) {
+    function getDoner()
+        public
+        view
+        restrictedDonerIndex
+        returns (Doner[] memory)
+    {
         Doner[] memory doner = new Doner[](DONER_IDX);
         uint256 j = 0;
         for (uint256 i = 1; i <= DONER_IDX; i++) doner[j++] = doner_map[i];
@@ -164,7 +175,7 @@ contract DonationContract {
     function getDonerById(uint256 id)
         public
         view
-        restrictedIndex
+        restrictedDonerIndex
         returns (Doner memory)
     {
         require(id <= DONER_IDX && id > 0, "Check the donor id !");
@@ -184,16 +195,40 @@ contract DonationContract {
 
     // For registering the request from requestor
     function registerRequestor(Requestor memory _requestor) public {
-        _requestor.id = ++REQUESTOR_ID;
+        _requestor.id = ++REQUESTOR_IDX;
         Requestor memory requestor = _requestor;
-        addRequestor(REQUESTOR_ID, requestor);
-        emit Register(REQUESTOR_ID, requestor);
+        addRequestor(REQUESTOR_IDX, requestor);
+        emit Register(REQUESTOR_IDX, requestor);
+    }
+
+    function getRequestor()
+        public
+        view
+        restrictedRequestorIndex
+        returns (Requestor[] memory)
+    {
+        Requestor[] memory requestor = new Requestor[](REQUESTOR_IDX);
+        uint256 j = 0;
+        for (uint256 i = 1; i <= REQUESTOR_IDX; i++)
+            requestor[j++] = requestor_map[i];
+        return requestor;
+    }
+
+    function getRequestorById(uint256 id)
+        public
+        view
+        restrictedRequestorIndex
+        returns (Requestor memory)
+    {
+        require(id <= REQUESTOR_IDX && id > 0, "Check the requestor id !");
+        Requestor memory requestor = requestor_map[id];
+        return requestor;
     }
 
     // For adding the requestor hospital details
     function registerRequestorHospital(Requestor_hospital memory _rh) public {
         _rh.id = ++requestor_hospital_id;
-        _rh.REQUESTOR_ID = REQUESTOR_ID;
+        _rh.REQUESTOR_ID = REQUESTOR_IDX;
         Requestor_hospital memory requestor_hospital = _rh;
         addRequestorHospital(requestor_hospital_id, requestor_hospital);
         emit Register(requestor_hospital_id, requestor_hospital);
@@ -201,7 +236,7 @@ contract DonationContract {
 
     // For adding the requestor organs details
     function registerRequestorOrgans(Requestor_organ memory ro) public {
-        ro.REQUESTOR_ID = REQUESTOR_ID;
+        ro.REQUESTOR_ID = REQUESTOR_IDX;
         ro.requestor_hospital_id = requestor_hospital_id;
         ro.organ_id = ++requestor_organ_id;
         Requestor_organ memory request_organ = ro;
