@@ -36,7 +36,7 @@ const Donors: React.FC<props> = ({ contract }) => {
             }
         })();
     }, [contract?.methods]);
-    console.log(data);
+
     return (
         <Nav>
             <Container>

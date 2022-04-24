@@ -1,39 +1,4 @@
-[9:54 PM, 4/23/2022] Arnab Mondal (CMSA VC): // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.9.0;
-
-contract DonationContract {
-    address public owner = msg.sender;
-    modifier restricted() {
-        require(
-            msg.sender == owner,
-            "This function is restricted to the contract's owner"
-        );
-        _;
-    }
-
-    uint256 DONER_IDX = 0;
-    struct Doner {
-        uint256 id;
-        string fname;
-        string lname;
-        string email;
-        uint256 dob;
-        uint256 mobile;
-        uint256 uidai;
-        uint256 age;
-        uint256 weight;
-        uint256 height;
-        uint256 bmi;
-        string blood_group;
-        string gender;
-        string address_line;
-        string state;
-        string district;
-        string postal_code;
-    }
-
-    uint25…
-[10:25 PM, 4/23/2022] Arnab Mondal (CMSA VC): // SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
 contract DonationContract {
@@ -46,10 +11,7 @@ contract DonationContract {
         _;
     }
     modifier restrictedIndex() {
-        require(
-            DONER_IDX > 0,
-            "There is no doner available yet !"
-        );
+        require(DONER_IDX > 0, "There is no doner available yet !");
         _;
     }
 
@@ -192,19 +154,20 @@ contract DonationContract {
         emit Register(doner);
     }
 
-    function getDoner() public view restrictedIndex returns(Doner[] memory){
+    function getDoner() public view restrictedIndex returns (Doner[] memory) {
         Doner[] memory doner = new Doner[](DONER_IDX);
         uint256 j = 0;
-        for(uint256 i=1;i<=DONER_IDX;i++)
-            doner[j++] = doner_map[i];
+        for (uint256 i = 1; i <= DONER_IDX; i++) doner[j++] = doner_map[i];
         return doner;
     }
 
-    function getDonerById(uint id) public view restrictedIndex returns(Doner memory) {
-        require(
-            id <= DONER_IDX && id>0, 
-            "Check the donor id !"
-        );
+    function getDonerById(uint256 id)
+        public
+        view
+        restrictedIndex
+        returns (Doner memory)
+    {
+        require(id <= DONER_IDX && id > 0, "Check the donor id !");
         Doner memory doner = doner_map[id];
         return doner;
     }
@@ -275,7 +238,7 @@ contract DonationContract {
 
     function userSet(address key, User memory user) private {
         USER_IDX_ARR.push(key);
-        user.id=key;
+        user.id = key;
         user_map[key] = user;
     }
 
@@ -285,7 +248,12 @@ contract DonationContract {
         requestor_organ_map[id] = request_organ;
     }
 
-    function getUnverifiedUser() public restricted view returns (User[] memory) {
+    function getUnverifiedUser()
+        public
+        view
+        restricted
+        returns (User[] memory)
+    {
         uint256 counter = 0;
 
         for (uint256 i = 0; i < USER_IDX_ARR.length; i++) {

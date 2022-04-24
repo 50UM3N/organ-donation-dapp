@@ -70,7 +70,7 @@ const RegisterRequestor: React.FC<props> = ({contract}) => {
             showNotification({
                 title: "Success",
                 autoClose: false,
-                message: "Requestor registration successful waiting for conformation",
+                message: "Requestor registration successful",
                 onClose: () => navigate("/"),
             });
         } catch (err: any) {

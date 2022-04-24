@@ -72,7 +72,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
             showNotification({
                 title: "Success",
                 autoClose: false,
-                message: "Doner registration successful waiting for conformation",
+                message: "Doner registration successful",
                 onClose: () => navigate("/"),
             });
         } catch (err: any) {
