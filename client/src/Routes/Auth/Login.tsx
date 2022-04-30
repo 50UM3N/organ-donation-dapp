@@ -38,7 +38,6 @@ interface props {
 }
 
 const Login: React.FC<props> = ({ setWeb3, web3, color, setTheme }) => {
-    console.log(color);
     const theme = useMantineTheme();
     const location = useLocation();
     const navigate = useNavigate();

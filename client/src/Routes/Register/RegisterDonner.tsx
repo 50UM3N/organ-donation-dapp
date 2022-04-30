@@ -8,7 +8,6 @@ import { Col, Divider, Grid, NumberInput, Paper, TextInput, Title, Select, Butto
 import { useState } from "react";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
-import { useNavigate } from "react-router-dom";
 import { IRootState } from "../../store";
 
 interface props {
@@ -17,7 +16,6 @@ interface props {
 
 const RegisterDonner: React.FC<props> = ({ contract }) => {
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
     const { showNotification } = useNotifications();
     const [form, validator] = useValidate({
         fname: { value: "", validate: "required", error: "" },
@@ -73,7 +71,6 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                 title: "Success",
                 autoClose: false,
                 message: "Doner registration successful",
-                onClose: () => navigate("/"),
             });
         } catch (err: any) {
             showNotification({
