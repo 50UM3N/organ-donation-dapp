@@ -1,7 +1,7 @@
 import { createStyles, Navbar, Group, Code, Burger, Avatar, Text, ScrollArea } from "@mantine/core";
 import { BellRinging, Receipt2, Logout, At, PhoneCall, Home, NewSection } from "tabler-icons-react";
 import { connect } from "react-redux";
-import { IRootState } from "../../store";
+
 import { InitialUserState } from "../../store/reducers/user-reducer";
 import { NavLink } from "react-router-dom";
 
@@ -171,7 +171,7 @@ const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
     );
 };
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
     return {
         user: state.userReducer,
     };

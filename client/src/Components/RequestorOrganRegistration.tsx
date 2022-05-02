@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import React, { useState } from "react";
 import { Contract } from "web3-eth-contract";
-import { IRootState } from "../store";
+
 import { Button, Modal, Select, Text } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { handleRPCError } from "../utils/handleError";
@@ -88,7 +88,7 @@ const RequestorOrganRegistration: React.FC<props> = ({ contract, organs, request
     );
 };
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
     contract: state.contractReducer.contract,
 });
 

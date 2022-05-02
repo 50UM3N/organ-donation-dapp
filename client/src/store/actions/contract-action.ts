@@ -1,8 +1,8 @@
 import { Contract } from "web3-eth-contract";
 export enum ContractActionType {
-    CONTRACT_SUCCESS="CONTRACT_SUCCESS",
-    CONTRACT_LOADING="CONTRACT_LOADING",
-    CONTRACT_ERROR="CONTRACT_ERROR",
+    CONTRACT_SUCCESS = "CONTRACT_SUCCESS",
+    CONTRACT_LOADING = "CONTRACT_LOADING",
+    CONTRACT_ERROR = "CONTRACT_ERROR",
 }
 
 export const contractSuccess = (contract: Contract) => {

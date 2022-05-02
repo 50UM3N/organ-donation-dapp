@@ -7,16 +7,16 @@ import Web3 from "web3";
 import Loader from "../Components/Loader";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
-import { IRootState } from "../store";
+
 import { Contract } from "web3-eth-contract";
 import { AbiItem } from "web3-utils";
 
 interface props {
-    web3: any;
+    web3: Web3State;
     contractSuccess: (contract: Contract) => void;
     web3Success: (web3: any) => void;
     web3Error: (e: string) => void;
-    userAdd: (user: object) => void;
+    userAdd: (user: User) => void;
 }
 
 const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web3Error, userAdd }) => {
@@ -80,7 +80,7 @@ const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web
         return <Navigate to="/login" state={{ from: location }} />;
     }
 };
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
     return {
         web3: state.web3Reducer,
     };
@@ -100,7 +100,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
         contractSuccess: (contract: Contract) => {
             dispatch(contractSuccess(contract));
         },
-        userAdd: (user: object) => {
+        userAdd: (user: User) => {
             dispatch(userAdd(user));
         },
     };

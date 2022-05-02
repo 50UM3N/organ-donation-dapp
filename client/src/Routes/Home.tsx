@@ -1,11 +1,9 @@
 import React from "react";
 import Nav from "../Components/Navigation/Nav";
 import { Text, Badge, Group, Paper, Container, Title } from "@mantine/core";
-import { IRootState } from "../store";
 import { connect } from "react-redux";
-import { InitialUserState } from "../store/reducers/user-reducer";
 
-const Home: React.FC<{ user: InitialUserState }> = ({ user }) => {
+const Home: React.FC<{ user: UserState }> = ({ user }) => {
     return (
         <Nav>
             <Container>
@@ -44,7 +42,7 @@ const Home: React.FC<{ user: InitialUserState }> = ({ user }) => {
     );
 };
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
     return {
         user: state.userReducer,
     };

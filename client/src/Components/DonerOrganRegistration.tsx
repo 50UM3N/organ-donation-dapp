@@ -1,7 +1,7 @@
 import { Button, Modal, Select, Text } from "@mantine/core";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { IRootState } from "../store";
+
 import { Contract } from "web3-eth-contract";
 import { handleRPCError } from "../utils/handleError";
 import { showNotification } from "@mantine/notifications";
@@ -86,7 +86,7 @@ const DonerOrganRegistration: React.FC<props> = ({ donerId, contract, organs, do
         </>
     );
 };
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
     contract: state.contractReducer.contract,
 });
 

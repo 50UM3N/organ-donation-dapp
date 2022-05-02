@@ -1,7 +1,5 @@
 import { connect } from "react-redux";
 import React, { useEffect, useState } from "react";
-import { IRootState } from "../store";
-import { Contract } from "web3-eth-contract";
 import Nav from "../Components/Navigation/Nav";
 import {
     Center,
@@ -22,7 +20,7 @@ import { useParams } from "react-router-dom";
 import RequestorOrganRegistration from "../Components/RequestorOrganRegistration";
 
 interface props {
-    contract: Contract | null;
+    contract: Contract;
 }
 
 const Requestor: React.FC<props> = ({ contract }) => {
@@ -271,7 +269,7 @@ const Requestor: React.FC<props> = ({ contract }) => {
     );
 };
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
     contract: state.contractReducer.contract,
 });
 

@@ -3,15 +3,13 @@ import { At } from "tabler-icons-react";
 import Nav from "../../Components/Navigation/Nav";
 import { DatePicker } from "@mantine/dates";
 import { useValidate } from "pangolin-hooks";
-import { Contract } from "web3-eth-contract";
 import { Col, Divider, Grid, NumberInput, Paper, TextInput, Title, Select, Button } from "@mantine/core";
 import { useState } from "react";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
-import { IRootState } from "../../store";
 
 interface props {
-    contract: Contract | null;
+    contract: Contract;
 }
 
 const RegisterDonner: React.FC<props> = ({ contract }) => {
@@ -310,7 +308,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
     );
 };
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
     return {
         contract: state.contractReducer.contract,
     };

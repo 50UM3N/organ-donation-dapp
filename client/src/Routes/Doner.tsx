@@ -1,7 +1,6 @@
 import { connect } from "react-redux";
 import React, { useEffect, useState } from "react";
-import { IRootState } from "../store";
-import { Contract } from "web3-eth-contract";
+
 import Nav from "../Components/Navigation/Nav";
 import {
     Button,
@@ -23,32 +22,14 @@ import { useParams } from "react-router-dom";
 import DonerOrganRegistration from "../Components/DonerOrganRegistration";
 
 interface props {
-    contract: Contract | null;
+    contract: Contract;
 }
-type TypeData = null | {
-    id: number;
-    fname: string;
-    lname: string;
-    email: string;
-    dob: string;
-    mobile: string;
-    age: string;
-    weight: string;
-    height: string;
-    bmi: string;
-    blood_group: string;
-    gender: string;
-    address_line: string;
-    state: string;
-    district: string;
-    postal_code: string;
-};
 
 const Doner: React.FC<props> = ({ contract }) => {
     const { donerId } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null | string>(null);
-    const [data, setData] = useState<TypeData>(null);
+    const [data, setData] = useState<Doner | null>(null);
     const [organs, setOrgans] = useState<any>(null);
     const [donerOrgans, setDonerOrgans] = useState<Array<DonerOrgans> | null>(null);
     useEffect(() => {
@@ -238,7 +219,7 @@ const Doner: React.FC<props> = ({ contract }) => {
     );
 };
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
     contract: state.contractReducer.contract,
 });
 

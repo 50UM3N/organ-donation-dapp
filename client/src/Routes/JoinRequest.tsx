@@ -1,7 +1,5 @@
 import { connect } from "react-redux";
 import React, { useEffect, useState } from "react";
-import { IRootState } from "../store";
-import { Contract } from "web3-eth-contract";
 import Nav from "../Components/Navigation/Nav";
 import { Grid, _ } from "gridjs-react";
 import "gridjs/dist/theme/mermaid.css";
@@ -12,7 +10,7 @@ import { Circle, X } from "tabler-icons-react";
 import useGridStyle from "../Components/Grid.style";
 
 interface props {
-    contract: Contract | null;
+    contract: Contract;
 }
 
 const JoinRequest: React.FC<props> = ({ contract }) => {
@@ -118,7 +116,7 @@ const JoinRequest: React.FC<props> = ({ contract }) => {
     );
 };
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
     contract: state.contractReducer.contract,
 });
 

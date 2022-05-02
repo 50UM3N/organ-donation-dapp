@@ -18,17 +18,16 @@ import { setWeb3 } from "../../store/thunk/setWeb3";
 import { useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { IRootState } from "../../store";
+
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { AbiItem } from "web3-utils";
-import { InitialWeb3State } from "../../store/reducers/web3-reducer";
 import { InitialThemeState } from "../../store/reducers/theme-reducer";
 import { toggleTheme } from "../../store/actions";
 import { ThemeActionType } from "../../store/actions/theme-action";
 
 interface props {
-    web3: InitialWeb3State;
+    web3: Web3State;
     setWeb3: () => void;
     color: InitialThemeState;
     setTheme: (theme: "dark" | "light") => {
@@ -102,14 +101,14 @@ const Login: React.FC<props> = ({ setWeb3, web3, color, setTheme }) => {
         </Container>
     );
 };
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
     return {
         web3: state.web3Reducer,
         color: state.themeReducer,
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<IRootState, any, AnyAction>) => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<RootState, any, AnyAction>) => {
     return {
         setWeb3: () =>
             dispatch(setWeb3(eVotingArtifact.abi as AbiItem[], eVotingArtifact.networks[5777].address)),

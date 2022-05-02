@@ -4,18 +4,16 @@ import { useValidate } from "pangolin-hooks";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
-import { IRootState } from "../../store";
-import { InitialUserState } from "../../store/reducers/user-reducer";
-import { Contract } from "web3-eth-contract";
+
 import { userAdd } from "../../store/actions";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { handleRPCError } from "../../utils/handleError";
 
 interface props {
-    contract: Contract | null;
-    user: InitialUserState;
-    userAdd: (user: object) => void;
+    contract: Contract;
+    user: UserState;
+    userAdd: (user: User) => void;
 }
 
 const Register: React.FC<props> = ({ contract, user, userAdd }) => {
@@ -61,12 +59,12 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
             });
             const user = response.events.Register.returnValues[0];
             userAdd({
-                id: "",
                 name: user[0],
                 email: user[1],
                 mobile: user[2],
                 verified: user[3],
                 role: user[4],
+                address: user["address_line"],
             });
         } catch (err: any) {
             showNotification({
@@ -143,7 +141,7 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
     );
 };
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
     return {
         contract: state.contractReducer.contract,
         user: state.userReducer,
@@ -151,7 +149,7 @@ const mapStateToProps = (state: IRootState) => {
 };
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        userAdd: (user: object) => {
+        userAdd: (user: User) => {
             dispatch(userAdd(user));
         },
     };

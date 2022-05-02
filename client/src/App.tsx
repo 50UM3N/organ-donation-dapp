@@ -8,7 +8,7 @@ import AuthProvider from "./Provider/AuthProvider";
 import { connect } from "react-redux";
 import Register from "./Routes/Auth/Register";
 import { NotificationsProvider } from "@mantine/notifications";
-import { IRootState } from "./store";
+
 import { InitialThemeState } from "./store/reducers/theme-reducer";
 import RegisterRequestor from "./Routes/Register/RegisterRequestor";
 import JoinRequest from "./Routes/JoinRequest";
@@ -44,7 +44,7 @@ const App: React.FC<props> = ({ colorScheme }) => {
     );
 };
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
     return {
         colorScheme: state.themeReducer,
         web3: state.web3Reducer,

@@ -16,7 +16,7 @@ import {
 import { ActionIcon } from "@mantine/core";
 import { connect } from "react-redux";
 import { toggleTheme } from "../../store/actions";
-import { IRootState } from "../../store";
+
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { InitialThemeState } from "../../store/reducers/theme-reducer";
@@ -128,7 +128,7 @@ const TopNav: React.FC<props> = ({ setNavOpen, navOpen, setTheme, colorScheme, u
     );
 };
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
     return {
         colorScheme: state.themeReducer,
         user: state.userReducer,

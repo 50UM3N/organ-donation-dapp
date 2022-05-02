@@ -3,6 +3,15 @@ interface Window {
     web3: any;
 }
 
+interface User {
+    role: string;
+    name: string;
+    email: string;
+    mobile: string;
+    address: string;
+    verified: boolean;
+}
+
 interface Doner {
     id: number;
     fname: string;

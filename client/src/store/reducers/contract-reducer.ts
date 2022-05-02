@@ -2,29 +2,20 @@ import { Action, Reducer } from "redux";
 import { ContractActionType } from "../actions/contract-action";
 import { Contract } from "web3-eth-contract";
 
-export interface InitialContractState {
-    loading: boolean;
-    error: null | string | object;
-    contract: null | Contract;
-}
-
-const initialState: InitialContractState = {
+const initialState: ContractState = {
     loading: false,
     error: null,
     contract: null,
 };
 
 export interface ContractDispatchAction extends Action<ContractActionType> {
-    payload: Partial<InitialContractState>;
+    payload: Contract;
 }
 
-const contractReducer: Reducer<InitialContractState, ContractDispatchAction> = (
-    state = initialState,
-    action
-) => {
+const contractReducer: Reducer<ContractState, ContractDispatchAction> = (state = initialState, action) => {
     switch (action.type) {
         case ContractActionType.CONTRACT_SUCCESS:
-            return { ...state, contract: action.payload as Contract, loading: false };
+            return { ...state, contract: action.payload, loading: false };
         case ContractActionType.CONTRACT_LOADING:
             return { ...state, loading: true };
         case ContractActionType.CONTRACT_ERROR:

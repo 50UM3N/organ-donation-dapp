@@ -1,7 +1,6 @@
 import { connect } from "react-redux";
 import React, { useEffect, useState } from "react";
-import { IRootState } from "../store";
-import { Contract } from "web3-eth-contract";
+
 import { handleRPCError } from "../utils/handleError";
 import Nav from "../Components/Navigation/Nav";
 import { Button, Center, Divider, Loader, Paper, Text, Title, Container } from "@mantine/core";
@@ -11,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { InfoCircle } from "tabler-icons-react";
 
 interface props {
-    contract: Contract | null;
+    contract: Contract;
 }
 
 const Donors: React.FC<props> = ({ contract }) => {
@@ -97,7 +96,7 @@ const Donors: React.FC<props> = ({ contract }) => {
     );
 };
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
     contract: state.contractReducer.contract,
 });
 

@@ -1,11 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import { IRootState } from "../store";
-import { InitialUserState } from "../store/reducers/user-reducer";
 
 interface props {
-    user: InitialUserState;
+    user: UserState;
     access: Array<string>;
 }
 const RouteProvider: React.FC<props> = ({ user, access = ["admin"] }) => {
@@ -17,7 +15,7 @@ const RouteProvider: React.FC<props> = ({ user, access = ["admin"] }) => {
     }
 };
 
-const mapStateToProps = (state: IRootState) => {
+const mapStateToProps = (state: RootState) => {
     return { user: state.userReducer };
 };
 export default connect(mapStateToProps)(RouteProvider);
