@@ -4,15 +4,20 @@ pragma solidity >=0.4.22 <0.9.0;
 contract DonationContract {
     address admin;
     modifier restricted() {
-        require(
-            msg.sender == admin,
-            "This function is restricted to the contract's owner"
-        );
+        require(msg.sender == admin, "This ");
         _;
     }
     modifier checkAvailable(uint256 _IDX) {
-        require(_IDX > 0, "There is no data available");
+        require(_IDX > 0, "There");
         _;
+    }
+
+    // some return struct
+
+    // requestorOrganMatch
+    struct RequestMatchOrgans {
+        RequestorOrgans requestorOrgans;
+        DonerOrgans[] matchOrgans;
     }
 
     uint256 DONER_IDX = 0;
@@ -139,7 +144,9 @@ contract DonationContract {
             10 * 365 * 24
         );
         ORGAN_IDX++;
-        userSet(admin, user);
+        USER_IDX_ARR.push(admin);
+        user.id = admin;
+        user_map[admin] = user;
     }
 
     event Register(User _user);
@@ -167,32 +174,66 @@ contract DonationContract {
     function getRequestorOrgans(uint256 _id)
         public
         view
-        returns (RequestorOrgans[] memory)
+        returns (RequestMatchOrgans[] memory)
     {
-        RequestorOrgans[] memory _requestororgans = new RequestorOrgans[](
-            REQUESTOR_ORGANS_IDX
-        );
+        RequestMatchOrgans[]
+            memory _requestMatchOrgans = new RequestMatchOrgans[](
+                REQUESTOR_ORGANS_IDX
+            );
+
+        // lppoing trouth the organs that are for the particulart requestor
         uint256 j = 0;
         for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
-            if (requestor_organ_map[i].requestor_map_id == _id)
-                _requestororgans[j++] = requestor_organ_map[i];
+            // check that the requestor organ id is equal to the requstoer id
+            if (requestor_organ_map[i].requestor_map_id == _id) {
+                // store the matched organ
+                _requestMatchOrgans[j].requestorOrgans = requestor_organ_map[i];
+                // find the matching organs that available for the requestor organ
+                uint256 matchOrgansCount = 0; // count
+                for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
+                    if (
+                        (doner_organ_map[k].organ_map_id ==
+                            requestor_organ_map[i].organ_map_id) &&
+                        memcmp(
+                            bytes(doner_organ_map[k].blood_group),
+                            bytes(requestor_organ_map[i].blood_group)
+                        )
+                    ) matchOrgansCount++;
+                }
+                DonerOrgans[] memory matchOrgans = new DonerOrgans[](
+                    matchOrgansCount
+                );
+                uint256 l = 0;
+                for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
+                    if (
+                        (doner_organ_map[k].organ_map_id ==
+                            requestor_organ_map[i].organ_map_id) &&
+                        memcmp(
+                            bytes(doner_organ_map[k].blood_group),
+                            bytes(requestor_organ_map[i].blood_group)
+                        )
+                    ) matchOrgans[l++] = doner_organ_map[k];
+                }
+                _requestMatchOrgans[j].matchOrgans = matchOrgans;
+                j++;
+            }
         }
 
-        return _requestororgans;
+        return _requestMatchOrgans;
     }
 
     // this function pleaze the organ for the a doner
     function registerOrganForRequestor(uint256 _requestor_id, uint256 _organ_id)
         public
     {
-        requestor_organ_map[REQUESTOR_ORGANS_IDX + 1] = RequestorOrgans(
-            REQUESTOR_ORGANS_IDX + 1,
+        REQUESTOR_ORGANS_IDX++;
+        requestor_organ_map[REQUESTOR_ORGANS_IDX] = RequestorOrgans(
+            REQUESTOR_ORGANS_IDX,
             _requestor_id,
             _organ_id,
             requestor_map[_requestor_id].blood_group,
             false
         );
-        REQUESTOR_ORGANS_IDX++;
         emit Register(requestor_organ_map[REQUESTOR_ORGANS_IDX]);
     }
 
@@ -234,36 +275,23 @@ contract DonationContract {
         address user_address = msg.sender;
         _user.role = "user";
         _user.verified = false;
-        User memory user = _user;
-        userSet(user_address, user);
-        emit Register(user);
-    }
-
-    //  This function1 set the user in the map
-    function userSet(address key, User memory user) private {
-        USER_IDX_ARR.push(key);
-        user.id = key;
-        user_map[key] = user;
+        USER_IDX_ARR.push(user_address);
+        _user.id = user_address;
+        user_map[user_address] = _user;
+        emit Register(_user);
     }
 
     // this function approved the user
     function approveUser(address _address) public restricted {
-        User storage user = user_map[_address];
-        user.verified = true;
+        user_map[_address].verified = true;
         emit UserVerified("Voter update success");
     }
 
     // For registering the doner
     function registerDoner(Doner memory _doner) public {
         _doner.id = ++DONER_IDX;
-        Doner memory doner = _doner;
-        addDoner(DONER_IDX, doner);
-        emit Register(doner);
-    }
-
-    // This function add the doner in the map
-    function addDoner(uint256 id, Doner memory doner) private {
-        doner_map[id] = doner;
+        doner_map[DONER_IDX] = _doner;
+        emit Register(_doner);
     }
 
     // this functon return the doner list
@@ -294,14 +322,8 @@ contract DonationContract {
     // For registering the request from requestor
     function registerRequestor(Requestor memory _requestor) public {
         _requestor.id = ++REQUESTOR_IDX;
-        Requestor memory requestor = _requestor;
-        addRequestor(REQUESTOR_IDX, requestor);
-        emit Register(REQUESTOR_IDX, requestor);
-    }
-
-    // This function add the requestor in the map
-    function addRequestor(uint256 id, Requestor memory requestor) private {
-        requestor_map[id] = requestor;
+        requestor_map[REQUESTOR_IDX] = _requestor;
+        emit Register(REQUESTOR_IDX, _requestor);
     }
 
     // This function return all the requestor
@@ -359,5 +381,13 @@ contract DonationContract {
             }
         }
         return users;
+    }
+
+    function memcmp(bytes memory a, bytes memory b)
+        internal
+        pure
+        returns (bool)
+    {
+        return (a.length == b.length) && (keccak256(a) == keccak256(b));
     }
 }

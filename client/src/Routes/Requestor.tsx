@@ -15,7 +15,7 @@ import {
     Space,
     Text,
     Title,
-    Table,
+    List,
 } from "@mantine/core";
 import { handleRPCError } from "../utils/handleError";
 import { useParams } from "react-router-dom";
@@ -43,7 +43,6 @@ const Requestor: React.FC<props> = ({ contract }) => {
                     .getRequestorById(requestorId)
                     .call({ from: accounts[0] });
                 const _organs = await contract?.methods.getOrgans().call({ from: accounts[0] });
-
                 setOrgans([
                     ..._organs.map((item: any) => ({
                         organ_name: item.organ_name,
@@ -57,12 +56,21 @@ const Requestor: React.FC<props> = ({ contract }) => {
                 if (requestors.length === 0) throw new Error("There is no doner available!");
                 setRequestorOrgans([
                     ..._requestorOrgans.map((item: any) => ({
-                        id: Number(item.id),
-                        transplanted: item.transplanted,
-                        blood_group: item.blood_group,
-                        requestor_map_id: Number(item.requestor_map_id),
-                        organ_map_id: Number(item.organ_map_id),
-                        organ: _organs[Number(item.organ_map_id) - 1]["organ_name"],
+                        id: Number(item.requestorOrgans.id),
+                        transplanted: item.requestorOrgans.transplanted,
+                        blood_group: item.requestorOrgans.blood_group,
+                        requestor_map_id: Number(item.requestorOrgans.requestor_map_id),
+                        organ_map_id: Number(item.requestorOrgans.organ_map_id),
+                        organ: _organs[Number(item.requestorOrgans.organ_map_id) - 1]["organ_name"],
+                        matchOrgans: item.matchOrgans.map((item: any) => ({
+                            id: Number(item.id),
+                            available: item.available,
+                            blood_group: item.blood_group,
+                            doner_map_id: Number(item.doner_map_id),
+                            organ_map_id: Number(item.organ_map_id),
+                            time: Number(item.time),
+                            organ: _organs[Number(item.organ_map_id) - 1]["organ_name"],
+                        })),
                     })),
                 ]);
                 setData(requestors);
@@ -73,7 +81,6 @@ const Requestor: React.FC<props> = ({ contract }) => {
             }
         })();
     }, [contract?.methods, requestorId]);
-
     return (
         <Nav>
             {loading && (
@@ -184,30 +191,77 @@ const Requestor: React.FC<props> = ({ contract }) => {
                                     <Title order={4}>All Organs donated by the user</Title>
                                 </Group>
                                 <Divider my="sm" />
-                                <Table>
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Available</th>
-                                            <th>Blood Group</th>
-                                            <th>Requestor ID</th>
-                                            <th>Organ ID</th>
-                                            <th>Organ Name</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {requestorOrgans.map((organ) => (
-                                            <tr key={organ.id}>
-                                                <td>{organ.id}</td>
-                                                <td>{organ.transplanted ? "Yes" : "No"}</td>
-                                                <td>{organ.blood_group}</td>
-                                                <td>{organ.requestor_map_id}</td>
-                                                <td>{organ.organ_map_id}</td>
-                                                <td>{organ.organ}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
+                                <List listStyleType="disc">
+                                    {requestorOrgans.map((organ) => (
+                                        <React.Fragment key={Math.random()}>
+                                            <List.Item>
+                                                <Group spacing="md">
+                                                    <Text>
+                                                        <strong>ID: </strong>
+                                                        {organ.id}
+                                                    </Text>
+                                                    <Text>
+                                                        <strong>Available: </strong>
+                                                        {organ.transplanted ? "Yes" : "No"}
+                                                    </Text>
+                                                    <Text>
+                                                        <strong>Blood Group: </strong>
+                                                        {organ.blood_group}
+                                                    </Text>
+                                                    <Text>
+                                                        <strong>Requestor ID: </strong>
+                                                        {organ.requestor_map_id}
+                                                    </Text>
+                                                    <Text>
+                                                        <strong>Organ ID: </strong>
+                                                        {organ.organ_map_id}
+                                                    </Text>
+                                                    <Text>
+                                                        <strong>Organ Name: </strong>
+                                                        {organ.organ}
+                                                    </Text>
+                                                </Group>
+                                                {organ.matchOrgans.length > 0 && (
+                                                    <List withPadding listStyleType="disc">
+                                                        {organ.matchOrgans.map((organ2) => (
+                                                            <List.Item key={Math.random()}>
+                                                                <Group spacing="md">
+                                                                    <Text>
+                                                                        <strong>ID: </strong> {organ2.id}
+                                                                    </Text>
+                                                                    <Text>
+                                                                        <strong>Available: </strong>
+                                                                        {organ2.available ? "Yes" : "No"}
+                                                                    </Text>
+                                                                    <Text>
+                                                                        <strong>Blood Group: </strong>
+                                                                        {organ2.blood_group}
+                                                                    </Text>
+                                                                    <Text>
+                                                                        <strong>Doner ID: </strong>
+                                                                        {organ2.doner_map_id}
+                                                                    </Text>
+                                                                    <Text>
+                                                                        <strong>Organ ID: </strong>
+                                                                        {organ2.organ_map_id}
+                                                                    </Text>
+                                                                    <Text>
+                                                                        <strong>Organ Name: </strong>{" "}
+                                                                        {organ2.organ}
+                                                                    </Text>
+                                                                    <Text>
+                                                                        <strong>Time(Hr): </strong>{" "}
+                                                                        {organ2.time}
+                                                                    </Text>
+                                                                </Group>
+                                                            </List.Item>
+                                                        ))}
+                                                    </List>
+                                                )}
+                                            </List.Item>
+                                        </React.Fragment>
+                                    ))}
+                                </List>
                             </Paper>
                         </Container>
                     )}

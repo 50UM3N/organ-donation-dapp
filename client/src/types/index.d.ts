@@ -57,6 +57,7 @@ interface RequestorOrgans {
     blood_group: string;
     requestor_map_id: number;
     organ: string;
+    matchOrgans: Array<DonerOrgans>;
 }
 
 interface Organs {
