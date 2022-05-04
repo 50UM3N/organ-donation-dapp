@@ -53,14 +53,15 @@ const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web
             const user = await contract.methods.getUser().call({ from: accounts[0] });
             contractSuccess(contract);
             web3Success(_web3);
-            if (user.email)
+            window.Web3 = _web3;
+            if (_web3.utils.toUtf8(user.email))
                 userAdd({
-                    name: user.name,
-                    email: user.email,
-                    mobile: user.mobile,
+                    name: _web3.utils.toUtf8(user.name),
+                    email: _web3.utils.toUtf8(user.email),
+                    mobile: _web3.utils.toUtf8(user.mobile),
                     verified: user.verified,
-                    role: user.role,
-                    address: user.user_address,
+                    role: _web3.utils.toUtf8(user.role),
+                    address: _web3.utils.toUtf8(user.user_address),
                 });
             else {
                 navigate("/register");

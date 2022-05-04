@@ -44,11 +44,11 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
             const response = await contract?.methods
                 .registerUser([
                     "0x9332d7652828B818E5C0587b26c29e895CcB02BB", // sample address for registration
-                    data.name,
-                    data.address,
-                    data.email,
-                    data.phone,
-                    "",
+                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(data.name),64),
+                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(data.address),64),
+                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(data.email),64),
+                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(data.phone),64),
+                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(""),64),
                     false,
                 ])
                 .send({ from: accounts[0] });
@@ -67,6 +67,7 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
                 address: user["address_line"],
             });
         } catch (err: any) {
+            console.log(err)
             showNotification({
                 color: "red",
                 title: "Error",

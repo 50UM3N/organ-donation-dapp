@@ -19,7 +19,7 @@ const Home: React.FC<{ user: UserState }> = ({ user }) => {
                         )}
                         {!user?.verified && (
                             <Badge color="red" variant="light">
-                                Verified
+                                Unverified
                             </Badge>
                         )}
                     </Group>
