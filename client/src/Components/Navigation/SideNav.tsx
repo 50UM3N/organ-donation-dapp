@@ -2,7 +2,6 @@ import { createStyles, Navbar, Group, Code, Burger, Avatar, Text, ScrollArea } f
 import { BellRinging, Receipt2, Logout, At, PhoneCall, Home, NewSection } from "tabler-icons-react";
 import { connect } from "react-redux";
 
-import { InitialUserState } from "../../store/reducers/user-reducer";
 import { NavLink } from "react-router-dom";
 
 const useStyles = createStyles((theme, _params, getRef) => {
@@ -97,7 +96,7 @@ const data = [
 interface props {
     setNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
     navOpen: boolean;
-    user: InitialUserState;
+    user: UserState;
 }
 
 const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
