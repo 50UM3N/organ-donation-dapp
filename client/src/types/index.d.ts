@@ -1,7 +1,6 @@
 interface Window {
     ethereum: any;
     web3: any;
-    Web3: import("../store").Web3Sample;
 }
 
 interface User {

@@ -9,6 +9,7 @@ import { userAdd } from "../../store/actions";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { handleRPCError } from "../../utils/handleError";
+import { toByte32 } from "../../utils/utils";
 
 interface props {
     contract: Contract;
@@ -44,11 +45,11 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
             const response = await contract?.methods
                 .registerUser([
                     "0x9332d7652828B818E5C0587b26c29e895CcB02BB", // sample address for registration
-                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(data.name),64),
-                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(data.address),64),
-                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(data.email),64),
-                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(data.phone),64),
-                    window.Web3.utils.padRight(window.Web3.utils.asciiToHex(""),64),
+                    toByte32(data.name),
+                    toByte32(data.address),
+                    toByte32(data.email),
+                    toByte32(data.phone),
+                    toByte32(""),
                     false,
                 ])
                 .send({ from: accounts[0] });
@@ -67,7 +68,7 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
                 address: user["address_line"],
             });
         } catch (err: any) {
-            console.log(err)
+            console.log(err);
             showNotification({
                 color: "red",
                 title: "Error",

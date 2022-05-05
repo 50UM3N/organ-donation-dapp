@@ -10,6 +10,7 @@ import { AnyAction } from "redux";
 
 import { Contract } from "web3-eth-contract";
 import { AbiItem } from "web3-utils";
+import { toString } from "../utils/utils";
 
 interface props {
     web3: Web3State;
@@ -53,15 +54,14 @@ const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web
             const user = await contract.methods.getUser().call({ from: accounts[0] });
             contractSuccess(contract);
             web3Success(_web3);
-            window.Web3 = _web3;
-            if (_web3.utils.toUtf8(user.email))
+            if (toString(user.email))
                 userAdd({
-                    name: _web3.utils.toUtf8(user.name),
-                    email: _web3.utils.toUtf8(user.email),
-                    mobile: _web3.utils.toUtf8(user.mobile),
+                    name: toString(user.name),
+                    email: toString(user.email),
+                    mobile: toString(user.mobile),
                     verified: user.verified,
-                    role: _web3.utils.toUtf8(user.role),
-                    address: _web3.utils.toUtf8(user.user_address),
+                    role: toString(user.role),
+                    address: toString(user.user_address),
                 });
             else {
                 navigate("/register");
