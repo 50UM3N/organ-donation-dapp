@@ -9,7 +9,7 @@ import { userAdd } from "../../store/actions";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { handleRPCError } from "../../utils/handleError";
-import { toByte32 } from "../../utils/utils";
+import { toByte32, toString } from "../../utils/utils";
 
 interface props {
     contract: Contract;
@@ -60,12 +60,12 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
             });
             const user = response.events.Register.returnValues[0];
             userAdd({
-                name: user[0],
-                email: user[1],
-                mobile: user[2],
+                name: toString(user[0]),
+                email: toString(user[1]),
+                mobile: toString(user[2]),
                 verified: user[3],
-                role: user[4],
-                address: user["address_line"],
+                role: toString(user[4]),
+                address: toString(user["address_line"]),
             });
         } catch (err: any) {
             console.log(err);

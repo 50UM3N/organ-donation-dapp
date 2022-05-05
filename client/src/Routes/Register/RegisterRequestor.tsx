@@ -7,6 +7,7 @@ import { Col, Divider, Grid, NumberInput, Paper, TextInput, Title, Select, Butto
 import { useState } from "react";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
+import { toByte32 } from "../../utils/utils";
 
 interface props {
     contract: Contract;
@@ -61,6 +62,15 @@ const RegisterRequestor: React.FC<props> = ({ contract }) => {
         data.dob = date;
         data.age = age;
         data.id = 0;
+        data.fname = toByte32(data.fname);
+        data.lname = toByte32(data.lname);
+        data.email = toByte32(data.email);
+        data.blood_group = toByte32(data.blood_group);
+        data.gender = toByte32(data.gender);
+        data.state = toByte32(data.state);
+        data.district = toByte32(data.district);
+        data.address_line = toByte32(data.address_line);
+        data.postal_code = toByte32(data.postal_code);
         try {
             await contract?.methods.registerRequestor(data).send({ from: accounts[0] });
             showNotification({

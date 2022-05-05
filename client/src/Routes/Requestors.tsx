@@ -7,6 +7,7 @@ import useGridStyle from "../Components/Grid.style";
 import { Grid, _ } from "gridjs-react";
 import { useNavigate } from "react-router-dom";
 import { InfoCircle } from "tabler-icons-react";
+import { toString } from "../utils/utils";
 
 interface props {
     contract: Contract;
@@ -66,9 +67,9 @@ const Requestors: React.FC<props> = ({ contract }) => {
                             ]}
                             data={data.map((item, index) => [
                                 index + 1,
-                                item["fname"] + " " + item["lname"],
-                                item["address_line"],
-                                item["email"],
+                                toString(item["fname"]) + " " + toString(item["lname"]),
+                                toString(item["address_line"]),
+                                toString(item["email"]),
                                 item["mobile"],
                                 item["uidai"],
                                 _(

@@ -8,6 +8,7 @@ import { handleRPCError } from "../utils/handleError";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import { Circle, X } from "tabler-icons-react";
 import useGridStyle from "../Components/Grid.style";
+import { toString } from "../utils/utils";
 
 interface props {
     contract: Contract;
@@ -93,10 +94,10 @@ const JoinRequest: React.FC<props> = ({ contract }) => {
                             columns={["#", "Name", "Address", "Email Address", "Mobile Number", "Action"]}
                             data={data.map((item, index) => [
                                 index + 1,
-                                item["name"],
-                                item["user_address"],
-                                item["email"],
-                                item["mobile"],
+                                toString(item["name"]),
+                                toString(item["user_address"]),
+                                toString(item["email"]),
+                                toString(item["mobile"]),
                                 _(
                                     <Button color={"green"} size="xs" onClick={() => approveUser(item["id"])}>
                                         Approve

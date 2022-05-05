@@ -11,6 +11,7 @@ import { AnyAction } from "redux";
 import { Contract } from "web3-eth-contract";
 import { AbiItem } from "web3-utils";
 import { toString } from "../utils/utils";
+import { Text } from "@mantine/core";
 
 interface props {
     web3: Web3State;
@@ -74,7 +75,7 @@ const AuthProvider: React.FC<props> = ({ web3, contractSuccess, web3Success, web
     if (loading) {
         return <Loader />;
     } else if (web3.error) {
-        return <p>{web3.error}</p>;
+        return <Text color="orange">{web3.error}</Text>;
     } else if (web3.web3) {
         return <Outlet />;
     } else {

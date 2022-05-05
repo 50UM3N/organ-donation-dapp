@@ -18,6 +18,7 @@ import {
 import { handleRPCError } from "../utils/handleError";
 import { useParams } from "react-router-dom";
 import RequestorOrganRegistration from "../Components/RequestorOrganRegistration";
+import { toString } from "../utils/utils";
 
 interface props {
     contract: Contract;
@@ -37,13 +38,25 @@ const Requestor: React.FC<props> = ({ contract }) => {
                 method: "eth_accounts",
             });
             try {
-                const requestors = await contract?.methods
+                let requestors = await contract?.methods
                     .getRequestorById(requestorId)
                     .call({ from: accounts[0] });
                 const _organs = await contract?.methods.getOrgans().call({ from: accounts[0] });
+
+                requestors = { ...requestors };
+                requestors.fname = toString(requestors.fname);
+                requestors.lname = toString(requestors.lname);
+                requestors.email = toString(requestors.email);
+                requestors.blood_group = toString(requestors.blood_group);
+                requestors.gender = toString(requestors.gender);
+                requestors.state = toString(requestors.state);
+                requestors.district = toString(requestors.district);
+                requestors.address_line = toString(requestors.address_line);
+                requestors.postal_code = toString(requestors.postal_code);
+
                 setOrgans([
                     ..._organs.map((item: any) => ({
-                        organ_name: item.organ_name,
+                        organ_name: toString(item.organ_name),
                         id: Number(item.id),
                         valid_time: Number(item.valid_time),
                     })),
@@ -56,18 +69,18 @@ const Requestor: React.FC<props> = ({ contract }) => {
                     ..._requestorOrgans.map((item: any) => ({
                         id: Number(item.requestorOrgans.id),
                         transplanted: item.requestorOrgans.transplanted,
-                        blood_group: item.requestorOrgans.blood_group,
+                        blood_group: toString(item.requestorOrgans.blood_group),
                         requestor_map_id: Number(item.requestorOrgans.requestor_map_id),
                         organ_map_id: Number(item.requestorOrgans.organ_map_id),
-                        organ: _organs[Number(item.requestorOrgans.organ_map_id) - 1]["organ_name"],
+                        organ: toString(_organs[Number(item.requestorOrgans.organ_map_id) - 1]["organ_name"]),
                         matchOrgans: item.matchOrgans.map((item: any) => ({
                             id: Number(item.id),
                             available: item.available,
-                            blood_group: item.blood_group,
+                            blood_group: toString(item.blood_group),
                             doner_map_id: Number(item.doner_map_id),
                             organ_map_id: Number(item.organ_map_id),
                             time: Number(item.time),
-                            organ: _organs[Number(item.organ_map_id) - 1]["organ_name"],
+                            organ: toString(_organs[Number(item.organ_map_id) - 1]["organ_name"]),
                         })),
                     })),
                 ]);

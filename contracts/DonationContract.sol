@@ -122,41 +122,25 @@ contract DonationContract {
             "admin",
             true
         );
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "0x4c756e67", 4); //Lung
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Lung", 4); //Lung
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "0x4865617274", 4); //Heart
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Heart", 4); //Heart
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "0x4c69766572", 24); // Liver
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Liver", 24); // Liver
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(
-            ORGAN_IDX + 1,
-            "0x50616e6372656173",
-            24
-        ); // Pancreas
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Pancreas", 24); // Pancreas
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "0x4b69646e6579", 72); // Kidney
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Kidney", 72); // Kidney
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(
-            ORGAN_IDX + 1,
-            "0x436f726e6561",
-            14 * 24
-        ); // Cornea
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Cornea", 14 * 24); // Cornea
+        ORGAN_IDX++;
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Bones", 5 * 365 * 24); // Bones
+        ORGAN_IDX++;
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Skin", 5 * 365 * 24); // Skin
         ORGAN_IDX++;
         organ_map[ORGAN_IDX + 1] = Organ(
             ORGAN_IDX + 1,
-            "0x426f6e6573",
-            5 * 365 * 24
-        ); // Bones
-        ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(
-            ORGAN_IDX + 1,
-            "0x536b696e",
-            5 * 365 * 24
-        ); // Skin
-        ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(
-            ORGAN_IDX + 1,
-            "0x48656172742056616c766573",
+            "Heart Valves",
             10 * 365 * 24
         ); // Heart Valves
         ORGAN_IDX++;

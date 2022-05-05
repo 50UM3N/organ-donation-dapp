@@ -20,6 +20,7 @@ import {
 import { handleRPCError } from "../utils/handleError";
 import { useParams } from "react-router-dom";
 import DonerOrganRegistration from "../Components/DonerOrganRegistration";
+import { toString } from "../utils/utils";
 
 interface props {
     contract: Contract;
@@ -38,33 +39,46 @@ const Doner: React.FC<props> = ({ contract }) => {
                 method: "eth_accounts",
             });
             try {
-                const doner = await contract?.methods.getDonerById(donerId).call({ from: accounts[0] });
+                let doner = await contract?.methods.getDonerById(donerId).call({ from: accounts[0] });
                 const _organs = await contract?.methods.getOrgans().call({ from: accounts[0] });
                 const _donatedOrgans = await contract?.methods
                     .getDonerOrgans(Number(doner.id))
                     .call({ from: accounts[0] });
+                console.log(toString(_organs[0].organ_name));
                 setOrgans([
                     ..._organs.map((item: any) => ({
-                        organ_name: item.organ_name,
+                        organ_name: toString(item.organ_name),
                         id: Number(item.id),
                         valid_time: Number(item.valid_time),
                     })),
                 ]);
                 if (doner.length === 0) throw new Error("There is no doner available!");
+                doner = { ...doner };
+                doner.fname = toString(doner.fname);
+                doner.lname = toString(doner.lname);
+                doner.email = toString(doner.email);
+                doner.blood_group = toString(doner.blood_group);
+                doner.gender = toString(doner.gender);
+                doner.state = toString(doner.state);
+                doner.district = toString(doner.district);
+                doner.address_line = toString(doner.address_line);
+                doner.postal_code = toString(doner.postal_code);
+
                 setData({ ...doner, id: Number(doner.id) });
                 setDonerOrgans([
                     ..._donatedOrgans.map((item: any) => ({
                         id: Number(item.id),
                         available: item.available,
-                        blood_group: item.blood_group,
+                        blood_group: toString(item.blood_group),
                         doner_map_id: Number(item.doner_map_id),
                         organ_map_id: Number(item.organ_map_id),
                         time: Number(item.time),
-                        organ: _organs[Number(item.organ_map_id) - 1]["organ_name"],
+                        organ: toString(_organs[Number(item.organ_map_id) - 1]["organ_name"]),
                     })),
                 ]);
                 setLoading(false);
             } catch (err: any) {
+                console.log(err);
                 setError(handleRPCError(err).message);
                 setLoading(false);
             }
