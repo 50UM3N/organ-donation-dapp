@@ -73,11 +73,11 @@ contract DonationContract {
     struct User {
         address id;
         bytes32 name;
-        bytes32 user_address;
         bytes32 email;
         bytes32 mobile;
         bytes32 role;
         bool verified;
+        uint256 hospital_id;
     }
 
     uint256 DONER_ORGANS_IDX = 0;
@@ -98,30 +98,37 @@ contract DonationContract {
         bytes32 blood_group;
         bool transplanted;
     }
+    uint256 HOSPITAL_IDX = 0;
+    struct Hospital {
+        uint256 id;
+        bytes32 name;
+        bytes32 hospital_type; // private/ govt
+        bytes32 registration_number; // alpha numeric nuumber like 52ADE2585SDW
+        bytes32 address_line; // 32 charecter
+        bytes32 state; // 32 charecter
+        bytes32 district; // 32 charecter
+        bytes32 town; // 32 charecter
+        uint256 pincode; // 32 charecter
+        bytes32 telephone; // 32 charecter
+        bytes32 mobile; // 32 charecter
+        bytes32 emergency_mobile; // 32 charecter
+    }
 
     mapping(address => User) user_map;
     mapping(uint256 => Doner) doner_map; // For mapping the doner
     mapping(uint256 => Organ) organ_map; // For mapping the organs donated by the doner
     mapping(uint256 => Requestor) requestor_map; //For mapping the requestor
-    mapping(uint256 => DonerOrgans) doner_organ_map;
-    mapping(uint256 => RequestorOrgans) requestor_organ_map;
+    mapping(uint256 => DonerOrgans) doner_organ_map; //
+    mapping(uint256 => RequestorOrgans) requestor_organ_map; //
+    mapping(uint256 => Hospital) hospital_map; //
 
     constructor(
         bytes32 name,
-        bytes32 user_address,
         bytes32 email,
         bytes32 mobile
     ) {
         admin = msg.sender;
-        User memory user = User(
-            admin,
-            name,
-            user_address,
-            email,
-            mobile,
-            "admin",
-            true
-        );
+        User memory user = User(admin, name, email, mobile, "admin", true, 0);
         organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Lung", 4); //Lung
         ORGAN_IDX++;
         organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Heart", 4); //Heart
@@ -149,7 +156,7 @@ contract DonationContract {
         user_map[admin] = user;
     }
 
-    event Register(User _user);
+    event Register(User _user, Hospital _hospital);
     event UserVerified(string _message);
     event Register(Doner _doner);
     event Register(Organ _organ);
@@ -285,14 +292,18 @@ contract DonationContract {
      * add the user in the map
      * also add the address in the USER_IDX_ARR
      */
-    function registerUser(User memory _user) public {
+    function registerUser(User memory _user, Hospital memory _hospital) public {
         address user_address = msg.sender;
         _user.role = "user";
         _user.verified = false;
         USER_IDX_ARR.push(user_address);
         _user.id = user_address;
+        HOSPITAL_IDX++;
+        _user.hospital_id = HOSPITAL_IDX;
+        _hospital.id = HOSPITAL_IDX;
+        hospital_map[HOSPITAL_IDX] = _hospital;
         user_map[user_address] = _user;
-        emit Register(_user);
+        emit Register(_user, _hospital);
     }
 
     /**
@@ -384,8 +395,14 @@ contract DonationContract {
     /**
      * This function return the current login user by its address
      */
-    function getUser() public view returns (User memory) {
-        return user_map[msg.sender];
+    function getUser()
+        public
+        view
+        returns (User memory user, Hospital memory hospital)
+    {
+        user = user_map[msg.sender];
+        hospital = hospital_map[user.hospital_id];
+        return (user, hospital);
     }
 
     /**
@@ -396,7 +413,7 @@ contract DonationContract {
         public
         view
         restricted
-        returns (User[] memory)
+        returns (User[] memory users, Hospital[] memory hospitals)
     {
         uint256 counter = 0;
 
@@ -405,16 +422,18 @@ contract DonationContract {
             if (!item.verified) counter++;
         }
 
-        User[] memory users = new User[](counter);
+        users = new User[](counter);
+        hospitals = new Hospital[](counter);
         uint256 j = 0;
         for (uint256 i = 0; i < USER_IDX_ARR.length; i++) {
             User memory item = user_map[USER_IDX_ARR[i]];
             if (!item.verified) {
                 users[j] = item;
+                hospitals[j] = hospital_map[item.hospital_id];
                 j++;
             }
         }
-        return users;
+        return (users, hospitals);
     }
 
     function memcmp(bytes32 a, bytes32 b) internal pure returns (bool) {

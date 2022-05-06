@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, Text, Paper, Group, Button, Container, Textarea, useMantineTheme } from "@mantine/core";
+import {
+    TextInput,
+    Text,
+    Paper,
+    Group,
+    Button,
+    Container,
+    useMantineTheme,
+    Stepper,
+    Title,
+    Select,
+} from "@mantine/core";
 import { useValidate } from "pangolin-hooks";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
@@ -9,7 +20,9 @@ import { userAdd } from "../../store/actions";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { handleRPCError } from "../../utils/handleError";
-import { toByte32, toString } from "../../utils/utils";
+import { toByte32 } from "../../utils/utils";
+import StateSelect from "../../Components/Select/StateSelect";
+import DistrictSelect from "../../Components/Select/DistricSelect";
 
 interface props {
     contract: Contract;
@@ -18,15 +31,28 @@ interface props {
 }
 
 const Register: React.FC<props> = ({ contract, user, userAdd }) => {
+    const [active, setActive] = useState(0);
+    const nextStep = () => setActive((current) => (current < 2 ? current + 1 : current));
+    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
     const navigate = useNavigate();
     const theme = useMantineTheme();
     const [loading, setLoading] = useState(false);
     const { showNotification } = useNotifications();
     const [form, validator] = useValidate({
-        name: { value: "", error: null, validate: "required" },
-        email: { value: "", error: null, validate: "required|email" },
-        address: { value: "", error: null, validate: "required" },
-        phone: { value: "", error: null, validate: "required" },
+        user_name: { value: "", error: null, validate: "required" },
+        user_email: { value: "", error: null, validate: "required|email" },
+        user_phone: { value: "", error: null, validate: "required" },
+        hospital_name: { value: "", error: null, validate: "required" },
+        hospital_type: { value: "", error: null, validate: "required" },
+        hospital_registration_number: { value: "", error: null, validate: "required" },
+        hospital_address_line: { value: "", error: null, validate: "required" },
+        hospital_state: { value: "", error: null, validate: "required" },
+        hospital_district: { value: "", error: null, validate: "required" },
+        hospital_town: { value: "", error: null, validate: "required" },
+        hospital_pincode: { value: "", error: null, validate: "required|number" },
+        hospital_telephone: { value: "", error: null, validate: "required" },
+        hospital_mobile: { value: "", error: null, validate: "required" },
+        hospital_emergency_mobile: { value: "", error: null, validate: "required" },
     });
 
     const handleChange = (evt: { name: string; value: any }) => {
@@ -42,31 +68,39 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
         });
         const data: any = validator.generalize();
         try {
-            const response = await contract?.methods
-                .registerUser([
-                    "0x9332d7652828B818E5C0587b26c29e895CcB02BB", // sample address for registration
-                    toByte32(data.name),
-                    toByte32(data.address),
-                    toByte32(data.email),
-                    toByte32(data.phone),
-                    toByte32(""),
-                    false,
-                ])
+            await contract?.methods
+                .registerUser(
+                    [
+                        "0x9332d7652828B818E5C0587b26c29e895CcB02BB", // sample address for registration
+                        toByte32(data.user_name),
+                        toByte32(data.user_email),
+                        toByte32(data.user_phone),
+                        toByte32(""),
+                        false,
+                        0,
+                    ],
+                    [
+                        0,
+                        toByte32(data.hospital_name),
+                        toByte32(data.hospital_type),
+                        toByte32(data.hospital_registration_number),
+                        toByte32(data.hospital_address_line),
+                        toByte32(data.hospital_state),
+                        toByte32(data.hospital_district),
+                        toByte32(data.hospital_town),
+                        data.hospital_pincode,
+                        toByte32(data.hospital_telephone),
+                        toByte32(data.hospital_mobile),
+                        toByte32(data.hospital_emergency_mobile),
+                    ]
+                )
                 .send({ from: accounts[0] });
             showNotification({
                 title: "Success",
                 message: "Registration successful waiting for conformation",
-                onClose: () => navigate("/"),
             });
-            const user = response.events.Register.returnValues[0];
-            userAdd({
-                name: toString(user[0]),
-                email: toString(user[1]),
-                mobile: toString(user[2]),
-                verified: user[3],
-                role: toString(user[4]),
-                address: toString(user["address_line"]),
-            });
+            nextStep();
+            // console.log(response.events.Register.returnValues);
         } catch (err: any) {
             console.log(err);
             showNotification({
@@ -84,62 +118,218 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
 
     return (
         <Container size={"xs"} py="xl">
-            <Paper radius="md" p="xl" withBorder>
-                <Text size="lg" weight={500}>
-                    Join our system
-                </Text>
-                <Text color={theme.colors.gray[6]} mb="sm">
-                    After fill up the form you have to wait for conformation the conformation will be given by
-                    the mobile number and email
-                </Text>
+            <Title mb="md" align="center">
+                Join our system
+            </Title>
+            <Text color={theme.colors.gray[6]} mb="lg" align="center">
+                After fill up the all form you have to wait for conformation the conformation will be given by
+                the mobile number and email
+            </Text>
+            <form onSubmit={handleSubmit} noValidate>
+                <Stepper active={active} onStepClick={setActive} breakpoint="sm">
+                    <Stepper.Step
+                        label="Fist step"
+                        description="Enter the user information"
+                        allowStepSelect={active > 0}
+                    >
+                        <UserRegistrationForm handleChange={handleChange} form={form} />
+                    </Stepper.Step>
+                    <Stepper.Step
+                        label="Second step"
+                        description="Enter the hospital details"
+                        allowStepSelect={active > 1}
+                    >
+                        <HospitalRegistrationForm handleChange={handleChange} form={form} />
+                    </Stepper.Step>
+                    <Stepper.Completed>
+                        <Text align="center">
+                            Your registration is successfully completed just waiting for approval.
+                        </Text>
+                    </Stepper.Completed>
+                </Stepper>
 
-                <form onSubmit={handleSubmit}>
-                    <Group direction="column" grow>
-                        <TextInput
-                            label="Name"
-                            required
-                            placeholder="Your name"
-                            name="name"
-                            value={form.name.value}
-                            onChange={(e) => handleChange(e.currentTarget)}
-                            error={form.name.error}
-                        />
-                        <TextInput
-                            required
-                            label="Email"
-                            placeholder="hello@mantine.dev"
-                            name="email"
-                            value={form.email.value}
-                            onChange={(e) => handleChange(e.currentTarget)}
-                            error={form.email.error}
-                        />
+                <Group position="center" mt="xl">
+                    {active !== 2 && (
+                        <Button type="button" variant="default" onClick={prevStep} loading={loading}>
+                            Back
+                        </Button>
+                    )}
 
-                        <TextInput
-                            required
-                            label="Mobile Number"
-                            placeholder="+91 95********"
-                            name="phone"
-                            value={form.phone.value}
-                            onChange={(e) => handleChange(e.currentTarget)}
-                            error={form.phone.error}
-                        />
-                        <Textarea
-                            required
-                            label="Address"
-                            placeholder="Your address"
-                            name="address"
-                            value={form.address.value}
-                            onChange={(e) => handleChange(e.currentTarget)}
-                            error={form.address.error}
-                        />
-                    </Group>
-
-                    <Button type="submit" mt="md" loading={loading}>
-                        Register
-                    </Button>
-                </form>
-            </Paper>
+                    {active === 0 && (
+                        <Button type="button" onClick={nextStep}>
+                            Next step
+                        </Button>
+                    )}
+                    {active === 1 && (
+                        <Button type="submit" loading={loading}>
+                            Register
+                        </Button>
+                    )}
+                    {active === 2 && (
+                        <Button type="button" onClick={() => navigate("/")} color="green">
+                            Go Home
+                        </Button>
+                    )}
+                </Group>
+            </form>
         </Container>
+    );
+};
+
+const UserRegistrationForm: React.FC<{
+    handleChange: any;
+    form: any;
+}> = ({ handleChange, form }) => {
+    return (
+        <Paper radius="md" p="xl" withBorder my="md">
+            <Text size="lg" weight={500}>
+                Enter the user information
+            </Text>
+            <Group direction="column" grow>
+                <TextInput
+                    label="Name"
+                    required
+                    placeholder="Your name"
+                    name="user_name"
+                    value={form.user_name.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.user_name.error}
+                />
+                <TextInput
+                    required
+                    label="Email"
+                    placeholder="hello@mantine.dev"
+                    name="user_email"
+                    value={form.user_email.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.user_email.error}
+                />
+
+                <TextInput
+                    required
+                    label="Mobile Number"
+                    placeholder="+91 95********"
+                    name="user_phone"
+                    value={form.user_phone.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.user_phone.error}
+                />
+            </Group>
+        </Paper>
+    );
+};
+
+const HospitalRegistrationForm: React.FC<{
+    handleChange: any;
+    form: any;
+}> = ({ handleChange, form }) => {
+    return (
+        <Paper radius="md" p="xl" withBorder>
+            <Text size="lg" weight={500} mb="md">
+                Enter your hospital/agency information
+            </Text>
+            <Group direction="column" grow>
+                <TextInput
+                    label="Hospital Name"
+                    required
+                    placeholder="Enter the name"
+                    name="hospital_name"
+                    value={form.hospital_name.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_name.error}
+                />
+                <Select
+                    label="Type of the healthcare"
+                    placeholder="Select One"
+                    data={["Private", "Government"]}
+                    onChange={(val) => handleChange({ name: "hospital_type", value: val })}
+                    error={form.hospital_type.error}
+                />
+                <TextInput
+                    label="Registration Number"
+                    required
+                    placeholder="Enter the hospital registration number"
+                    name="hospital_registration_number"
+                    value={form.hospital_registration_number.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_registration_number.error}
+                />
+                <TextInput
+                    label="Address Line"
+                    required
+                    placeholder="Enter the hospital address line"
+                    name="hospital_address_line"
+                    value={form.hospital_address_line.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_address_line.error}
+                />
+                <StateSelect
+                    label="State of the hospital"
+                    required
+                    onChange={(val: string) => handleChange({ name: "hospital_state", value: val })}
+                    error={form.hospital_state.error}
+                />
+                {form.hospital_state.value && (
+                    <DistrictSelect
+                        state={form.hospital_state.value}
+                        label="State of the hospital"
+                        required
+                        data={[]}
+                        onChange={(val: string) => handleChange({ name: "hospital_district", value: val })}
+                        error={form.hospital_district.error}
+                    />
+                )}
+                <TextInput
+                    label="Town"
+                    required
+                    placeholder="Enter the hospital town"
+                    name="hospital_town"
+                    value={form.hospital_town.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_town.error}
+                />
+
+                <TextInput
+                    label="Pincode"
+                    required
+                    placeholder="Enter the hospital pincode"
+                    name="hospital_pincode"
+                    value={form.hospital_pincode.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_pincode.error}
+                />
+
+                <TextInput
+                    required
+                    label="Hospital mobile number"
+                    placeholder="+91 95********"
+                    name="hospital_mobile"
+                    value={form.hospital_mobile.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_mobile.error}
+                />
+
+                <TextInput
+                    required
+                    label="Hospital Telephone number"
+                    placeholder="033 25*******"
+                    name="hospital_telephone"
+                    value={form.hospital_telephone.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_telephone.error}
+                />
+
+                <TextInput
+                    required
+                    label="Hospital Emergency Mobile Number"
+                    placeholder="+91 95********"
+                    name="hospital_emergency_mobile"
+                    value={form.hospital_emergency_mobile.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_emergency_mobile.error}
+                />
+            </Group>
+        </Paper>
     );
 };
 

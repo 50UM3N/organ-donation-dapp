@@ -8,8 +8,23 @@ interface User {
     name: string;
     email: string;
     mobile: string;
-    address: string;
     verified: boolean;
+    hospital: null | Hospital;
+}
+
+interface Hospital {
+    id: number;
+    name: string;
+    hospital_type: string;
+    registration_number: string;
+    address_line: string;
+    state: string;
+    district: string;
+    town: string;
+    pincode: number;
+    telephone: string;
+    mobile: string;
+    emergency_mobile: string;
 }
 
 interface Doner {
