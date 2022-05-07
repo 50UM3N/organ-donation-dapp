@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
 import React, { useEffect, useState } from "react";
-
 import { handleRPCError } from "../utils/handleError";
 import Nav from "../Components/Navigation/Nav";
 import { Button, Center, Divider, Loader, Paper, Text, Title, Container } from "@mantine/core";

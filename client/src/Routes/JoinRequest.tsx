@@ -1,13 +1,21 @@
 import { connect } from "react-redux";
 import React, { useEffect, useState } from "react";
 import Nav from "../Components/Navigation/Nav";
-import { Grid, _ } from "gridjs-react";
-import "gridjs/dist/theme/mermaid.css";
-import { Button, Center, Container, Divider, Loader, Paper, Text, Title } from "@mantine/core";
+import {
+    Button,
+    Center,
+    Container,
+    Divider,
+    Loader,
+    Paper,
+    ScrollArea,
+    Table,
+    Text,
+    Title,
+} from "@mantine/core";
 import { handleRPCError } from "../utils/handleError";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import { Circle, X } from "tabler-icons-react";
-import useGridStyle from "../Components/Grid.style";
 import { toString } from "../utils/utils";
 
 interface props {
@@ -15,8 +23,7 @@ interface props {
 }
 
 const JoinRequest: React.FC<props> = ({ contract }) => {
-    const { classes } = useGridStyle();
-    const [data, setData] = useState<null | []>(null);
+    const [data, setData] = useState<null | { users: []; hospitals: [] }>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null | string>(null);
     useEffect(() => {
@@ -70,6 +77,7 @@ const JoinRequest: React.FC<props> = ({ contract }) => {
             });
         }
     };
+    console.log(data);
     return (
         <Nav>
             <Container>
@@ -83,33 +91,58 @@ const JoinRequest: React.FC<props> = ({ contract }) => {
                     )}
                     {error && <Text color="red">{error}</Text>}
                     {data && (
-                        <Grid
-                            className={{
-                                header: classes.tableHead,
-                                container: classes.tableContainer,
-                                footer: classes.tableFooter,
-                                th: classes.tableTh,
-                                td: classes.tableTd,
-                            }}
-                            columns={["#", "Name", "Address", "Email Address", "Mobile Number", "Action"]}
-                            data={data.map((item, index) => [
-                                index + 1,
-                                toString(item["name"]),
-                                toString(item["user_address"]),
-                                toString(item["email"]),
-                                toString(item["mobile"]),
-                                _(
-                                    <Button color={"green"} size="xs" onClick={() => approveUser(item["id"])}>
-                                        Approve
-                                    </Button>
-                                ),
-                            ])}
-                            search={false}
-                            pagination={{
-                                enabled: true,
-                                limit: 5,
-                            }}
-                        />
+                        <ScrollArea style={{ width: "100%" }} type="auto" mb="md">
+                            <Table mb="xs">
+                                <thead>
+                                    <tr>
+                                        <th>User Name</th>
+                                        <th>User Email</th>
+                                        <th>User Mobile Number</th>
+                                        <th>Hospital Name</th>
+                                        <th>Hospital Type</th>
+                                        <th>Hospital Registration No</th>
+                                        <th>Hospital Address Line</th>
+                                        <th>Hospital State</th>
+                                        <th>Hospital District</th>
+                                        <th>Hospital Town</th>
+                                        <th>Hospital Pincode</th>
+                                        <th>Hospital Telephone</th>
+                                        <th>Hospital Mobile</th>
+                                        <th>Hospital Emergency no</th>
+                                        <th>Approved</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.users.map((item, index) => (
+                                        <tr key={index + 1}>
+                                            <td>{toString(item["name"])}</td>
+                                            <td>{toString(item["email"])}</td>
+                                            <td>{toString(item["mobile"])}</td>
+                                            <td>{toString(data.hospitals[index]["name"])}</td>
+                                            <td>{toString(data.hospitals[index]["hospital_type"])}</td>
+                                            <td>{toString(data.hospitals[index]["registration_number"])}</td>
+                                            <td>{toString(data.hospitals[index]["address_line"])}</td>
+                                            <td>{toString(data.hospitals[index]["state"])}</td>
+                                            <td>{toString(data.hospitals[index]["district"])}</td>
+                                            <td>{toString(data.hospitals[index]["town"])}</td>
+                                            <td>{data.hospitals[index]["pincode"]}</td>
+                                            <td>{toString(data.hospitals[index]["telephone"])}</td>
+                                            <td>{toString(data.hospitals[index]["mobile"])}</td>
+                                            <td>{toString(data.hospitals[index]["emergency_mobile"])}</td>
+                                            <td>
+                                                <Button
+                                                    color={"green"}
+                                                    size="xs"
+                                                    onClick={() => approveUser(item["id"])}
+                                                >
+                                                    Approve
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </ScrollArea>
                     )}
                 </Paper>
             </Container>
