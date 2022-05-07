@@ -35,7 +35,7 @@ const App: React.FC<props> = ({ colorScheme }) => {
                         <Route path="/donors" element={<Donors />} />
                         <Route path="/doner/:donerId" element={<Doner />} />
                         <Route path="/requestors" element={<Requestors />} />
-                        <Route path="/requestor-details/:requestorId" element={<Requestor />} />
+                        <Route path="/requestor/:requestorId" element={<Requestor />} />
                     </Route>
                     <Route path="/login" element={<Login />} />
                 </Routes>

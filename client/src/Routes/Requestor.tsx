@@ -28,7 +28,7 @@ const Requestor: React.FC<props> = ({ contract }) => {
     const { requestorId } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null | string>(null);
-    const [data, setData] = useState<Doner | null>(null);
+    const [data, setData] = useState<Doner&{requestHospital:Hospital} | null>(null);
     const [organs, setOrgans] = useState<any>(null);
     const [requestorOrgans, setRequestorOrgans] = useState<Array<RequestorOrgans> | null>(null);
 
@@ -43,7 +43,20 @@ const Requestor: React.FC<props> = ({ contract }) => {
                     .call({ from: accounts[0] });
                 const _organs = await contract?.methods.getOrgans().call({ from: accounts[0] });
 
-                requestors = { ...requestors };
+                let request_hospital = requestors._request_hospital
+                request_hospital = {...request_hospital}
+                request_hospital.name = toString(request_hospital.name);
+                request_hospital.address_line = toString(request_hospital.address_line);
+                request_hospital.district = toString(request_hospital.district);
+                request_hospital.emergency_mobile = toString(request_hospital.emergency_mobile);
+                request_hospital.hospital_type = toString(request_hospital.hospital_type);
+                request_hospital.mobile = toString(request_hospital.mobile);
+                request_hospital.registration_number = toString(request_hospital.registration_number);
+                request_hospital.state= toString(request_hospital.state);                
+                request_hospital.telephone= toString(request_hospital.telephone);
+                request_hospital.town= toString(request_hospital.town);
+
+                requestors = { ...requestors._requestor };
                 requestors.fname = toString(requestors.fname);
                 requestors.lname = toString(requestors.lname);
                 requestors.email = toString(requestors.email);
@@ -53,6 +66,8 @@ const Requestor: React.FC<props> = ({ contract }) => {
                 requestors.district = toString(requestors.district);
                 requestors.address_line = toString(requestors.address_line);
                 requestors.postal_code = toString(requestors.postal_code);
+
+                requestors.requestHospital = request_hospital;
 
                 setOrgans([
                     ..._organs.map((item: any) => ({
@@ -104,7 +119,7 @@ const Requestor: React.FC<props> = ({ contract }) => {
                 <>
                     <Container>
                         <Paper withBorder p="md">
-                            <Title order={4}>Doner Details</Title>
+                            <Title order={4}>Requestor Details</Title>
                             <Divider my="sm" />
 
                             <Grid gutter={"md"}>
@@ -195,11 +210,80 @@ const Requestor: React.FC<props> = ({ contract }) => {
                             <RequestorOrganRegistration organs={organs} requestor={data} />
                         </Paper>
                     </Container>
+                    <Container my="md">
+                        <Paper withBorder p="md">
+                            <Group position="apart">
+                                <Title order={4}>Requestor Hospital Details</Title>
+                            </Group>
+                            <Divider my="sm" />
+
+                            <Grid gutter={"md"}>
+                                <Col md={6}>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Hospital Name:
+                                    </Text>
+                                    <Text mb={3}>{data.requestHospital?.name}</Text>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Hospital Type:
+                                    </Text>
+                                    <Text mb={3}>{data.requestHospital?.hospital_type}</Text>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Telephone Number:
+                                    </Text>
+                                    <Text mb={3}>{"+033 "+data.requestHospital?.telephone}</Text>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Mobile Number:
+                                    </Text>
+                                    <Text mb={3}>{"+91 "+data.requestHospital?.mobile}</Text>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Emergency Number:
+                                    </Text>
+                                    <Text mb={3}>{"+91 "+data.requestHospital?.emergency_mobile}</Text>
+                                    <Space h="xs" />
+                                </Col>
+                                <Col md={6}>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Hospital Address:
+                                    </Text>
+                                    <Text mb={3}>{data.requestHospital?.address_line}</Text>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        State:
+                                    </Text>
+                                    <Text mb={3}>
+                                        {data.requestHospital?.state}
+                                    </Text>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        District:
+                                    </Text>
+                                    <Text mb={3}>{data.requestHospital?.district}</Text>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Town:
+                                    </Text>
+                                    <Text mb={3}>{data.requestHospital?.town}</Text>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Pincode:
+                                    </Text>
+                                    <Text mb={3}>{data.requestHospital?.pincode}</Text>
+                                    <Space h="xs" />
+                                </Col>
+                            </Grid>
+                        </Paper>
+                    </Container>
                     {requestorOrgans && (
                         <Container my="md">
                             <Paper withBorder p="md">
                                 <Group position="apart">
-                                    <Title order={4}>All Organs donated by the user</Title>
+                                    <Title order={4}>All Donated Organs</Title>
                                 </Group>
                                 <Divider my="sm" />
                                 <List listStyleType="disc">

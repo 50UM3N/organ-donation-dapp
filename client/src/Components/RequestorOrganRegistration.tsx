@@ -44,7 +44,7 @@ const RequestorOrganRegistration: React.FC<props> = ({ contract, organs, request
     return (
         <>
             <Button onClick={() => setOpen(true)} size="xs">
-                Add New Organ
+                Request Organ
             </Button>
             <Modal
                 opened={open}

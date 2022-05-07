@@ -2,9 +2,7 @@ import { connect } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { handleRPCError } from "../utils/handleError";
 import Nav from "../Components/Navigation/Nav";
-import { Button, Center, Divider, Loader, Paper, Text, Title, Container } from "@mantine/core";
-import useGridStyle from "../Components/Grid.style";
-import { Grid, _ } from "gridjs-react";
+import { Button, Center, Divider, Loader, Paper, Text, Title, Container, ScrollArea, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { InfoCircle } from "tabler-icons-react";
 import { toString } from "../utils/utils";
@@ -15,7 +13,6 @@ interface props {
 
 const Requestors: React.FC<props> = ({ contract }) => {
     const navigate = useNavigate();
-    const { classes } = useGridStyle();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null | string>(null);
     const [data, setData] = useState<null | []>(null);
@@ -48,46 +45,40 @@ const Requestors: React.FC<props> = ({ contract }) => {
                     )}
                     {error && <Text color="red">{error}</Text>}
                     {data && (
-                        <Grid
-                            className={{
-                                header: classes.tableHead,
-                                container: classes.tableContainer,
-                                footer: classes.tableFooter,
-                                th: classes.tableTh,
-                                td: classes.tableTd,
-                            }}
-                            columns={[
-                                "#",
-                                "Name",
-                                "Address",
-                                "Email Address",
-                                "Mobile Number",
-                                "Aadhaar Id",
-                                "Action",
-                            ]}
-                            data={data.map((item, index) => [
-                                index + 1,
-                                toString(item["fname"]) + " " + toString(item["lname"]),
-                                toString(item["address_line"]),
-                                toString(item["email"]),
-                                item["mobile"],
-                                item["uidai"],
-                                _(
-                                    <Button
+                        <ScrollArea style={{width:"100%"}} mb="xs">
+                            <Table>
+                                <thead>
+                                    <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Mobile Number</th>
+                                    <th>Email Address</th>
+                                    <th>Aadhaar Id</th>
+                                    <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>{
+                                    data.map((item, index)=>(
+                                      <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{toString(item["fname"]) + " " + toString(item["lname"])}</td>
+                                        <td>{toString(item["address_line"])}</td>
+                                        <td>{toString(item["email"])}</td>
+                                        <td>{item["mobile"]}</td>
+                                        <td>{item["uidai"]}</td>
+                                        <td><Button
                                         size="xs"
                                         leftIcon={<InfoCircle size={18} />}
-                                        onClick={() => navigate("/requestor-details/" + item["id"])}
+                                        onClick={() => navigate("/requestor/" + item["id"])}
                                     >
                                         Details
-                                    </Button>
-                                ),
-                            ])}
-                            search={false}
-                            pagination={{
-                                enabled: true,
-                                limit: 5,
-                            }}
-                        />
+                                    </Button></td>
+                                      </tr>  
+                                    ))
+                                }</tbody>
+                            </Table>
+                        </ScrollArea>
                     )}
                 </Paper>
             </Container>

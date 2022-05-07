@@ -39,6 +39,9 @@ contract DonationContract {
         bytes32 state;
         bytes32 district;
         bytes32 postal_code;
+        bool demise;
+        uint256 register_hospital_id;
+        uint256 demise_hospital_id;
     }
 
     uint256 ORGAN_IDX = 0;
@@ -67,6 +70,7 @@ contract DonationContract {
         bytes32 state;
         bytes32 district;
         bytes32 postal_code;
+        uint256 register_hospital_id;
     }
 
     address[] USER_IDX_ARR; // store the inserted address
@@ -320,6 +324,9 @@ contract DonationContract {
      */
     function registerDoner(Doner memory _doner) public {
         _doner.id = ++DONER_IDX;
+        _doner.demise = false;
+        _doner.register_hospital_id = user_map[msg.sender].hospital_id;
+        _doner.demise_hospital_id = 0;
         doner_map[DONER_IDX] = _doner;
         emit Register(_doner);
     }
@@ -346,11 +353,35 @@ contract DonationContract {
         public
         view
         checkAvailable(DONER_IDX)
-        returns (Doner memory)
+        returns (
+            Doner memory _doner,
+            Hospital memory _request_hospital,
+            Hospital memory _demise_hospital
+        )
     {
         require(id <= DONER_IDX && id > 0, "Check the donor id !");
-        Doner memory doner = doner_map[id];
-        return doner;
+        _doner = doner_map[id];
+
+        return (
+            _doner,
+            hospital_map[_doner.register_hospital_id],
+            hospital_map[_doner.demise_hospital_id]
+        );
+    }
+
+    /**
+     * When the doner will die we will get the hospital id
+     * Make the organ donated available
+     */
+    function donerDemise(uint256 doner_id) public {
+        Doner memory doner = doner_map[doner_id];
+        doner.demise = true;
+        doner.demise_hospital_id = user_map[msg.sender].hospital_id;
+        for (uint256 i = 1; i <= DONER_ORGANS_IDX; i++) {
+            if (doner_organ_map[i].doner_map_id == doner_id) {
+                doner_organ_map[i].available = true;
+            }
+        }
     }
 
     /**
@@ -358,6 +389,7 @@ contract DonationContract {
      */
     function registerRequestor(Requestor memory _requestor) public {
         _requestor.id = ++REQUESTOR_IDX;
+        _requestor.register_hospital_id = user_map[msg.sender].hospital_id;
         requestor_map[REQUESTOR_IDX] = _requestor;
         emit Register(REQUESTOR_IDX, _requestor);
     }
@@ -385,11 +417,11 @@ contract DonationContract {
         public
         view
         checkAvailable(REQUESTOR_IDX)
-        returns (Requestor memory)
+        returns (Requestor memory _requestor, Hospital memory _request_hospital)
     {
         require(id <= REQUESTOR_IDX && id > 0, "Check the requestor id !");
-        Requestor memory requestor = requestor_map[id];
-        return requestor;
+        _requestor = requestor_map[id];
+        return (_requestor, hospital_map[_requestor.register_hospital_id]);
     }
 
     /**

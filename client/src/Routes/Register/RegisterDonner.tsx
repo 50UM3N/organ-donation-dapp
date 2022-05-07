@@ -73,7 +73,8 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
         data.district = toByte32(data.district);
         data.address_line = toByte32(data.address_line);
         data.postal_code = toByte32(data.postal_code);
-        console.log(data);
+        data.register_hospital_id=0;
+        data.demise_hospital_id = 0;
         try {
             await contract?.methods.registerDoner(data).send({ from: accounts[0] });
             showNotification({

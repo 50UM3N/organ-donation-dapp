@@ -44,6 +44,8 @@ interface Doner {
     state: string;
     district: string;
     postal_code: string;
+    register_hospital_id: number;
+    demise_hospital_id: number;
 }
 
 interface Requestor {
@@ -63,6 +65,7 @@ interface Requestor {
     state: string;
     district: string;
     postal_code: string;
+    register_hospital_id: number;
 }
 interface DonerOrgans {
     id: number;
