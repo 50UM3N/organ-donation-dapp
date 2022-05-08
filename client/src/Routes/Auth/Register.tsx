@@ -23,6 +23,7 @@ import { handleRPCError } from "../../utils/handleError";
 import { toByte32 } from "../../utils/utils";
 import StateSelect from "../../Components/Select/StateSelect";
 import DistrictSelect from "../../Components/Select/DistricSelect";
+import faker from "@faker-js/faker";
 
 interface props {
     contract: Contract;
@@ -39,22 +40,62 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
     const [loading, setLoading] = useState(false);
     const { showNotification } = useNotifications();
     const [form, validator] = useValidate({
-        user_name: { value: "", error: null, validate: "required" },
-        user_email: { value: "", error: null, validate: "required|email" },
-        user_phone: { value: "", error: null, validate: "required" },
-        hospital_name: { value: "", error: null, validate: "required" },
-        hospital_type: { value: "", error: null, validate: "required" },
-        hospital_registration_number: { value: "", error: null, validate: "required" },
-        hospital_address_line: { value: "", error: null, validate: "required" },
-        hospital_state: { value: "", error: null, validate: "required" },
-        hospital_district: { value: "", error: null, validate: "required" },
-        hospital_town: { value: "", error: null, validate: "required" },
-        hospital_pincode: { value: "", error: null, validate: "required|number" },
-        hospital_telephone: { value: "", error: null, validate: "required" },
-        hospital_mobile: { value: "", error: null, validate: "required" },
-        hospital_emergency_mobile: { value: "", error: null, validate: "required" },
+        user_name: { value: faker.name.findName(), error: null, validate: "required" },
+        user_email: { value: faker.internet.email().toLowerCase(), error: null, validate: "required|email" },
+        user_phone: { value: faker.phone.phoneNumber("+91 98########"), error: null, validate: "required" },
+        hospital_name: { value: faker.name.findName(), error: null, validate: "required" },
+        hospital_type: { value: "Private", error: null, validate: "required" },
+        hospital_registration_number: { value: "EA123456789", error: null, validate: "required" },
+        hospital_address_line: {
+            value: faker.address.streetAddress(false),
+            error: null,
+            validate: "required",
+        },
+        hospital_state: { value: "Andaman and Nicobar Island (UT)", error: null, validate: "required" },
+        hospital_district: { value: "Nicobar", error: null, validate: "required" },
+        hospital_town: { value: faker.address.city(), error: null, validate: "required" },
+        hospital_pincode: { value: faker.address.zipCode(), error: null, validate: "required|number" },
+        hospital_telephone: {
+            value: faker.phone.phoneNumber("033 28######"),
+            error: null,
+            validate: "required",
+        },
+        hospital_mobile: {
+            value: faker.phone.phoneNumber("+91 98########"),
+            error: null,
+            validate: "required",
+        },
+        hospital_emergency_mobile: {
+            value: faker.phone.phoneNumber("+91 98########"),
+            error: null,
+            validate: "required",
+        },
     });
-
+    console.log(
+        [
+            "0x9332d7652828B818E5C0587b26c29e895CcB02BB", // sample address for registration
+            toByte32(form.user_name.value),
+            toByte32(form.user_email.value),
+            toByte32(form.user_phone.value),
+            toByte32(""),
+            false,
+            0,
+        ],
+        [
+            0,
+            toByte32(form.hospital_name.value),
+            toByte32(form.hospital_type.value),
+            toByte32(form.hospital_registration_number.value),
+            toByte32(form.hospital_address_line.value),
+            toByte32(form.hospital_state.value),
+            toByte32(form.hospital_district.value),
+            toByte32(form.hospital_town.value),
+            form.hospital_pincode.value,
+            toByte32(form.hospital_telephone.value),
+            toByte32(form.hospital_mobile.value),
+            toByte32(form.hospital_emergency_mobile.value),
+        ]
+    );
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);
     };
@@ -102,7 +143,6 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
             nextStep();
             // console.log(response.events.Register.returnValues);
         } catch (err: any) {
-            console.log(err);
             showNotification({
                 color: "red",
                 title: "Error",

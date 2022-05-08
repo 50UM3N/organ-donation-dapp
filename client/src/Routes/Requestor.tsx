@@ -13,7 +13,7 @@ import {
     Space,
     Text,
     Title,
-    List,
+    Button,
 } from "@mantine/core";
 import { handleRPCError } from "../utils/handleError";
 import { useParams } from "react-router-dom";
@@ -28,10 +28,10 @@ const Requestor: React.FC<props> = ({ contract }) => {
     const { requestorId } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null | string>(null);
-    const [data, setData] = useState<Doner&{requestHospital:Hospital} | null>(null);
+    const [data, setData] = useState<(Doner & { requestHospital: Hospital }) | null>(null);
     const [organs, setOrgans] = useState<any>(null);
     const [requestorOrgans, setRequestorOrgans] = useState<Array<RequestorOrgans> | null>(null);
-
+    const [requestOrgans, setRequestOrgans] = useState<null | RequestOrganList[]>(null);
     useEffect(() => {
         (async () => {
             const accounts = await window.ethereum.request({
@@ -42,9 +42,24 @@ const Requestor: React.FC<props> = ({ contract }) => {
                     .getRequestorById(requestorId)
                     .call({ from: accounts[0] });
                 const _organs = await contract?.methods.getOrgans().call({ from: accounts[0] });
-
-                let request_hospital = requestors._request_hospital
-                request_hospital = {...request_hospital}
+                try {
+                    const _request_organ_list = await contract?.methods
+                        .getOrganRequestor()
+                        .call({ from: accounts[0] });
+                    setRequestOrgans(
+                        _request_organ_list.map((item: any) => ({
+                            id: Number(item.id),
+                            donerId: Number(item.doner_map_id),
+                            requestorId: Number(item.doner_map_id),
+                            donerOrganId: Number(item.doner_organ_map_id),
+                            requestorOrganId: Number(item.requestor_organ_map_id),
+                        }))
+                    );
+                } catch (err: any) {
+                    console.log(err);
+                }
+                let request_hospital = requestors._request_hospital;
+                request_hospital = { ...request_hospital };
                 request_hospital.name = toString(request_hospital.name);
                 request_hospital.address_line = toString(request_hospital.address_line);
                 request_hospital.district = toString(request_hospital.district);
@@ -52,9 +67,9 @@ const Requestor: React.FC<props> = ({ contract }) => {
                 request_hospital.hospital_type = toString(request_hospital.hospital_type);
                 request_hospital.mobile = toString(request_hospital.mobile);
                 request_hospital.registration_number = toString(request_hospital.registration_number);
-                request_hospital.state= toString(request_hospital.state);                
-                request_hospital.telephone= toString(request_hospital.telephone);
-                request_hospital.town= toString(request_hospital.town);
+                request_hospital.state = toString(request_hospital.state);
+                request_hospital.telephone = toString(request_hospital.telephone);
+                request_hospital.town = toString(request_hospital.town);
 
                 requestors = { ...requestors._requestor };
                 requestors.fname = toString(requestors.fname);
@@ -107,6 +122,26 @@ const Requestor: React.FC<props> = ({ contract }) => {
             }
         })();
     }, [contract?.methods, requestorId]);
+
+    const placeOrgan = async (
+        doner_id: number,
+        requestor_id: number,
+        doner_organ_id: number,
+        requestor_organ_id: number
+    ) => {
+        const accounts = await window.ethereum.request({
+            method: "eth_accounts",
+        });
+        try {
+            const res = await contract?.methods
+                .requestForOrgan(requestor_organ_id, doner_organ_id, doner_id, requestor_id)
+                .send({ from: accounts[0] });
+            console.log(res);
+        } catch (err: any) {
+            console.log(err);
+        }
+    };
+
     return (
         <Nav>
             {loading && (
@@ -233,17 +268,17 @@ const Requestor: React.FC<props> = ({ contract }) => {
                                     <Text color="dimmed" mb={0} size="sm">
                                         Telephone Number:
                                     </Text>
-                                    <Text mb={3}>{"+033 "+data.requestHospital?.telephone}</Text>
+                                    <Text mb={3}>{"+033 " + data.requestHospital?.telephone}</Text>
                                     <Space h="xs" />
                                     <Text color="dimmed" mb={0} size="sm">
                                         Mobile Number:
                                     </Text>
-                                    <Text mb={3}>{"+91 "+data.requestHospital?.mobile}</Text>
+                                    <Text mb={3}>{"+91 " + data.requestHospital?.mobile}</Text>
                                     <Space h="xs" />
                                     <Text color="dimmed" mb={0} size="sm">
                                         Emergency Number:
                                     </Text>
-                                    <Text mb={3}>{"+91 "+data.requestHospital?.emergency_mobile}</Text>
+                                    <Text mb={3}>{"+91 " + data.requestHospital?.emergency_mobile}</Text>
                                     <Space h="xs" />
                                 </Col>
                                 <Col md={6}>
@@ -256,9 +291,7 @@ const Requestor: React.FC<props> = ({ contract }) => {
                                     <Text color="dimmed" mb={0} size="sm">
                                         State:
                                     </Text>
-                                    <Text mb={3}>
-                                        {data.requestHospital?.state}
-                                    </Text>
+                                    <Text mb={3}>{data.requestHospital?.state}</Text>
                                     <Space h="xs" />
                                     <Text color="dimmed" mb={0} size="sm">
                                         District:
@@ -281,83 +314,167 @@ const Requestor: React.FC<props> = ({ contract }) => {
                     </Container>
                     {requestorOrgans && (
                         <Container my="md">
-                            <Paper withBorder p="md">
-                                <Group position="apart">
-                                    <Title order={4}>All Donated Organs</Title>
-                                </Group>
-                                <Divider my="sm" />
-                                <List listStyleType="disc">
-                                    {requestorOrgans.map((organ) => (
-                                        <React.Fragment key={Math.random()}>
-                                            <List.Item>
-                                                <Group spacing="md">
-                                                    <Text>
-                                                        <strong>ID: </strong>
-                                                        {organ.id}
-                                                    </Text>
-                                                    <Text>
-                                                        <strong>Available: </strong>
-                                                        {organ.transplanted ? "Yes" : "No"}
-                                                    </Text>
-                                                    <Text>
-                                                        <strong>Blood Group: </strong>
-                                                        {organ.blood_group}
-                                                    </Text>
-                                                    <Text>
-                                                        <strong>Requestor ID: </strong>
-                                                        {organ.requestor_map_id}
-                                                    </Text>
-                                                    <Text>
-                                                        <strong>Organ ID: </strong>
-                                                        {organ.organ_map_id}
-                                                    </Text>
-                                                    <Text>
-                                                        <strong>Organ Name: </strong>
-                                                        {organ.organ}
-                                                    </Text>
-                                                </Group>
-                                                {organ.matchOrgans.length > 0 && (
-                                                    <List withPadding listStyleType="disc">
-                                                        {organ.matchOrgans.map((organ2) => (
-                                                            <List.Item key={Math.random()}>
+                            {requestorOrgans.map((organ) => (
+                                <Paper withBorder p="md" my="md" key={Math.random()}>
+                                    <Title order={4}>{organ.organ}</Title>
+                                    <Divider my="sm" />
+                                    <Grid gutter="md">
+                                        <Col md={6}>
+                                            <Text mb={4}>
+                                                <strong>ID: </strong>
+                                                {organ.id}
+                                            </Text>
+                                            <Text mb={4}>
+                                                <strong>Available: </strong>
+                                                {organ.transplanted ? "Yes" : "No"}
+                                            </Text>
+                                            <Text mb={4}>
+                                                <strong>Blood Group: </strong>
+                                                {organ.blood_group}
+                                            </Text>
+                                            <Text mb={4}>
+                                                <strong>Requestor ID: </strong>
+                                                {organ.requestor_map_id}
+                                            </Text>
+                                            <Text mb={4}>
+                                                <strong>Organ ID: </strong>
+                                                {organ.organ_map_id}
+                                            </Text>
+                                            <Text mb={4}>
+                                                <strong>Organ Name: </strong>
+                                                {organ.organ}
+                                            </Text>
+                                        </Col>
+                                        <Col md={6}>
+                                            {(requestOrgans?.filter(
+                                                (item: RequestOrganList) =>
+                                                    item.requestorOrganId === Number(organ.id)
+                                            ).length as number) > 0 ? (
+                                                <>
+                                                    {requestOrgans
+                                                        ?.filter(
+                                                            (item: RequestOrganList) =>
+                                                                item.requestorId === Number(data.id)
+                                                        )
+                                                        .map((item100: RequestOrganList) => (
+                                                            <Paper
+                                                                sx={(theme) => ({
+                                                                    backgroundColor: theme.colors.green[0],
+                                                                })}
+                                                                withBorder
+                                                                p="md"
+                                                                mb="xs"
+                                                                key={Math.random()}
+                                                            >
+                                                                <Text mb={4}>
+                                                                    <strong>ID: </strong> {item100.id}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>donerId: </strong>
+                                                                    {item100.donerId}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>requestorId: </strong>
+                                                                    {item100.requestorId}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>donerOrganId: </strong>
+                                                                    {item100.donerOrganId}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>requestorOrganId: </strong>
+                                                                    {item100.requestorOrganId}
+                                                                </Text>
+
                                                                 <Group spacing="md">
-                                                                    <Text>
-                                                                        <strong>ID: </strong> {organ2.id}
-                                                                    </Text>
-                                                                    <Text>
-                                                                        <strong>Available: </strong>
-                                                                        {organ2.available ? "Yes" : "No"}
-                                                                    </Text>
-                                                                    <Text>
-                                                                        <strong>Blood Group: </strong>
-                                                                        {organ2.blood_group}
-                                                                    </Text>
-                                                                    <Text>
-                                                                        <strong>Doner ID: </strong>
-                                                                        {organ2.doner_map_id}
-                                                                    </Text>
-                                                                    <Text>
-                                                                        <strong>Organ ID: </strong>
-                                                                        {organ2.organ_map_id}
-                                                                    </Text>
-                                                                    <Text>
-                                                                        <strong>Organ Name: </strong>{" "}
-                                                                        {organ2.organ}
-                                                                    </Text>
-                                                                    <Text>
-                                                                        <strong>Time(Hr): </strong>{" "}
-                                                                        {organ2.time}
-                                                                    </Text>
+                                                                    <Button color="green" size="xs">
+                                                                        Details
+                                                                    </Button>
                                                                 </Group>
-                                                            </List.Item>
+                                                            </Paper>
                                                         ))}
-                                                    </List>
-                                                )}
-                                            </List.Item>
-                                        </React.Fragment>
-                                    ))}
-                                </List>
-                            </Paper>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {organ.matchOrgans.length > 0 &&
+                                                        organ.matchOrgans.map((organ2) => (
+                                                            <Paper
+                                                                sx={(theme) => ({
+                                                                    backgroundColor: theme.colors.red[1],
+                                                                })}
+                                                                withBorder
+                                                                p="md"
+                                                                mb="xs"
+                                                                key={Math.random()}
+                                                            >
+                                                                <Text mb={4}>
+                                                                    <strong>ID: </strong> {organ2.id}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Available: </strong>
+                                                                    {organ2.available ? "Yes" : "No"}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Blood Group: </strong>
+                                                                    {organ2.blood_group}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Doner ID: </strong>
+                                                                    {organ2.doner_map_id}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Organ ID: </strong>
+                                                                    {organ2.organ_map_id}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Organ Name: </strong>{" "}
+                                                                    {organ2.organ}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Time(Hr): </strong> {organ2.time}
+                                                                </Text>
+                                                                <Divider my="xs" />
+                                                                <Group spacing="md">
+                                                                    <Button
+                                                                        color="red"
+                                                                        size="xs"
+                                                                        onClick={() =>
+                                                                            placeOrgan(
+                                                                                organ2.doner_map_id,
+                                                                                data?.id,
+                                                                                organ2.id,
+                                                                                organ.id
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        Place
+                                                                    </Button>
+                                                                    <Button color="orange" size="xs">
+                                                                        Details
+                                                                    </Button>
+                                                                </Group>
+                                                            </Paper>
+                                                        ))}
+                                                    {organ.matchOrgans.length === 0 && (
+                                                        <Paper
+                                                            color="red"
+                                                            withBorder
+                                                            p="md"
+                                                            sx={(theme) => ({
+                                                                backgroundColor: theme.colors.blue[0],
+                                                            })}
+                                                        >
+                                                            <Text align="center">
+                                                                No Organ Available yet !
+                                                            </Text>
+                                                        </Paper>
+                                                    )}
+                                                </>
+                                            )}
+                                        </Col>
+                                    </Grid>
+                                </Paper>
+                            ))}
                         </Container>
                     )}
                 </>

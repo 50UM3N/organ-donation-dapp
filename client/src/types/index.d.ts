@@ -3,6 +3,14 @@ interface Window {
     web3: any;
 }
 
+interface RequestOrganList {
+    id: number;
+    donerId: number;
+    requestorId: number;
+    donerOrganId: number;
+    requestorOrganId: number;
+}
+
 interface User {
     role: string;
     name: string;
@@ -46,6 +54,7 @@ interface Doner {
     postal_code: string;
     register_hospital_id: number;
     demise_hospital_id: number;
+    demise: boolean;
 }
 
 interface Requestor {

@@ -8,7 +8,7 @@ import { useState } from "react";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
 import { toByte32 } from "../../utils/utils";
-
+import { faker } from "@faker-js/faker";
 interface props {
     contract: Contract;
 }
@@ -16,21 +16,21 @@ const RegisterRequestor: React.FC<props> = ({ contract }) => {
     const [loading, setLoading] = useState(false);
     const { showNotification } = useNotifications();
     const [form, validator] = useValidate({
-        fname: { value: "", validate: "required", error: "" },
-        lname: { value: "", validate: "required", error: "" },
-        gender: { value: "", validate: "required", error: "" },
-        dob: { value: "", validate: "required", error: "" },
-        email: { value: "", validate: "required", error: "" },
-        mobile: { value: "", validate: "required", error: "" },
-        uidai: { value: "", validate: "required", error: "" },
-        weight: { value: "", validate: "required", error: "" },
-        height: { value: "", validate: "required", error: "" },
-        bmi: { value: "", validate: "required", error: "" },
-        blood_group: { value: "", validate: "required", error: "" },
-        address_line: { value: "", validate: "required", error: "" },
-        state: { value: "", validate: "required", error: "" },
-        district: { value: "", validate: "required", error: "" },
-        postal_code: { value: "", validate: "required", error: "" },
+        fname: { value: faker.name.firstName(), validate: "required", error: "" },
+        lname: { value: faker.name.lastName(), validate: "required", error: "" },
+        email: { value: faker.internet.email().toLowerCase(), validate: "required", error: "" },
+        dob: { value: new Date("2018"), validate: "required", error: "" },
+        mobile: { value: faker.phone.phoneNumber("98########"), validate: "required", error: "" },
+        uidai: { value: faker.phone.phoneNumber("############"), validate: "required", error: "" },
+        weight: { value: 56, validate: "required", error: "" },
+        height: { value: 52, validate: "required", error: "" },
+        bmi: { value: 541, validate: "required", error: "" },
+        blood_group: { value: "A+", validate: "required", error: "" },
+        gender: { value: "male", validate: "required", error: "" },
+        state: { value: faker.address.city(), validate: "required", error: "" },
+        district: { value: faker.address.county(), validate: "required", error: "" },
+        postal_code: { value: faker.address.zipCode(), validate: "required", error: "" },
+        address_line: { value: faker.address.streetAddress(false), validate: "required", error: "" },
     });
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);
@@ -166,32 +166,22 @@ const RegisterRequestor: React.FC<props> = ({ contract }) => {
                             />
                         </Col>
                         <Col md={6}>
-                            <NumberInput
+                            <TextInput
                                 placeholder="Mobile number"
                                 required
                                 label="Requestor Mobile Number"
-                                onChange={(val) =>
-                                    handleChange({
-                                        name: "mobile",
-                                        value: val,
-                                    })
-                                }
+                                onChange={(e) => handleChange(e.currentTarget)}
                                 value={form.mobile.value}
                                 name="mobile"
                                 error={form.mobile.error}
                             />
                         </Col>
                         <Col md={6}>
-                            <NumberInput
+                            <TextInput
                                 placeholder="UIDAI no"
                                 required
                                 label="Requestor UIDAI No"
-                                onChange={(val) =>
-                                    handleChange({
-                                        name: "uidai",
-                                        value: val,
-                                    })
-                                }
+                                onChange={(e) => handleChange(e.currentTarget)}
                                 value={form.uidai.value}
                                 name="uidai"
                                 min={0}
