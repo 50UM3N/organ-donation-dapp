@@ -33,7 +33,6 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
         postal_code: { value: faker.address.zipCode(), validate: "required", error: "" },
         address_line: { value: faker.address.streetAddress(false), validate: "required", error: "" },
     });
-    console.log(form);
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);
     };

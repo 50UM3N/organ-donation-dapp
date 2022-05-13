@@ -58,6 +58,15 @@ const JoinRequest: React.FC<props> = ({ contract }) => {
         });
         try {
             await contract?.methods.approveUser(address).send({ from: accounts[0] });
+            setData((data: any) => {
+                const newData = { ...data };
+                const user = newData.users.filter((item: any) => item["id"] === address)[0];
+                newData.users = newData.users.filter((item: any) => item["id"] !== address);
+                newData.hospitals = newData.hospitals.filter(
+                    (item: any) => item["id"] !== user["hospital_id"]
+                );
+                return { ...newData };
+            });
             updateNotification({
                 id: "approved-user",
                 color: "teal",
@@ -77,7 +86,6 @@ const JoinRequest: React.FC<props> = ({ contract }) => {
             });
         }
     };
-    console.log(data);
     return (
         <Nav>
             <Container>
@@ -91,58 +99,72 @@ const JoinRequest: React.FC<props> = ({ contract }) => {
                     )}
                     {error && <Text color="red">{error}</Text>}
                     {data && (
-                        <ScrollArea style={{ width: "100%" }} type="auto" mb="md">
-                            <Table mb="xs">
-                                <thead>
-                                    <tr>
-                                        <th>User Name</th>
-                                        <th>User Email</th>
-                                        <th>User Mobile Number</th>
-                                        <th>Hospital Name</th>
-                                        <th>Hospital Type</th>
-                                        <th>Hospital Registration No</th>
-                                        <th>Hospital Address Line</th>
-                                        <th>Hospital State</th>
-                                        <th>Hospital District</th>
-                                        <th>Hospital Town</th>
-                                        <th>Hospital Pincode</th>
-                                        <th>Hospital Telephone</th>
-                                        <th>Hospital Mobile</th>
-                                        <th>Hospital Emergency no</th>
-                                        <th>Approved</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {data.users.map((item, index) => (
-                                        <tr key={index + 1}>
-                                            <td>{toString(item["name"])}</td>
-                                            <td>{toString(item["email"])}</td>
-                                            <td>{toString(item["mobile"])}</td>
-                                            <td>{toString(data.hospitals[index]["name"])}</td>
-                                            <td>{toString(data.hospitals[index]["hospital_type"])}</td>
-                                            <td>{toString(data.hospitals[index]["registration_number"])}</td>
-                                            <td>{toString(data.hospitals[index]["address_line"])}</td>
-                                            <td>{toString(data.hospitals[index]["state"])}</td>
-                                            <td>{toString(data.hospitals[index]["district"])}</td>
-                                            <td>{toString(data.hospitals[index]["town"])}</td>
-                                            <td>{data.hospitals[index]["pincode"]}</td>
-                                            <td>{toString(data.hospitals[index]["telephone"])}</td>
-                                            <td>{toString(data.hospitals[index]["mobile"])}</td>
-                                            <td>{toString(data.hospitals[index]["emergency_mobile"])}</td>
-                                            <td>
-                                                <Button
-                                                    color={"green"}
-                                                    size="xs"
-                                                    onClick={() => approveUser(item["id"])}
-                                                >
-                                                    Approve
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </ScrollArea>
+                        <>
+                            {data.users.length === 0 ? (
+                                <Text>There is no user to approved</Text>
+                            ) : (
+                                <ScrollArea style={{ width: "100%" }} type="auto" mb="md">
+                                    <Table mb="xs">
+                                        <thead>
+                                            <tr>
+                                                <th>User Name</th>
+                                                <th>User Email</th>
+                                                <th>User Mobile Number</th>
+                                                <th>Hospital Name</th>
+                                                <th>Hospital Type</th>
+                                                <th>Hospital Registration No</th>
+                                                <th>Hospital Address Line</th>
+                                                <th>Hospital State</th>
+                                                <th>Hospital District</th>
+                                                <th>Hospital Town</th>
+                                                <th>Hospital Pincode</th>
+                                                <th>Hospital Telephone</th>
+                                                <th>Hospital Mobile</th>
+                                                <th>Hospital Emergency no</th>
+                                                <th>Approved</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {data.users.map((item, index) => (
+                                                <tr key={index + 1}>
+                                                    <td>{toString(item["name"])}</td>
+                                                    <td>{toString(item["email"])}</td>
+                                                    <td>{toString(item["mobile"])}</td>
+                                                    <td>{toString(data.hospitals[index]["name"])}</td>
+                                                    <td>
+                                                        {toString(data.hospitals[index]["hospital_type"])}
+                                                    </td>
+                                                    <td>
+                                                        {toString(
+                                                            data.hospitals[index]["registration_number"]
+                                                        )}
+                                                    </td>
+                                                    <td>{toString(data.hospitals[index]["address_line"])}</td>
+                                                    <td>{toString(data.hospitals[index]["state"])}</td>
+                                                    <td>{toString(data.hospitals[index]["district"])}</td>
+                                                    <td>{toString(data.hospitals[index]["town"])}</td>
+                                                    <td>{data.hospitals[index]["pincode"]}</td>
+                                                    <td>{toString(data.hospitals[index]["telephone"])}</td>
+                                                    <td>{toString(data.hospitals[index]["mobile"])}</td>
+                                                    <td>
+                                                        {toString(data.hospitals[index]["emergency_mobile"])}
+                                                    </td>
+                                                    <td>
+                                                        <Button
+                                                            color={"green"}
+                                                            size="xs"
+                                                            onClick={() => approveUser(item["id"])}
+                                                        >
+                                                            Approve
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                </ScrollArea>
+                            )}
+                        </>
                     )}
                 </Paper>
             </Container>

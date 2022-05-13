@@ -171,12 +171,12 @@ contract DonationContract {
     }
 
     event Register(User _user, Hospital _hospital);
-    event UserVerified(string _message);
     event Register(Doner _doner);
     event Register(Organ _organ);
     event Register(uint256 id, Requestor _requestor);
     event Register(DonerOrgans _donerOrgans);
     event Register(RequestorOrgans _requestorOrgans);
+    event UserVerified(address _address);
 
     /**
      * returns the list of organs from which organs are to be selected
@@ -330,7 +330,7 @@ contract DonationContract {
      */
     function approveUser(address _address) public restricted {
         user_map[_address].verified = true;
-        emit UserVerified("Voter update success");
+        emit UserVerified(_address);
     }
 
     /**
