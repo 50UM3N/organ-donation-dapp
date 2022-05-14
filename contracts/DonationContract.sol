@@ -201,10 +201,14 @@ contract DonationContract {
         view
         returns (RequestMatchOrgans[] memory)
     {
+        uint256 counter = 0;
+        for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
+            if (requestor_organ_map[i].requestor_map_id == _id) {
+                counter++;
+            }
+        }
         RequestMatchOrgans[]
-            memory _requestMatchOrgans = new RequestMatchOrgans[](
-                REQUESTOR_ORGANS_IDX
-            );
+            memory _requestMatchOrgans = new RequestMatchOrgans[](counter);
 
         // lppoing trouth the organs that are for the particulart requestor
         uint256 j = 0;
@@ -276,8 +280,12 @@ contract DonationContract {
         view
         returns (DonerOrgans[] memory)
     {
-        DonerOrgans[] memory _donerorgans = new DonerOrgans[](DONER_ORGANS_IDX);
         uint256 j = 0;
+        uint256 counter = 0;
+        for (uint256 i = 1; i <= DONER_ORGANS_IDX; i++) {
+            if (doner_organ_map[i].doner_map_id == _id) counter++;
+        }
+        DonerOrgans[] memory _donerorgans = new DonerOrgans[](counter);
         for (uint256 i = 1; i <= DONER_ORGANS_IDX; i++) {
             if (doner_organ_map[i].doner_map_id == _id)
                 _donerorgans[j++] = doner_organ_map[i];
@@ -293,15 +301,15 @@ contract DonationContract {
         uint256 _organ_id,
         uint256 _time
     ) public {
-        doner_organ_map[DONER_ORGANS_IDX + 1] = DonerOrgans(
-            DONER_ORGANS_IDX + 1,
+        doner_organ_map[++DONER_ORGANS_IDX] = DonerOrgans(
+            DONER_ORGANS_IDX,
             _doner_id,
             _organ_id,
             doner_map[_doner_id].blood_group,
             _time,
             false
         );
-        DONER_ORGANS_IDX++;
+        // DONER_ORGANS_IDX++;
         emit Register(doner_organ_map[DONER_ORGANS_IDX]);
     }
 

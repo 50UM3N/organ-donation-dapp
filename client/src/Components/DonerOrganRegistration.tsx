@@ -50,7 +50,7 @@ const DonerOrganRegistration: React.FC<props> = ({ donerId, contract, organs, do
     return (
         <>
             <Button onClick={() => setOpen(true)} size="xs">
-                Add New Organ
+                Pledge Organ
             </Button>
             <Modal
                 opened={open}
