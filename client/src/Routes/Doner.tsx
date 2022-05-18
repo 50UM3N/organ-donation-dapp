@@ -108,7 +108,6 @@ const Doner: React.FC<props> = ({ contract }) => {
                         organ: toString(_organs[Number(item.organ_map_id) - 1]["organ_name"]),
                     })),
                 ]);
-                console.log(donerOrgans)
                 setLoading(false);
             } catch (err: any) {
                 console.log(err);

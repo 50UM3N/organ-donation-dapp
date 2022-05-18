@@ -22,9 +22,10 @@ import { toString } from "../utils/utils";
 
 interface props {
     contract: Contract;
+    user: UserState;
 }
 
-const Requestor: React.FC<props> = ({ contract }) => {
+const Requestor: React.FC<props> = ({ contract, user }) => {
     const { requestorId } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null | string>(null);
@@ -92,7 +93,7 @@ const Requestor: React.FC<props> = ({ contract }) => {
                     })),
                 ]);
                 const _requestorOrgans = await contract?.methods
-                    .getRequestorOrgans(Number(requestors.id))
+                    .getRequestorOrgans(Number(requestors.id), user?.id)
                     .call({ from: accounts[0] });
                 if (requestors.length === 0) throw new Error("There is no doner available!");
                 setRequestorOrgans([
@@ -121,7 +122,7 @@ const Requestor: React.FC<props> = ({ contract }) => {
                 setLoading(false);
             }
         })();
-    }, [contract?.methods, requestorId]);
+    }, [contract?.methods, requestorId, user?.id]);
 
     const placeOrgan = async (
         doner_id: number,
@@ -485,6 +486,7 @@ const Requestor: React.FC<props> = ({ contract }) => {
 
 const mapStateToProps = (state: RootState) => ({
     contract: state.contractReducer.contract,
+    user: state.userReducer,
 });
 
 const mapDispatchToProps = {};

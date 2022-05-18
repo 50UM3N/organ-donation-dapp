@@ -196,14 +196,20 @@ contract DonationContract {
     /**
      * This function returns the matched organs which the requestor requested
      */
-    function getRequestorOrgans(uint256 _id)
+    function getRequestorOrgans(uint256 _id, address _add)
         public
         view
         returns (RequestMatchOrgans[] memory)
     {
         uint256 counter = 0;
         for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
-            if (requestor_organ_map[i].requestor_map_id == _id) {
+            // 1 check that the requestor is belong to the hospital that register
+            // 2 check that the requesot id is equal
+            if (
+                (requestor_map[requestor_organ_map[i].requestor_map_id]
+                    .register_hospital_id == user_map[_add].hospital_id) &&
+                (requestor_organ_map[i].requestor_map_id == _id)
+            ) {
                 counter++;
             }
         }
@@ -214,7 +220,11 @@ contract DonationContract {
         uint256 j = 0;
         for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
             // check that the requestor organ id is equal to the requstoer id
-            if (requestor_organ_map[i].requestor_map_id == _id) {
+            if (
+                (requestor_map[requestor_organ_map[i].requestor_map_id]
+                    .register_hospital_id == user_map[_add].hospital_id) &&
+                (requestor_organ_map[i].requestor_map_id == _id)
+            ) {
                 // store the matched organ
                 _requestMatchOrgans[j].requestorOrgans = requestor_organ_map[i];
                 // find the matching organs that available for the requestor organ
@@ -395,6 +405,8 @@ contract DonationContract {
      * When the doner will die we will get the hospital id
      * Make the organ donated available
      */
+    event DonerDemise(uint256[] _hospitals, uint256[] _users);
+
     function donerDemise(uint256 doner_id) public {
         doner_map[doner_id].demise = true;
         doner_map[doner_id].demise_hospital_id = user_map[msg.sender]
@@ -404,6 +416,49 @@ contract DonationContract {
                 doner_organ_map[i].available = true;
             }
         }
+        uint256 counter = 0;
+        for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
+            for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
+                if (doner_organ_map[i].doner_map_id == doner_id) {
+                    if (
+                        (doner_organ_map[k].organ_map_id ==
+                            requestor_organ_map[i].organ_map_id) &&
+                        memcmp(
+                            doner_organ_map[k].blood_group,
+                            requestor_organ_map[i].blood_group
+                        )
+                    ) {
+                        counter++;
+                    }
+                }
+            }
+        }
+
+        uint256[] memory _hospitals = new uint256[](counter);
+        uint256[] memory _users = new uint256[](counter);
+
+        uint256 j = 0;
+        for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
+            for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
+                if (doner_organ_map[i].doner_map_id == doner_id) {
+                    if (
+                        (doner_organ_map[k].organ_map_id ==
+                            requestor_organ_map[i].organ_map_id) &&
+                        memcmp(
+                            doner_organ_map[k].blood_group,
+                            requestor_organ_map[i].blood_group
+                        )
+                    ) {
+                        _hospitals[j] = requestor_map[
+                            requestor_organ_map[i].requestor_map_id
+                        ].register_hospital_id;
+                        _users[j] = requestor_organ_map[i].requestor_map_id;
+                        j++;
+                    }
+                }
+            }
+        }
+        emit DonerDemise(_hospitals, _users);
     }
 
     /**
@@ -419,16 +474,26 @@ contract DonationContract {
     /**
      * returns an array of structure containing all requestor info
      */
-    function getRequestor()
+    function getRequestor(address _id)
         public
         view
         checkAvailable(REQUESTOR_IDX)
         returns (Requestor[] memory)
     {
-        Requestor[] memory requestor = new Requestor[](REQUESTOR_IDX);
+        uint256 counter = 0;
+        for (uint256 i = 1; i <= REQUESTOR_IDX; i++) {
+            Requestor memory _requestor = requestor_map[i];
+            if (_requestor.register_hospital_id == user_map[_id].hospital_id)
+                counter++;
+        }
+
+        Requestor[] memory requestor = new Requestor[](counter);
         uint256 j = 0;
-        for (uint256 i = 1; i <= REQUESTOR_IDX; i++)
-            requestor[j++] = requestor_map[i];
+        for (uint256 i = 1; i <= REQUESTOR_IDX; i++) {
+            Requestor memory _requestor = requestor_map[i];
+            if (_requestor.register_hospital_id == user_map[_id].hospital_id)
+                requestor[j++] = _requestor;
+        }
         return requestor;
     }
 

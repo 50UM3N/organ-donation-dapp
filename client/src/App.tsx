@@ -43,17 +43,20 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
 
     useEffect(() => {
         handleNotificationPermission();
-        let a: any;
+        let UserVerified: any;
+        let DonerDemise: any;
+        const options = {
+            filter: {
+                value: ["1000", "1337"],
+            },
+            fromBlock: "latest",
+            toBlock: "latest",
+        };
         if (contract) {
-            a = contract?.events.UserVerified({
-                filter: {
-                    value: ["1000", "1337"],
-                },
-                fromBlock: "latest",
-                toBlock: "latest",
-            });
+            UserVerified = contract?.events.UserVerified(options);
 
-            a.on("data", (event: any) => {
+            UserVerified.on("data", (event: any) => {
+                console.log(event);
                 if (event.returnValues._address === user?.id) {
                     const notification = new Notification(
                         "You are approved just now click me! or refresh the page"
@@ -65,18 +68,29 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                     window.location.reload();
                 }
             });
-            a.on("error", (err: any) => console.error("error " + err));
-            a.on("connected", (str: any) => console.debug("event connected (UserVerified): " + str));
+            UserVerified.on("error", (err: any) => console.error("error " + err));
+            UserVerified.on("connected", (str: any) =>
+                console.debug("Event connected (UserVerified): " + str)
+            );
+
+            DonerDemise = contract?.events.DonerDemise(options);
+            DonerDemise.on("data", (event: any) => {
+                console.log(event);
+            });
+            DonerDemise.on("error", (err: any) => console.error("error " + err));
+            DonerDemise.on("connected", (str: any) => console.debug("Event connected (DonerDemise): " + str));
         }
         return () => {
-            if (a) {
-                a.unsubscribe((a: any) => {
-                    console.log(a);
+            if (UserVerified) {
+                UserVerified.unsubscribe((a: any) => {
+                    console.debug("Unsubscribe (UserVerified) : " + a);
+                });
+                DonerDemise.unsubscribe((a: any) => {
+                    console.debug("Unsubscribe (DonerDemise) : " + a);
                 });
             }
         };
     }, [contract, handleNotificationPermission, user?.id]);
-    console.log(user);
     return (
         <MantineProvider theme={{ colorScheme }}>
             <NotificationsProvider>
