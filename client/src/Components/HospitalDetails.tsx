@@ -23,17 +23,17 @@ const HospitalDetails: React.FC<props> = ({ hospital }) => {
                 <Text color="dimmed" mb={0} size="sm">
                     Telephone Number:
                 </Text>
-                <Text mb={3}>{"+033 " + hospital.telephone}</Text>
+                <Text mb={3}>{hospital.telephone}</Text>
                 <Space h="xs" />
                 <Text color="dimmed" mb={0} size="sm">
                     Mobile Number:
                 </Text>
-                <Text mb={3}>{"+91 " + hospital.mobile}</Text>
+                <Text mb={3}>{hospital.mobile}</Text>
                 <Space h="xs" />
                 <Text color="dimmed" mb={0} size="sm">
                     Emergency Number:
                 </Text>
-                <Text mb={3}>{"+91 " + hospital.emergency_mobile}</Text>
+                <Text mb={3}>{hospital.emergency_mobile}</Text>
                 <Space h="xs" />
             </Col>
             <Col md={6}>

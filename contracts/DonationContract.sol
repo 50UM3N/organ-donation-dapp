@@ -419,7 +419,7 @@ contract DonationContract {
         uint256 counter = 0;
         for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
             for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
-                if (doner_organ_map[i].doner_map_id == doner_id) {
+                if (doner_organ_map[k].doner_map_id == doner_id) {
                     if (
                         (doner_organ_map[k].organ_map_id ==
                             requestor_organ_map[i].organ_map_id) &&
@@ -440,7 +440,7 @@ contract DonationContract {
         uint256 j = 0;
         for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
             for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
-                if (doner_organ_map[i].doner_map_id == doner_id) {
+                if (doner_organ_map[k].doner_map_id == doner_id) {
                     if (
                         (doner_organ_map[k].organ_map_id ==
                             requestor_organ_map[i].organ_map_id) &&
@@ -535,10 +535,11 @@ contract DonationContract {
         emit RequestForOrgan(organ_request_map[ORGAN_REQUEST_IDX]);
     }
 
+    //checkAvailable(ORGAN_REQUEST_IDX)
+
     function getOrganRequestor()
         public
         view
-        checkAvailable(ORGAN_REQUEST_IDX)
         returns (OrganRequest[] memory _organ_request)
     {
         uint256 j = 0;

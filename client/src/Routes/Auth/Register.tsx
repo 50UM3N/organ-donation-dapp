@@ -71,31 +71,31 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
             validate: "required",
         },
     });
-    console.log(
-        [
-            "0x9332d7652828B818E5C0587b26c29e895CcB02BB", // sample address for registration
-            toByte32(form.user_name.value),
-            toByte32(form.user_email.value),
-            toByte32(form.user_phone.value),
-            toByte32(""),
-            false,
-            0,
-        ],
-        [
-            0,
-            toByte32(form.hospital_name.value),
-            toByte32(form.hospital_type.value),
-            toByte32(form.hospital_registration_number.value),
-            toByte32(form.hospital_address_line.value),
-            toByte32(form.hospital_state.value),
-            toByte32(form.hospital_district.value),
-            toByte32(form.hospital_town.value),
-            form.hospital_pincode.value,
-            toByte32(form.hospital_telephone.value),
-            toByte32(form.hospital_mobile.value),
-            toByte32(form.hospital_emergency_mobile.value),
-        ]
-    );
+    // console.log(
+    //     [
+    //         "0x9332d7652828B818E5C0587b26c29e895CcB02BB", // sample address for registration
+    //         toByte32(form.user_name.value),
+    //         toByte32(form.user_email.value),
+    //         toByte32(form.user_phone.value),
+    //         toByte32(""),
+    //         false,
+    //         0,
+    //     ],
+    //     [
+    //         0,
+    //         toByte32(form.hospital_name.value),
+    //         toByte32(form.hospital_type.value),
+    //         toByte32(form.hospital_registration_number.value),
+    //         toByte32(form.hospital_address_line.value),
+    //         toByte32(form.hospital_state.value),
+    //         toByte32(form.hospital_district.value),
+    //         toByte32(form.hospital_town.value),
+    //         form.hospital_pincode.value,
+    //         toByte32(form.hospital_telephone.value),
+    //         toByte32(form.hospital_mobile.value),
+    //         toByte32(form.hospital_emergency_mobile.value),
+    //     ]
+    // );
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);
     };

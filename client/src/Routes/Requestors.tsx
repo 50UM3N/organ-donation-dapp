@@ -36,7 +36,7 @@ const Requestors: React.FC<props> = ({ contract, user }) => {
             });
             try {
                 const requestor = await contract?.methods.getRequestor(user?.id).call({ from: accounts[0] });
-                if (requestor.length === 0) throw new Error("There is no doner available!");
+                if (requestor.length === 0) throw new Error("There is no requestor!");
                 setData(requestor);
                 setLoading(false);
             } catch (err: any) {

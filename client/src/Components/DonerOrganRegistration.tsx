@@ -33,7 +33,7 @@ const DonerOrganRegistration: React.FC<props> = ({ donerId, contract, organs, do
                 .send({ from: accounts[0] });
             showNotification({
                 title: "Success",
-                message: "Successfully donate the organ",
+                message: "Successfully pledged the organ",
             });
             setOrganId(null);
             setLoading(false);

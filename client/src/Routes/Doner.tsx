@@ -141,14 +141,14 @@ const Doner: React.FC<props> = ({ contract }) => {
                         <Paper withBorder p="md" mb="md">
                             <Group position="apart">
                                 <Title order={4}>Doner Details</Title>
-                                <Button
+                                {data.demise?(<Text align="right" weight={500} color="red">This doner has passed</Text>):(<Button
                                     size="xs"
                                     variant="light"
                                     color="red"
                                     onClick={() => donerDemise(data.id)}
                                 >
                                     Dead
-                                </Button>
+                                </Button>)}
                             </Group>
                             <Divider my="sm" />
                             <DonerDetails doner={data} />

@@ -21,7 +21,6 @@ import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { InitialThemeState } from "../../store/reducers/theme-reducer";
 import { ThemeActionType } from "../../store/actions/theme-action";
-import { InitialUserState } from "../../store/reducers/user-reducer";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -74,7 +73,7 @@ interface props {
         payload: "dark" | "light";
     };
     colorScheme: InitialThemeState;
-    user: InitialUserState;
+    user: UserState;
 }
 
 const TopNav: React.FC<props> = ({ setNavOpen, navOpen, setTheme, colorScheme, user }) => {

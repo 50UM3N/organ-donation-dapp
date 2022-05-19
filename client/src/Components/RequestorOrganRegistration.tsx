@@ -28,7 +28,7 @@ const RequestorOrganRegistration: React.FC<props> = ({ contract, organs, request
                 .send({ from: accounts[0] });
             showNotification({
                 title: "Success",
-                message: "Successfully donate the organ",
+                message: "Successfully requested for the organ",
             });
             setOrganId(null);
             setLoading(false);

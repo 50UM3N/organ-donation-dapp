@@ -72,10 +72,21 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
             UserVerified.on("connected", (str: any) =>
                 console.debug("Event connected (UserVerified): " + str)
             );
-
+        
             DonerDemise = contract?.events.DonerDemise(options);
             DonerDemise.on("data", (event: any) => {
                 console.log(event);
+                const idSet = new Set(event.returnValues._hospitals);
+                console.log(idSet);
+                if(idSet.has(user?.hospital)){
+                    const notification = new Notification(
+                        "There is a Organ available for your requestor."
+                    );
+                    notification.onclick = (event) => {
+                            event.preventDefault();
+                            window.open(window.location.host, "_blank");
+                        };
+                }
             });
             DonerDemise.on("error", (err: any) => console.error("error " + err));
             DonerDemise.on("connected", (str: any) => console.debug("Event connected (DonerDemise): " + str));
@@ -90,7 +101,7 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                 });
             }
         };
-    }, [contract, handleNotificationPermission, user?.id]);
+    }, [contract, handleNotificationPermission, user?.id,user?.hospital]);
     return (
         <MantineProvider theme={{ colorScheme }}>
             <NotificationsProvider>
