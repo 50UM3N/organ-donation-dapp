@@ -20,18 +20,17 @@ import { userAdd } from "../../store/actions";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { handleRPCError } from "../../utils/handleError";
-import { toByte32 } from "../../utils/utils";
+import { toByte32, toString } from "../../utils/utils";
 import StateSelect from "../../Components/Select/StateSelect";
 import DistrictSelect from "../../Components/Select/DistricSelect";
 import faker from "@faker-js/faker";
-
+import provider from "../../utils/provider";
 interface props {
-    contract: Contract;
-    user: UserState;
     userAdd: (user: User) => void;
 }
 
-const Register: React.FC<props> = ({ contract, user, userAdd }) => {
+const Register: React.FC<props> = ({ userAdd }) => {
+    const [pending, setPending] = useState(true);
     const [active, setActive] = useState(0);
     const nextStep = () => setActive((current) => (current < 2 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
@@ -71,42 +70,20 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
             validate: "required",
         },
     });
-    // console.log(
-    //     [
-    //         "0x9332d7652828B818E5C0587b26c29e895CcB02BB", // sample address for registration
-    //         toByte32(form.user_name.value),
-    //         toByte32(form.user_email.value),
-    //         toByte32(form.user_phone.value),
-    //         toByte32(""),
-    //         false,
-    //         0,
-    //     ],
-    //     [
-    //         0,
-    //         toByte32(form.hospital_name.value),
-    //         toByte32(form.hospital_type.value),
-    //         toByte32(form.hospital_registration_number.value),
-    //         toByte32(form.hospital_address_line.value),
-    //         toByte32(form.hospital_state.value),
-    //         toByte32(form.hospital_district.value),
-    //         toByte32(form.hospital_town.value),
-    //         form.hospital_pincode.value,
-    //         toByte32(form.hospital_telephone.value),
-    //         toByte32(form.hospital_mobile.value),
-    //         toByte32(form.hospital_emergency_mobile.value),
-    //     ]
-    // );
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const { contract, accounts, error } = await provider();
+        if (error) {
+            console.log(error);
+            return;
+        }
         if (!validator.validate()) return;
         setLoading(true);
-        const accounts = await window.ethereum.request({
-            method: "eth_accounts",
-        });
+
         const data: any = validator.generalize();
         try {
             await contract?.methods
@@ -153,8 +130,17 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
         setLoading(false);
     };
     useEffect(() => {
-        if (user) navigate("/");
-    }, [navigate, user]);
+        (async () => {
+            const { contract, accounts } = await provider();
+            if (!contract && !accounts) return;
+            const user = await contract.methods.getUser().call({ from: accounts[0] });
+            if (toString(user.user.email)) {
+                navigate("/");
+            } else {
+                setPending(false);
+            }
+        })();
+    }, [navigate]);
 
     return (
         <Container size={"xs"} py="xl">
@@ -165,53 +151,55 @@ const Register: React.FC<props> = ({ contract, user, userAdd }) => {
                 After fill up the all form you have to wait for conformation the conformation will be given by
                 the mobile number and email
             </Text>
-            <form onSubmit={handleSubmit} noValidate>
-                <Stepper active={active} onStepClick={setActive} breakpoint="sm">
-                    <Stepper.Step
-                        label="Fist step"
-                        description="Enter the user information"
-                        allowStepSelect={active > 0}
-                    >
-                        <UserRegistrationForm handleChange={handleChange} form={form} />
-                    </Stepper.Step>
-                    <Stepper.Step
-                        label="Second step"
-                        description="Enter the hospital details"
-                        allowStepSelect={active > 1}
-                    >
-                        <HospitalRegistrationForm handleChange={handleChange} form={form} />
-                    </Stepper.Step>
-                    <Stepper.Completed>
-                        <Text align="center">
-                            Your registration is successfully completed just waiting for approval.
-                        </Text>
-                    </Stepper.Completed>
-                </Stepper>
+            {!pending && (
+                <form onSubmit={handleSubmit} noValidate>
+                    <Stepper active={active} onStepClick={setActive} breakpoint="sm">
+                        <Stepper.Step
+                            label="Fist step"
+                            description="Enter the user information"
+                            allowStepSelect={active > 0}
+                        >
+                            <UserRegistrationForm handleChange={handleChange} form={form} />
+                        </Stepper.Step>
+                        <Stepper.Step
+                            label="Second step"
+                            description="Enter the hospital details"
+                            allowStepSelect={active > 1}
+                        >
+                            <HospitalRegistrationForm handleChange={handleChange} form={form} />
+                        </Stepper.Step>
+                        <Stepper.Completed>
+                            <Text align="center">
+                                Your registration is successfully completed just waiting for approval.
+                            </Text>
+                        </Stepper.Completed>
+                    </Stepper>
 
-                <Group position="center" mt="xl">
-                    {active !== 2 && (
-                        <Button type="button" variant="default" onClick={prevStep} loading={loading}>
-                            Back
-                        </Button>
-                    )}
+                    <Group position="center" mt="xl">
+                        {active !== 2 && (
+                            <Button type="button" variant="default" onClick={prevStep} loading={loading}>
+                                Back
+                            </Button>
+                        )}
 
-                    {active === 0 && (
-                        <Button type="button" onClick={nextStep}>
-                            Next step
-                        </Button>
-                    )}
-                    {active === 1 && (
-                        <Button type="submit" loading={loading}>
-                            Register
-                        </Button>
-                    )}
-                    {active === 2 && (
-                        <Button type="button" onClick={() => navigate("/")} color="green">
-                            Go Home
-                        </Button>
-                    )}
-                </Group>
-            </form>
+                        {active === 0 && (
+                            <Button type="button" onClick={nextStep}>
+                                Next step
+                            </Button>
+                        )}
+                        {active === 1 && (
+                            <Button type="submit" loading={loading}>
+                                Register
+                            </Button>
+                        )}
+                        {active === 2 && (
+                            <Button type="button" onClick={() => navigate("/")} color="green">
+                                Go Home
+                            </Button>
+                        )}
+                    </Group>
+                </form>
+            )}
         </Container>
     );
 };

@@ -123,15 +123,15 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                     <Routes>
                         <Route element={<AuthProvider />}>
                             <Route path="/" element={<Home />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path="/register-doner" element={<RegisterDoner />} />
                             <Route path="/register-requestor" element={<RegisterRequestor />} />
                             <Route path="/new-request" element={<JoinRequest />} />
                             <Route path="/donors" element={<Donors />} />
                             <Route path="/doner/:donerId" element={<Doner />} />
                             <Route path="/requestors" element={<Requestors />} />
                             <Route path="/requestor/:requestorId" element={<Requestor />} />
+                            <Route path="/register-doner" element={<RegisterDoner />} />
                         </Route>
+                        <Route path="/register" element={<Register />} />
                         <Route path="/login" element={<Login />} />
                     </Routes>
                 )}
