@@ -14,11 +14,13 @@ import {
     Text,
     Title,
     Button,
+    Modal,
 } from "@mantine/core";
 import { handleRPCError } from "../utils/handleError";
 import { useParams } from "react-router-dom";
 import RequestorOrganRegistration from "../Components/RequestorOrganRegistration";
 import { toString } from "../utils/utils";
+import DetailsModal from "../Components/DetailsModal";
 
 interface props {
     contract: Contract;
@@ -33,6 +35,11 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
     const [organs, setOrgans] = useState<any>(null);
     const [requestorOrgans, setRequestorOrgans] = useState<Array<RequestorOrgans> | null>(null);
     const [requestOrgans, setRequestOrgans] = useState<null | RequestOrganList[]>(null);
+    const [detailsModal, setDetailsModal] = useState<{ active: boolean; selected: any }>({
+        active: false,
+        selected: null,
+    });
+    console.log(requestorOrgans);
     useEffect(() => {
         (async () => {
             const accounts = await window.ethereum.request({
@@ -96,6 +103,7 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                     .getRequestorOrgans(Number(requestors.id), user?.id)
                     .call({ from: accounts[0] });
                 if (requestors.length === 0) throw new Error("There is no doner available!");
+                console.log(_requestorOrgans);
                 setRequestorOrgans([
                     ..._requestorOrgans.map((item: any) => ({
                         id: Number(item.requestorOrgans.id),
@@ -130,6 +138,7 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
         doner_organ_id: number,
         requestor_organ_id: number
     ) => {
+        console.log(doner_id, requestor_id, doner_organ_id, requestor_organ_id);
         const accounts = await window.ethereum.request({
             method: "eth_accounts",
         });
@@ -154,6 +163,20 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
             {data && (
                 <>
                     <Container>
+                        <Modal
+                            size="xl"
+                            opened={detailsModal.active}
+                            onClose={() =>
+                                setDetailsModal({
+                                    active: false,
+                                    selected: null,
+                                })
+                            }
+                            title="Details"
+                        >
+                            <DetailsModal detailsModal={detailsModal} />
+                        </Modal>
+
                         <Paper withBorder p="md">
                             <Title order={4}>Requestor Details</Title>
                             <Divider my="sm" />
@@ -371,24 +394,38 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                                                                     <strong>ID: </strong> {item100.id}
                                                                 </Text>
                                                                 <Text mb={4}>
-                                                                    <strong>donerId: </strong>
+                                                                    <strong>Doner Id: </strong>
                                                                     {item100.donerId}
                                                                 </Text>
                                                                 <Text mb={4}>
-                                                                    <strong>requestorId: </strong>
+                                                                    <strong>Requestor Id: </strong>
                                                                     {item100.requestorId}
                                                                 </Text>
                                                                 <Text mb={4}>
-                                                                    <strong>donerOrganId: </strong>
+                                                                    <strong>Doner Organ Id: </strong>
                                                                     {item100.donerOrganId}
                                                                 </Text>
-                                                                <Text mb={4}>
-                                                                    <strong>requestorOrganId: </strong>
+                                                                <Text mb="md">
+                                                                    <strong>Requestor Organ Id: </strong>
                                                                     {item100.requestorOrganId}
                                                                 </Text>
 
                                                                 <Group spacing="md">
-                                                                    <Button color="green" size="xs">
+                                                                    <Button
+                                                                        color="green"
+                                                                        size="xs"
+                                                                        onClick={() =>
+                                                                            setDetailsModal({
+                                                                                active: true,
+                                                                                selected: {
+                                                                                    id: item100.id,
+                                                                                    donerId: item100.donerId,
+                                                                                    organId:
+                                                                                        item100.requestorOrganId,
+                                                                                },
+                                                                            })
+                                                                        }
+                                                                    >
                                                                         Details
                                                                     </Button>
                                                                 </Group>
@@ -450,7 +487,22 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                                                                     >
                                                                         Place
                                                                     </Button>
-                                                                    <Button color="orange" size="xs">
+                                                                    <Button
+                                                                        color="orange"
+                                                                        size="xs"
+                                                                        onClick={() =>
+                                                                            setDetailsModal({
+                                                                                active: true,
+                                                                                selected: {
+                                                                                    id: organ2.id,
+                                                                                    donerId:
+                                                                                        organ2.doner_map_id,
+                                                                                    organId:
+                                                                                        organ2.organ_map_id,
+                                                                                },
+                                                                            })
+                                                                        }
+                                                                    >
                                                                         Details
                                                                     </Button>
                                                                 </Group>

@@ -7,7 +7,7 @@ import Login from "./Routes/Auth/Login";
 import AuthProvider from "./Provider/AuthProvider";
 import { connect } from "react-redux";
 import Register from "./Routes/Auth/Register";
-import { NotificationsProvider } from "@mantine/notifications";
+import { NotificationsProvider, showNotification } from "@mantine/notifications";
 
 import { InitialThemeState } from "./store/reducers/theme-reducer";
 import RegisterRequestor from "./Routes/Register/RegisterRequestor";
@@ -50,13 +50,11 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                 value: ["1000", "1337"],
             },
             fromBlock: "latest",
-            toBlock: "latest",
         };
         if (contract) {
             UserVerified = contract?.events.UserVerified(options);
 
             UserVerified.on("data", (event: any) => {
-                console.log(event);
                 if (event.returnValues._address === user?.id) {
                     const notification = new Notification(
                         "You are approved just now click me! or refresh the page"
@@ -72,20 +70,36 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
             UserVerified.on("connected", (str: any) =>
                 console.debug("Event connected (UserVerified): " + str)
             );
-        
+
             DonerDemise = contract?.events.DonerDemise(options);
             DonerDemise.on("data", (event: any) => {
                 console.log(event);
-                const idSet = new Set(event.returnValues._hospitals);
-                console.log(idSet);
-                if(idSet.has(user?.hospital)){
-                    const notification = new Notification(
-                        "There is a Organ available for your requestor."
-                    );
+                const hospitals = event.returnValues._hospitals.map((item: string) => Number(item));
+                const users = event.returnValues._users;
+                console.log(users);
+                const map: any = {};
+
+                hospitals.forEach((element: string, index: number) => {
+                    if (map[Number(element)] === undefined) {
+                        map[Number(element)] = [];
+                    }
+                    map[Number(element)].push(users[index]);
+                });
+                console.log(map);
+                const idSet = new Set(hospitals);
+                if (idSet.has(user?.hospital?.id)) {
+                    showNotification({
+                        autoClose: false,
+                        title: "New Organ Found for the user",
+                        message: `There are the list of the user id that match organ are found. Please do the required steps for each users,The id are 
+                            ${map[user?.hospital?.id || 0]}
+                        `,
+                    });
+                    const notification = new Notification("There is a Organ available for your requestor.");
                     notification.onclick = (event) => {
-                            event.preventDefault();
-                            window.open(window.location.host, "_blank");
-                        };
+                        event.preventDefault();
+                        window.open(window.location.host, "_blank");
+                    };
                 }
             });
             DonerDemise.on("error", (err: any) => console.error("error " + err));
@@ -101,7 +115,7 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                 });
             }
         };
-    }, [contract, handleNotificationPermission, user?.id,user?.hospital]);
+    }, [contract, handleNotificationPermission, user?.id, user?.hospital]);
     return (
         <MantineProvider theme={{ colorScheme }}>
             <NotificationsProvider>

@@ -311,7 +311,8 @@ contract DonationContract {
         uint256 _organ_id,
         uint256 _time
     ) public {
-        doner_organ_map[++DONER_ORGANS_IDX] = DonerOrgans(
+        DONER_ORGANS_IDX++;
+        doner_organ_map[DONER_ORGANS_IDX] = DonerOrgans(
             DONER_ORGANS_IDX,
             _doner_id,
             _organ_id,
@@ -319,7 +320,7 @@ contract DonationContract {
             _time,
             false
         );
-        // DONER_ORGANS_IDX++;
+        
         emit Register(doner_organ_map[DONER_ORGANS_IDX]);
     }
 
