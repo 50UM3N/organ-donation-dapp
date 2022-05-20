@@ -78,6 +78,9 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                 request_hospital.state = toString(request_hospital.state);
                 request_hospital.telephone = toString(request_hospital.telephone);
                 request_hospital.town = toString(request_hospital.town);
+                request_hospital.longitude = toString(request_hospital.longitude);
+                request_hospital.latitude = toString(request_hospital.latitude);
+
 
                 requestors = { ...requestors._requestor };
                 requestors.fname = toString(requestors.fname);
@@ -304,6 +307,11 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                                     </Text>
                                     <Text mb={3}>{data.requestHospital?.emergency_mobile}</Text>
                                     <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Longitude:
+                                    </Text>
+                                    <Text mb={3}>{data.requestHospital?.longitude}</Text>
+                                    <Space h="xs" />
                                 </Col>
                                 <Col md={6}>
                                     <Space h="xs" />
@@ -331,6 +339,11 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                                         Pincode:
                                     </Text>
                                     <Text mb={3}>{data.requestHospital?.pincode}</Text>
+                                    <Space h="xs" />
+                                    <Text color="dimmed" mb={0} size="sm">
+                                        Latitude:
+                                    </Text>
+                                    <Text mb={3}>{data.requestHospital?.latitude}</Text>
                                     <Space h="xs" />
                                 </Col>
                             </Grid>

@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { AlertCircle } from "tabler-icons-react";
 
 const Home: React.FC<{ user: UserState }> = ({ user }) => {
+    console.log(user)
     return (
         <Nav>
             <Container>
@@ -55,6 +56,14 @@ const Home: React.FC<{ user: UserState }> = ({ user }) => {
                                     Hospital Pincode:
                                 </Text>
                                 <Text mb={3}>{user?.hospital.pincode}</Text>
+                                <Text color="dimmed" mb={0} size="sm">
+                                    Hospital Longitude:
+                                </Text>
+                                <Text mb={3}>{user?.hospital.longitude}</Text>
+                                <Text color="dimmed" mb={0} size="sm">
+                                    Hospital Latitude:
+                                </Text>
+                                <Text mb={3}>{user?.hospital.latitude}</Text>
                                 <Text color="dimmed" mb={0} size="sm">
                                     Hospital Telephone:
                                 </Text>

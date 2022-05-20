@@ -125,6 +125,8 @@ contract DonationContract {
         bytes32 telephone; // 32 charecter
         bytes32 mobile; // 32 charecter
         bytes32 emergency_mobile; // 32 charecter
+        bytes32 longitude;
+        bytes32 latitude;
     }
 
     mapping(address => User) user_map;
@@ -320,7 +322,7 @@ contract DonationContract {
             _time,
             false
         );
-        
+
         emit Register(doner_organ_map[DONER_ORGANS_IDX]);
     }
 
