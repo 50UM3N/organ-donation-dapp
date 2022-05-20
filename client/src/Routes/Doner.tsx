@@ -70,6 +70,8 @@ const Doner: React.FC<props> = ({ contract }) => {
                 register_hospital.state = toString(register_hospital.state);
                 register_hospital.telephone = toString(register_hospital.telephone);
                 register_hospital.town = toString(register_hospital.town);
+                register_hospital.longitude = toString(register_hospital.longitude);
+                register_hospital.latitude = toString(register_hospital.latitude);
 
                 demise_hospital = { ...demise_hospital };
                 demise_hospital.name = toString(demise_hospital.name);
@@ -82,6 +84,9 @@ const Doner: React.FC<props> = ({ contract }) => {
                 demise_hospital.state = toString(demise_hospital.state);
                 demise_hospital.telephone = toString(demise_hospital.telephone);
                 demise_hospital.town = toString(demise_hospital.town);
+                demise_hospital.longitude = toString(demise_hospital.longitude);
+                demise_hospital.latitude = toString(demise_hospital.latitude);
+
 
                 doner = { ...doner._doner };
                 doner.fname = toString(doner.fname);

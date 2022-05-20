@@ -61,6 +61,8 @@ const AuthProvider: React.FC<props> = ({
                               district: toString(user.hospital.district),
                               town: toString(user.hospital.town),
                               pincode: Number(user.hospital.pincode),
+                              longitude: toString(user.hospital.longitude),
+                              latitude: toString(user.hospital.latitude),
                               telephone: toString(user.hospital.telephone),
                               mobile: toString(user.hospital.mobile),
                               emergency_mobile: toString(user.hospital.emergency_mobile),

@@ -34,6 +34,8 @@ interface Hospital {
     telephone: string;
     mobile: string;
     emergency_mobile: string;
+    longitude: string; 
+    latitude: string;
 }
 
 interface Doner {

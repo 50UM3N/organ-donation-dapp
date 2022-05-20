@@ -43,6 +43,7 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
 
     useEffect(() => {
         handleNotificationPermission();
+        console.log("App useEffect");
         let UserVerified: any;
         let DonerDemise: any;
         const options = {

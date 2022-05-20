@@ -35,6 +35,11 @@ const HospitalDetails: React.FC<props> = ({ hospital }) => {
                 </Text>
                 <Text mb={3}>{hospital.emergency_mobile}</Text>
                 <Space h="xs" />
+                <Text color="dimmed" mb={0} size="sm">
+                    Longitude:
+                </Text>
+                <Text mb={3}>{hospital.longitude}</Text>
+                <Space h="xs" />
             </Col>
             <Col md={6}>
                 <Space h="xs" />
@@ -62,6 +67,11 @@ const HospitalDetails: React.FC<props> = ({ hospital }) => {
                     Pincode:
                 </Text>
                 <Text mb={3}>{hospital.pincode}</Text>
+                <Space h="xs" />
+                <Text color="dimmed" mb={0} size="sm">
+                    Latitude:
+                </Text>
+                <Text mb={3}>{hospital.latitude}</Text>
                 <Space h="xs" />
             </Col>
         </Grid>

@@ -69,6 +69,16 @@ const Register: React.FC<props> = ({ userAdd }) => {
             error: null,
             validate: "required",
         },
+        hospital_longitude: {
+            value: faker.address.longitude(),
+            error: null,
+            validate: "required",
+        },
+        hospital_latitude: {
+            value: faker.address.latitude(),
+            error: null,
+            validate: "required",
+        },
     });
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);
@@ -110,6 +120,8 @@ const Register: React.FC<props> = ({ userAdd }) => {
                         toByte32(data.hospital_telephone),
                         toByte32(data.hospital_mobile),
                         toByte32(data.hospital_emergency_mobile),
+                        toByte32(data.hospital_longitude),
+                        toByte32(data.hospital_latitude),
                     ]
                 )
                 .send({ from: accounts[0] });
@@ -325,6 +337,26 @@ const HospitalRegistrationForm: React.FC<{
                     value={form.hospital_pincode.value}
                     onChange={(e) => handleChange(e.currentTarget)}
                     error={form.hospital_pincode.error}
+                />
+
+                <TextInput
+                    required
+                    label="Hospital Longitude"
+                    placeholder=""
+                    name="hospital_longitude"
+                    value={form.hospital_longitude.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_longitude.error}
+                />
+
+                <TextInput
+                    required
+                    label="Hospital Latitude"
+                    placeholder=""
+                    name="hospital_latitude"
+                    value={form.hospital_latitude.value}
+                    onChange={(e) => handleChange(e.currentTarget)}
+                    error={form.hospital_latitude.error}
                 />
 
                 <TextInput
