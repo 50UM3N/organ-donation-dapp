@@ -57,8 +57,8 @@ const Donors: React.FC<props> = ({ contract }) => {
                     )}
                     {error && <Text color="red">{error}</Text>}
                     {data && (
-                        <ScrollArea style={{ width: "100%" }} mb="xs">
-                            <Table>
+                        <ScrollArea type="auto" style={{ width: "100%" }}>
+                            <Table mb="xl">
                                 <thead>
                                     <tr>
                                         <th>#</th>

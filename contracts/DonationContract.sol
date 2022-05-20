@@ -180,6 +180,14 @@ contract DonationContract {
     event Register(RequestorOrgans _requestorOrgans);
     event UserVerified(address _address);
 
+    function getHospitals() public view returns (Hospital[] memory _hospital) {
+        _hospital = new Hospital[](HOSPITAL_IDX);
+        uint256 j = 0;
+        for (uint256 i = 1; i <= HOSPITAL_IDX; i++)
+            _hospital[j++] = hospital_map[i];
+        return _hospital;
+    }
+
     /**
      * returns the list of organs from which organs are to be selected
      */

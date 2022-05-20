@@ -43,7 +43,7 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
 
     useEffect(() => {
         handleNotificationPermission();
-        console.log("App useEffect");
+
         let UserVerified: any;
         let DonerDemise: any;
         const options = {
@@ -73,20 +73,18 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
             );
 
             DonerDemise = contract?.events.DonerDemise(options);
-            DonerDemise.on("data", (event: any) => {
-                console.log(event);
+            DonerDemise.on("data", async (event: any) => {
+                const allHospitals = await contract.methods.getHospitals().call();
+                console.log(allHospitals);
                 const hospitals = event.returnValues._hospitals.map((item: string) => Number(item));
                 const users = event.returnValues._users;
-                console.log(users);
                 const map: any = {};
-
                 hospitals.forEach((element: string, index: number) => {
                     if (map[Number(element)] === undefined) {
                         map[Number(element)] = [];
                     }
                     map[Number(element)].push(users[index]);
                 });
-                console.log(map);
                 const idSet = new Set(hospitals);
                 if (idSet.has(user?.hospital?.id)) {
                     showNotification({
@@ -106,11 +104,14 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
             DonerDemise.on("error", (err: any) => console.error("error " + err));
             DonerDemise.on("connected", (str: any) => console.debug("Event connected (DonerDemise): " + str));
         }
+        console.dir(UserVerified);
         return () => {
             if (UserVerified) {
                 UserVerified.unsubscribe((a: any) => {
                     console.debug("Unsubscribe (UserVerified) : " + a);
                 });
+            }
+            if (DonerDemise) {
                 DonerDemise.unsubscribe((a: any) => {
                     console.debug("Unsubscribe (DonerDemise) : " + a);
                 });

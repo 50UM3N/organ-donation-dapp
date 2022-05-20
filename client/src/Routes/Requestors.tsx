@@ -58,8 +58,8 @@ const Requestors: React.FC<props> = ({ contract, user }) => {
                     )}
                     {error && <Text color="red">{error}</Text>}
                     {data && (
-                        <ScrollArea style={{ width: "100%" }} mb="xs">
-                            <Table>
+                        <ScrollArea style={{ width: "100%" }}>
+                            <Table mb="xl">
                                 <thead>
                                     <tr>
                                         <th>#</th>

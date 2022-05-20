@@ -3,7 +3,18 @@ import { At } from "tabler-icons-react";
 import Nav from "../../Components/Navigation/Nav";
 import { DatePicker } from "@mantine/dates";
 import { useValidate } from "pangolin-hooks";
-import { Col, Divider, Grid, NumberInput, Paper, TextInput, Title, Select, Button } from "@mantine/core";
+import {
+    Col,
+    Divider,
+    Grid,
+    NumberInput,
+    Paper,
+    TextInput,
+    Title,
+    Select,
+    Button,
+    Container,
+} from "@mantine/core";
 import { useState } from "react";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
@@ -91,218 +102,220 @@ const RegisterRequestor: React.FC<props> = ({ contract }) => {
     };
     return (
         <Nav>
-            <Paper p={"md"}>
-                <Title order={4}>Add new Requestor</Title>
-                <Divider my={"sm"} />
-                <form onSubmit={handleSubmit}>
-                    <Grid gutter={"sm"}>
-                        <Col md={6}>
-                            <TextInput
-                                placeholder="First name"
-                                required
-                                label="Requestor First Name"
-                                onChange={(e) => handleChange(e.currentTarget)}
-                                value={form.fname.value}
-                                name="fname"
-                                error={form.fname.error}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <TextInput
-                                placeholder="Last name"
-                                required
-                                label="Requestor Last Name"
-                                onChange={(e) => handleChange(e.currentTarget)}
-                                value={form.lname.value}
-                                name="lname"
-                                error={form.lname.error}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <Select
-                                placeholder="Gender"
-                                required
-                                label="Requestor Gender"
-                                onChange={(val) =>
-                                    handleChange({
-                                        name: "gender",
-                                        value: val,
-                                    })
-                                }
-                                value={form.gender.value}
-                                error={form.gender.error}
-                                data={[
-                                    { value: "male", label: "Male" },
-                                    { value: "female", label: "Female" },
-                                    { value: "other", label: "Other" },
-                                ]}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <DatePicker
-                                placeholder="Pick date"
-                                required
-                                label="Requestor date of birth"
-                                onChange={(val) =>
-                                    handleChange({
-                                        name: "dob",
-                                        value: val,
-                                    })
-                                }
-                                value={form.dob.value}
-                                error={form.dob.error}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <TextInput
-                                placeholder="Requestor email"
-                                required
-                                label="Requestor Email Address"
-                                onChange={(e) => handleChange(e.currentTarget)}
-                                value={form.email.value}
-                                name="email"
-                                error={form.email.error}
-                                icon={<At size={14} />}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <TextInput
-                                placeholder="Mobile number"
-                                required
-                                label="Requestor Mobile Number"
-                                onChange={(e) => handleChange(e.currentTarget)}
-                                value={form.mobile.value}
-                                name="mobile"
-                                error={form.mobile.error}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <TextInput
-                                placeholder="UIDAI no"
-                                required
-                                label="Requestor UIDAI No"
-                                onChange={(e) => handleChange(e.currentTarget)}
-                                value={form.uidai.value}
-                                name="uidai"
-                                min={0}
-                                error={form.uidai.error}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <NumberInput
-                                placeholder="Weight"
-                                required
-                                label="Requestor Weight"
-                                onChange={(val) =>
-                                    handleChange({
-                                        name: "weight",
-                                        value: val,
-                                    })
-                                }
-                                value={form.weight.value}
-                                error={form.weight.error}
-                                min={0}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <NumberInput
-                                placeholder="Height"
-                                required
-                                label="Requestor Height"
-                                onChange={(val) =>
-                                    handleChange({
-                                        name: "height",
-                                        value: val,
-                                    })
-                                }
-                                value={form.height.value}
-                                error={form.height.error}
-                                min={0}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <NumberInput
-                                placeholder="BMI"
-                                required
-                                label="Requestor BMI"
-                                onChange={(val) =>
-                                    handleChange({
-                                        name: "bmi",
-                                        value: val,
-                                    })
-                                }
-                                value={form.bmi.value}
-                                error={form.bmi.error}
-                                min={0}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <Select
-                                placeholder="Blood group"
-                                required
-                                label="Requestor Blood Group"
-                                onChange={(val) =>
-                                    handleChange({
-                                        name: "blood_group",
-                                        value: val,
-                                    })
-                                }
-                                value={form.blood_group.value}
-                                error={form.blood_group.error}
-                                data={["A+", "O+", "B+", "AB+", "A-", "O-", "B-", "AB-"]}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <TextInput
-                                placeholder="Address line"
-                                required
-                                label="Requestor Address Line"
-                                onChange={(e) => handleChange(e.currentTarget)}
-                                value={form.address_line.value}
-                                name="address_line"
-                                error={form.address_line.error}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <TextInput
-                                placeholder="State"
-                                required
-                                label="Requestor State"
-                                onChange={(e) => handleChange(e.currentTarget)}
-                                value={form.state.value}
-                                name="state"
-                                error={form.state.error}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <TextInput
-                                placeholder="District"
-                                required
-                                label="Requestor District"
-                                onChange={(e) => handleChange(e.currentTarget)}
-                                value={form.district.value}
-                                name="district"
-                                error={form.district.error}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <TextInput
-                                placeholder="Postal code"
-                                required
-                                label="Requestor Postal Code"
-                                onChange={(e) => handleChange(e.currentTarget)}
-                                name="postal_code"
-                                value={form.postal_code.value}
-                                error={form.postal_code.error}
-                                min={0}
-                            />
-                        </Col>
-                    </Grid>
-                    <Button type="submit" mt="md" loading={loading}>
-                        Add Requestor
-                    </Button>
-                </form>
-            </Paper>
+            <Container>
+                <Paper p={"md"}>
+                    <Title order={4}>Add new Requestor</Title>
+                    <Divider my={"sm"} />
+                    <form onSubmit={handleSubmit}>
+                        <Grid gutter={"sm"}>
+                            <Col md={6}>
+                                <TextInput
+                                    placeholder="First name"
+                                    required
+                                    label="Requestor First Name"
+                                    onChange={(e) => handleChange(e.currentTarget)}
+                                    value={form.fname.value}
+                                    name="fname"
+                                    error={form.fname.error}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextInput
+                                    placeholder="Last name"
+                                    required
+                                    label="Requestor Last Name"
+                                    onChange={(e) => handleChange(e.currentTarget)}
+                                    value={form.lname.value}
+                                    name="lname"
+                                    error={form.lname.error}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <Select
+                                    placeholder="Gender"
+                                    required
+                                    label="Requestor Gender"
+                                    onChange={(val) =>
+                                        handleChange({
+                                            name: "gender",
+                                            value: val,
+                                        })
+                                    }
+                                    value={form.gender.value}
+                                    error={form.gender.error}
+                                    data={[
+                                        { value: "male", label: "Male" },
+                                        { value: "female", label: "Female" },
+                                        { value: "other", label: "Other" },
+                                    ]}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <DatePicker
+                                    placeholder="Pick date"
+                                    required
+                                    label="Requestor date of birth"
+                                    onChange={(val) =>
+                                        handleChange({
+                                            name: "dob",
+                                            value: val,
+                                        })
+                                    }
+                                    value={form.dob.value}
+                                    error={form.dob.error}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextInput
+                                    placeholder="Requestor email"
+                                    required
+                                    label="Requestor Email Address"
+                                    onChange={(e) => handleChange(e.currentTarget)}
+                                    value={form.email.value}
+                                    name="email"
+                                    error={form.email.error}
+                                    icon={<At size={14} />}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextInput
+                                    placeholder="Mobile number"
+                                    required
+                                    label="Requestor Mobile Number"
+                                    onChange={(e) => handleChange(e.currentTarget)}
+                                    value={form.mobile.value}
+                                    name="mobile"
+                                    error={form.mobile.error}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextInput
+                                    placeholder="UIDAI no"
+                                    required
+                                    label="Requestor UIDAI No"
+                                    onChange={(e) => handleChange(e.currentTarget)}
+                                    value={form.uidai.value}
+                                    name="uidai"
+                                    min={0}
+                                    error={form.uidai.error}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <NumberInput
+                                    placeholder="Weight"
+                                    required
+                                    label="Requestor Weight"
+                                    onChange={(val) =>
+                                        handleChange({
+                                            name: "weight",
+                                            value: val,
+                                        })
+                                    }
+                                    value={form.weight.value}
+                                    error={form.weight.error}
+                                    min={0}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <NumberInput
+                                    placeholder="Height"
+                                    required
+                                    label="Requestor Height"
+                                    onChange={(val) =>
+                                        handleChange({
+                                            name: "height",
+                                            value: val,
+                                        })
+                                    }
+                                    value={form.height.value}
+                                    error={form.height.error}
+                                    min={0}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <NumberInput
+                                    placeholder="BMI"
+                                    required
+                                    label="Requestor BMI"
+                                    onChange={(val) =>
+                                        handleChange({
+                                            name: "bmi",
+                                            value: val,
+                                        })
+                                    }
+                                    value={form.bmi.value}
+                                    error={form.bmi.error}
+                                    min={0}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <Select
+                                    placeholder="Blood group"
+                                    required
+                                    label="Requestor Blood Group"
+                                    onChange={(val) =>
+                                        handleChange({
+                                            name: "blood_group",
+                                            value: val,
+                                        })
+                                    }
+                                    value={form.blood_group.value}
+                                    error={form.blood_group.error}
+                                    data={["A+", "O+", "B+", "AB+", "A-", "O-", "B-", "AB-"]}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextInput
+                                    placeholder="Address line"
+                                    required
+                                    label="Requestor Address Line"
+                                    onChange={(e) => handleChange(e.currentTarget)}
+                                    value={form.address_line.value}
+                                    name="address_line"
+                                    error={form.address_line.error}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextInput
+                                    placeholder="State"
+                                    required
+                                    label="Requestor State"
+                                    onChange={(e) => handleChange(e.currentTarget)}
+                                    value={form.state.value}
+                                    name="state"
+                                    error={form.state.error}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextInput
+                                    placeholder="District"
+                                    required
+                                    label="Requestor District"
+                                    onChange={(e) => handleChange(e.currentTarget)}
+                                    value={form.district.value}
+                                    name="district"
+                                    error={form.district.error}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextInput
+                                    placeholder="Postal code"
+                                    required
+                                    label="Requestor Postal Code"
+                                    onChange={(e) => handleChange(e.currentTarget)}
+                                    name="postal_code"
+                                    value={form.postal_code.value}
+                                    error={form.postal_code.error}
+                                    min={0}
+                                />
+                            </Col>
+                        </Grid>
+                        <Button type="submit" mt="md" loading={loading}>
+                            Add Requestor
+                        </Button>
+                    </form>
+                </Paper>
+            </Container>
         </Nav>
     );
 };
