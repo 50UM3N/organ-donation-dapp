@@ -1,19 +1,7 @@
 import React from "react";
-import { createStyles, Header, Group, Burger, Avatar, Menu, Divider } from "@mantine/core";
-import {
-    Heart,
-    Logout,
-    Message,
-    PlayerPause,
-    Settings,
-    Star,
-    SwitchHorizontal,
-    Trash,
-    Sun,
-    MoonStars,
-} from "tabler-icons-react";
+import { createStyles, Header, Group, Burger, SegmentedControl, Center, Box } from "@mantine/core";
+import { Sun, Moon } from "tabler-icons-react";
 
-import { ActionIcon } from "@mantine/core";
 import { connect } from "react-redux";
 import { toggleTheme } from "../../store/actions";
 
@@ -77,8 +65,7 @@ interface props {
 }
 
 const TopNav: React.FC<props> = ({ setNavOpen, navOpen, setTheme, colorScheme, user }) => {
-    const { classes, theme } = useStyles();
-    const dark = colorScheme === "dark";
+    const { classes } = useStyles();
 
     return (
         <Header height={56} className={classes.header}>
@@ -89,38 +76,30 @@ const TopNav: React.FC<props> = ({ setNavOpen, navOpen, setTheme, colorScheme, u
 
                 <Group>
                     <Group ml={50} spacing={5} className={classes.links}></Group>
-                    <ActionIcon
-                        variant="outline"
-                        color={dark ? "yellow" : "blue"}
-                        onClick={() => setTheme(colorScheme === "dark" ? "light" : "dark")}
-                        title="Toggle color scheme"
-                    >
-                        {dark ? <Sun size={18} /> : <MoonStars size={18} />}
-                    </ActionIcon>
-                    <Menu control={<Avatar radius="xl" style={{ cursor: "pointer" }} />}>
-                        <Menu.Item icon={<Heart size={14} color={theme.colors.red[6]} />}>
-                            Liked posts
-                        </Menu.Item>
-                        <Menu.Item icon={<Star size={14} color={theme.colors.yellow[6]} />}>
-                            Saved posts
-                        </Menu.Item>
-                        <Menu.Item icon={<Message size={14} color={theme.colors.blue[6]} />}>
-                            Your comments
-                        </Menu.Item>
-
-                        <Menu.Label>Settings</Menu.Label>
-                        <Menu.Item icon={<Settings size={14} />}>Account settings</Menu.Item>
-                        <Menu.Item icon={<SwitchHorizontal size={14} />}>Change account</Menu.Item>
-                        <Menu.Item icon={<Logout size={14} />}>Logout</Menu.Item>
-
-                        <Divider />
-
-                        <Menu.Label>Danger zone</Menu.Label>
-                        <Menu.Item icon={<PlayerPause size={14} />}>Pause subscription</Menu.Item>
-                        <Menu.Item color="red" icon={<Trash size={14} />}>
-                            Delete account
-                        </Menu.Item>
-                    </Menu>
+                    <SegmentedControl
+                        value={colorScheme}
+                        onChange={() => setTheme(colorScheme === "dark" ? "light" : "dark")}
+                        data={[
+                            {
+                                value: "light",
+                                label: (
+                                    <Center>
+                                        <Sun size={16} />
+                                        <Box ml={10}>Light</Box>
+                                    </Center>
+                                ),
+                            },
+                            {
+                                value: "dark",
+                                label: (
+                                    <Center>
+                                        <Moon size={16} />
+                                        <Box ml={10}>Dark</Box>
+                                    </Center>
+                                ),
+                            },
+                        ]}
+                    />
                 </Group>
             </div>
         </Header>

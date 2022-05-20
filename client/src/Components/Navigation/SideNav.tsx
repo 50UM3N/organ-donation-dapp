@@ -1,5 +1,18 @@
-import { createStyles, Navbar, Group, Code, Burger, Avatar, Text, ScrollArea } from "@mantine/core";
-import { BellRinging, Receipt2, Logout, At, PhoneCall, Home, NewSection } from "tabler-icons-react";
+import {
+    createStyles,
+    Navbar,
+    Group,
+    Burger,
+    Avatar,
+    Text,
+    ScrollArea,
+    ThemeIcon,
+    Title,
+    Divider,
+    Box,
+    ActionIcon,
+} from "@mantine/core";
+import { BellRinging, Receipt2, Logout, Home, NewSection, Activity } from "tabler-icons-react";
 import { connect } from "react-redux";
 
 import { NavLink } from "react-router-dom";
@@ -120,8 +133,20 @@ const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
     return (
         <Navbar p="xs" className={classes.navbar}>
             <Navbar.Section>
-                <Group className={classes.header} mb="md" position="apart">
-                    <Code>v3.1.2</Code>
+                <Group mb="md" position="apart">
+                    <Group spacing="xs">
+                        <ThemeIcon size="xl" radius="xl" variant="light">
+                            <Activity />
+                        </ThemeIcon>
+                        <Title
+                            order={3}
+                            sx={(theme) => ({
+                                color: theme.colorScheme === "dark" ? "white" : "inherit",
+                            })}
+                        >
+                            Organ Donation
+                        </Title>
+                    </Group>
                     <Burger
                         className={classes.burger}
                         opened={!navOpen}
@@ -129,42 +154,35 @@ const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
                         size="sm"
                     />
                 </Group>
-                <Group noWrap mb="md">
-                    <Avatar size={94} radius="md" />
-                    <div>
-                        <Text size="xs" sx={{ textTransform: "uppercase" }} weight={700} color="dimmed">
-                            {user?.role}
-                        </Text>
-
-                        <Text size="lg" weight={500} className={classes.name}>
-                            {user?.name}
-                        </Text>
-
-                        <Group noWrap spacing={10} mt={3}>
-                            <At size={16} className={classes.icon} />
-                            <Text size="xs" color="dimmed">
-                                {user?.email}
-                            </Text>
-                        </Group>
-
-                        <Group noWrap spacing={10} mt={5}>
-                            <PhoneCall size={16} className={classes.icon} />
-                            <Text size="xs" color="dimmed">
-                                {user?.mobile}
-                            </Text>
-                        </Group>
-                    </div>
-                </Group>
             </Navbar.Section>
+            <Divider mb="md" />
 
             <Navbar.Section grow component={ScrollArea} mx="-xs" px="xs">
                 {links}
             </Navbar.Section>
-            <Navbar.Section className={classes.footer}>
-                <a href="/" className={classes.link} onClick={(event) => event.preventDefault()}>
-                    <Logout className={classes.linkIcon} />
-                    <span>Logout</span>
-                </a>
+            <Divider />
+            <Navbar.Section p="xs">
+                <Group>
+                    <Avatar p={0} radius="xl" />
+                    <Box sx={{ flex: 1 }}>
+                        <Text
+                            size="sm"
+                            weight={500}
+                            sx={(theme) => ({
+                                color: theme.colorScheme === "dark" ? "white" : "inherit",
+                            })}
+                        >
+                            {user?.name}
+                        </Text>
+                        <Text color="dimmed" size="xs">
+                            {user?.email}
+                        </Text>
+                    </Box>
+
+                    <ActionIcon>
+                        <Logout />
+                    </ActionIcon>
+                </Group>
             </Navbar.Section>
         </Navbar>
     );
