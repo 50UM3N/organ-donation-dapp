@@ -77,6 +77,8 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                 const allHospitals = await contract.methods.getHospitals().call();
                 console.log(allHospitals);
                 const hospitals = event.returnValues._hospitals.map((item: string) => Number(item));
+                const matchedHospitals = event.returnValues._matchedHospitals;
+                const matchedOrgans = event.returnValues._matchedOrgans;
                 const users = event.returnValues._users;
                 const map: any = {};
                 hospitals.forEach((element: string, index: number) => {
@@ -86,6 +88,12 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                     map[Number(element)].push(users[index]);
                 });
                 const idSet = new Set(hospitals);
+                console.log(allHospitals)
+                console.log(hospitals)
+                console.log(matchedHospitals)
+                console.log(matchedOrgans)
+                const filteredHospitals = hospitals.filter((item: any)=>item===user?.hospital?.id);
+                console.log(filteredHospitals)
                 if (idSet.has(user?.hospital?.id)) {
                     showNotification({
                         autoClose: false,

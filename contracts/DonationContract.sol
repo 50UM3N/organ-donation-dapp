@@ -18,6 +18,7 @@ contract DonationContract {
     struct RequestMatchOrgans {
         RequestorOrgans requestorOrgans;
         DonerOrgans[] matchOrgans;
+        Hospital[] matchHospital;
     }
 
     uint256 DONER_IDX = 0;
@@ -226,7 +227,7 @@ contract DonationContract {
         RequestMatchOrgans[]
             memory _requestMatchOrgans = new RequestMatchOrgans[](counter);
 
-        // lppoing trouth the organs that are for the particulart requestor
+        // looping through the organs that are for the particular requestor
         uint256 j = 0;
         for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
             // check that the requestor organ id is equal to the requstoer id
@@ -254,6 +255,9 @@ contract DonationContract {
                 DonerOrgans[] memory matchOrgans = new DonerOrgans[](
                     matchOrgansCount
                 );
+                Hospital[] memory matchHospitals = new Hospital[](
+                    matchOrgansCount
+                );
                 uint256 l = 0;
                 for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
                     if (doner_organ_map[k].available) {
@@ -264,10 +268,18 @@ contract DonationContract {
                                 doner_organ_map[k].blood_group,
                                 requestor_organ_map[i].blood_group
                             )
-                        ) matchOrgans[l++] = doner_organ_map[k];
+                        ) {
+                            matchOrgans[l] = doner_organ_map[k];
+                            matchHospitals[l] = hospital_map[
+                                doner_map[doner_organ_map[k].doner_map_id]
+                                    .demise_hospital_id
+                            ];
+                            l++;
+                        }
                     }
                 }
                 _requestMatchOrgans[j].matchOrgans = matchOrgans;
+                _requestMatchOrgans[j].matchHospital = matchHospitals;
                 j++;
             }
         }
@@ -416,7 +428,12 @@ contract DonationContract {
      * When the doner will die we will get the hospital id
      * Make the organ donated available
      */
-    event DonerDemise(uint256[] _hospitals, uint256[] _users);
+    event DonerDemise(
+        uint256[] _hospitals,
+        uint256[] _users,
+        Hospital[] _matchedHospitals,
+        Organ[] _matchedOrgans
+    );
 
     function donerDemise(uint256 doner_id) public {
         doner_map[doner_id].demise = true;
@@ -447,6 +464,8 @@ contract DonationContract {
 
         uint256[] memory _hospitals = new uint256[](counter);
         uint256[] memory _users = new uint256[](counter);
+        Hospital[] memory _matchedHospitals = new Hospital[](counter);
+        Organ[] memory _matchedOrgans = new Organ[](counter);
 
         uint256 j = 0;
         for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
@@ -464,12 +483,19 @@ contract DonationContract {
                             requestor_organ_map[i].requestor_map_id
                         ].register_hospital_id;
                         _users[j] = requestor_organ_map[i].requestor_map_id;
+                        _matchedHospitals[j] = hospital_map[
+                            doner_map[doner_organ_map[k].doner_map_id]
+                                .demise_hospital_id
+                        ];
+                        _matchedOrgans[j] = organ_map[
+                            doner_organ_map[k].organ_map_id
+                        ];
                         j++;
                     }
                 }
             }
         }
-        emit DonerDemise(_hospitals, _users);
+        emit DonerDemise(_hospitals, _users, _matchedHospitals, _matchedOrgans);
     }
 
     /**
