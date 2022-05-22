@@ -19,7 +19,7 @@ import {
 import { handleRPCError } from "../utils/handleError";
 import { useParams } from "react-router-dom";
 import RequestorOrganRegistration from "../Components/RequestorOrganRegistration";
-import { toString } from "../utils/utils";
+import { distanceCalculate, toString } from "../utils/utils";
 import DetailsModal from "../Components/DetailsModal";
 
 interface props {
@@ -33,20 +33,18 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
     const [error, setError] = useState<null | string>(null);
     const [data, setData] = useState<(Doner & { requestHospital: Hospital }) | null>(null);
     const [organs, setOrgans] = useState<any>(null);
-    const [requestorOrgans, setRequestorOrgans] = useState<Array<RequestorOrgans&{matchHospitals:{matchedHospitalLongitutde:string,matchedHospitalLatitude:string}[]}> | null>(null);
+    const [requestorOrgans, setRequestorOrgans] = useState<Array<
+        RequestorOrgans & {
+            matchHospitals: { matchedHospitalLongitutde: string; matchedHospitalLatitude: string }[];
+        }
+    > | null>(null);
     const [requestOrgans, setRequestOrgans] = useState<null | RequestOrganList[]>(null);
     const [detailsModal, setDetailsModal] = useState<{ active: boolean; selected: any }>({
         active: false,
         selected: null,
     });
-    const distanceCalculate = (hlongitude:any, hLatitude:any, rlongitude:any, rlatitude:any)=>{
-        const p = 0.017453292519943295;    // Math.PI / 180
-        const c = Math.cos;
-        const a = 0.5 - c((rlatitude - hLatitude) * p)/2 + c(hLatitude * p) * c(rlatitude * p) * (1 - c((rlongitude - hlongitude) * p))/2;
-        const distance = 12742 * Math.asin(Math.sqrt(a))
-        return (((Math.round(distance/2))*10)/60);
-    };
-        // console.log(requestorOrgans);
+
+    // console.log(requestorOrgans);
 
     useEffect(() => {
         (async () => {
@@ -89,7 +87,6 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                 request_hospital.longitude = toString(request_hospital.longitude);
                 request_hospital.latitude = toString(request_hospital.latitude);
 
-
                 requestors = { ...requestors._requestor };
                 requestors.fname = toString(requestors.fname);
                 requestors.lname = toString(requestors.lname);
@@ -115,27 +112,42 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                     .call({ from: accounts[0] });
                 if (requestors.length === 0) throw new Error("There is no doner available!");
                 setRequestorOrgans([
-                    ..._requestorOrgans.map((item: any) => ({
-                        id: Number(item.requestorOrgans.id),
-                        transplanted: item.requestorOrgans.transplanted,
-                        blood_group: toString(item.requestorOrgans.blood_group),
-                        requestor_map_id: Number(item.requestorOrgans.requestor_map_id),
-                        organ_map_id: Number(item.requestorOrgans.organ_map_id),
-                        organ: toString(_organs[Number(item.requestorOrgans.organ_map_id) - 1]["organ_name"]),
-                        matchOrgans: item.matchOrgans.map((item: any) => ({
-                            id: Number(item.id),
-                            available: item.available,
-                            blood_group: toString(item.blood_group),
-                            doner_map_id: Number(item.doner_map_id),
-                            organ_map_id: Number(item.organ_map_id),
-                            time: Number(item.time),
-                            organ: toString(_organs[Number(item.organ_map_id) - 1]["organ_name"]),
-                        })),
-                        matchHospitals: item.matchHospital.map((item:any)=>({
-                            matchedHospitalLongitutde: toString(item.longitude),
-                            matchedHospitalLatitude: toString(item.latitude),
-                        })),
-                    })),
+                    ..._requestorOrgans.map((item1: any) => {
+                        const mOrgans = item1.matchOrgans.filter((item2: any, index: number) => {
+                            const time: number = distanceCalculate(
+                                Number(toString(item1.matchHospital[index].longitude)),
+                                Number(toString(item1.matchHospital[index].latitude)),
+                                Number(requestors.requestHospital.longitude),
+                                Number(requestors.requestHospital.latitude)
+                            );
+                            if (Number(item2.time) >= time) return true;
+                            return false;
+                        });
+
+                        return {
+                            id: Number(item1.requestorOrgans.id),
+                            transplanted: item1.requestorOrgans.transplanted,
+                            blood_group: toString(item1.requestorOrgans.blood_group),
+                            requestor_map_id: Number(item1.requestorOrgans.requestor_map_id),
+                            organ_map_id: Number(item1.requestorOrgans.organ_map_id),
+                            organ: toString(
+                                _organs[Number(item1.requestorOrgans.organ_map_id) - 1]["organ_name"]
+                            ),
+                            matchOrgans: mOrgans.map((item2: any, index: number) => ({
+                                id: Number(item2.id),
+                                available: item2.available,
+                                blood_group: toString(item2.blood_group),
+                                doner_map_id: Number(item2.doner_map_id),
+                                organ_map_id: Number(item2.organ_map_id),
+                                time: Number(item2.time),
+                                organ: toString(_organs[Number(item2.organ_map_id) - 1]["organ_name"]),
+                            })),
+                            matchHospitals: item1.matchHospital.map((item: any) => ({
+                                matchedHospitalLongitutde: toString(item.longitude),
+                                matchedHospitalLatitude: toString(item.latitude),
+                            })),
+                        };
+                    }),
                 ]);
                 setData(requestors);
                 setLoading(false);
@@ -459,84 +471,79 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                                             ) : (
                                                 <>
                                                     {organ.matchOrgans.length > 0 &&
-                                                        organ.matchOrgans.map((organ2, index) => {
-                                                            const time:number = distanceCalculate(Number(organ.matchHospitals[index].matchedHospitalLongitutde),Number(organ.matchHospitals[index].matchedHospitalLatitude), Number(data.requestHospital.longitude),Number(data.requestHospital.latitude));
-                                                            if(organ2.time >= time)
-                                                                return(
-                                                                <Paper
-                                                                    sx={(theme) => ({
-                                                                        backgroundColor: theme.colors.red[1],
-                                                                    })}
-                                                                    withBorder
-                                                                    p="md"
-                                                                    mb="xs"
-                                                                    key={Math.random()}
-                                                                >
-                                                                    <Text mb={4}>
-                                                                        <strong>ID: </strong> {organ2.id}
-                                                                    </Text>
-                                                                    <Text mb={4}>
-                                                                        <strong>Available: </strong>
-                                                                        {organ2.available ? "Yes" : "No"}
-                                                                    </Text>
-                                                                    <Text mb={4}>
-                                                                        <strong>Blood Group: </strong>
-                                                                        {organ2.blood_group}
-                                                                    </Text>
-                                                                    <Text mb={4}>
-                                                                        <strong>Doner ID: </strong>
-                                                                        {organ2.doner_map_id}
-                                                                    </Text>
-                                                                    <Text mb={4}>
-                                                                        <strong>Organ ID: </strong>
-                                                                        {organ2.organ_map_id}
-                                                                    </Text>
-                                                                    <Text mb={4}>
-                                                                        <strong>Organ Name: </strong>{" "}
-                                                                        {organ2.organ}
-                                                                    </Text>
-                                                                    <Text mb={4}>
-                                                                        <strong>Time(Hr): </strong> {organ2.time}
-                                                                    </Text>
-                                                                    <Divider my="xs" />
-                                                                    <Group spacing="md">
-                                                                        <Button
-                                                                            color="red"
-                                                                            size="xs"
-                                                                            onClick={() =>
-                                                                                placeOrgan(
-                                                                                    organ2.doner_map_id,
-                                                                                    data?.id,
-                                                                                    organ2.id,
-                                                                                    organ.id
-                                                                                )
-                                                                            }
-                                                                        >
-                                                                            Place
-                                                                        </Button>
-                                                                        <Button
-                                                                            color="orange"
-                                                                            size="xs"
-                                                                            onClick={() =>
-                                                                                setDetailsModal({
-                                                                                    active: true,
-                                                                                    selected: {
-                                                                                        id: organ2.id,
-                                                                                        donerId:
-                                                                                            organ2.doner_map_id,
-                                                                                        organId:
-                                                                                            organ2.organ_map_id,
-                                                                                    },
-                                                                                })
-                                                                            }
-                                                                        >
-                                                                            Details
-                                                                        </Button>
-                                                                    </Group>
-                                                                </Paper>)
-                                                            return (<></>)
-                                                        }
-                                                        )}
+                                                        organ.matchOrgans.map((organ2) => (
+                                                            <Paper
+                                                                sx={(theme) => ({
+                                                                    backgroundColor: theme.colors.red[1],
+                                                                })}
+                                                                withBorder
+                                                                p="md"
+                                                                mb="xs"
+                                                                key={Math.random()}
+                                                            >
+                                                                <Text mb={4}>
+                                                                    <strong>ID: </strong> {organ2.id}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Available: </strong>
+                                                                    {organ2.available ? "Yes" : "No"}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Blood Group: </strong>
+                                                                    {organ2.blood_group}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Doner ID: </strong>
+                                                                    {organ2.doner_map_id}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Organ ID: </strong>
+                                                                    {organ2.organ_map_id}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Organ Name: </strong>{" "}
+                                                                    {organ2.organ}
+                                                                </Text>
+                                                                <Text mb={4}>
+                                                                    <strong>Time(Hr): </strong> {organ2.time}
+                                                                </Text>
+                                                                <Divider my="xs" />
+                                                                <Group spacing="md">
+                                                                    <Button
+                                                                        color="red"
+                                                                        size="xs"
+                                                                        onClick={() =>
+                                                                            placeOrgan(
+                                                                                organ2.doner_map_id,
+                                                                                data?.id,
+                                                                                organ2.id,
+                                                                                organ.id
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        Place
+                                                                    </Button>
+                                                                    <Button
+                                                                        color="orange"
+                                                                        size="xs"
+                                                                        onClick={() =>
+                                                                            setDetailsModal({
+                                                                                active: true,
+                                                                                selected: {
+                                                                                    id: organ2.id,
+                                                                                    donerId:
+                                                                                        organ2.doner_map_id,
+                                                                                    organId:
+                                                                                        organ2.organ_map_id,
+                                                                                },
+                                                                            })
+                                                                        }
+                                                                    >
+                                                                        Details
+                                                                    </Button>
+                                                                </Group>
+                                                            </Paper>
+                                                        ))}
                                                     {organ.matchOrgans.length === 0 && (
                                                         <Paper
                                                             color="red"

@@ -16,6 +16,7 @@ import Donors from "./Routes/Donors";
 import Doner from "./Routes/Doner";
 import Requestors from "./Routes/Requestors";
 import Requestor from "./Routes/Requestor";
+import { distanceCalculate, toString } from "./utils/utils";
 
 interface props {
     colorScheme: InitialThemeState;
@@ -77,7 +78,10 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                 const allHospitals = await contract.methods.getHospitals().call();
                 console.log(allHospitals);
                 const hospitals = event.returnValues._hospitals.map((item: string) => Number(item));
-                const matchedHospitals = event.returnValues._matchedHospitals;
+                const matchedHospitals = event.returnValues._matchedHospitals.map((item: any) => ({
+                    longitude: Number(toString(item.longitude)),
+                    latitude: Number(toString(item.latitude)),
+                }));
                 const matchedOrgans = event.returnValues._matchedOrgans;
                 const users = event.returnValues._users;
                 const map: any = {};
@@ -88,31 +92,48 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                     map[Number(element)].push(users[index]);
                 });
                 const idSet = new Set(hospitals);
-                console.log(allHospitals)
-                console.log(hospitals)
-                console.log(matchedHospitals)
-                console.log(matchedOrgans)
-                const filteredHospitals = hospitals.filter((item: any)=>item===user?.hospital?.id);
-                console.log(filteredHospitals)
+                console.log(allHospitals);
+                console.log(hospitals);
+                console.log(matchedHospitals);
+                console.log(matchedOrgans);
+                const filteredHospitals = hospitals.filter((item: any) => item === user?.hospital?.id);
+                console.log(filteredHospitals);
                 if (idSet.has(user?.hospital?.id)) {
-                    showNotification({
-                        autoClose: false,
-                        title: "New Organ Found for the user",
-                        message: `There are the list of the user id that match organ are found. Please do the required steps for each users,The id are 
-                            ${map[user?.hospital?.id || 0]}
-                        `,
+                    const d: any[] = [];
+                    hospitals.forEach((item: number, index: number) => {
+                        if (user?.hospital?.id === item) {
+                            const time = distanceCalculate(
+                                matchedHospitals[index].longitude,
+                                matchedHospitals[index].latitude,
+                                Number(user?.hospital?.longitude),
+                                Number(user?.hospital?.latitude)
+                            );
+                            if (Number(matchedOrgans.valid_time) >= time) {
+                                d.push(users[index]);
+                            }
+                        }
                     });
-                    const notification = new Notification("There is a Organ available for your requestor.");
-                    notification.onclick = (event) => {
-                        event.preventDefault();
-                        window.open(window.location.host, "_blank");
-                    };
+                    if (d.length > 0) {
+                        showNotification({
+                            autoClose: false,
+                            title: "New Organ Found for the user",
+                            message: `There are the list of the user id that match organ are found. Please do the required steps for each users,The id are 
+                            ${d}
+                        `,
+                        });
+                        const notification = new Notification(
+                            "There is a Organ available for your requestor."
+                        );
+                        notification.onclick = (event) => {
+                            event.preventDefault();
+                            window.open(window.location.host, "_blank");
+                        };
+                    }
                 }
             });
             DonerDemise.on("error", (err: any) => console.error("error " + err));
             DonerDemise.on("connected", (str: any) => console.debug("Event connected (DonerDemise): " + str));
         }
-        console.dir(UserVerified);
         return () => {
             if (UserVerified) {
                 UserVerified.unsubscribe((a: any) => {
