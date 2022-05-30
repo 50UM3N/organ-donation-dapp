@@ -556,7 +556,7 @@ contract DonationContract {
         uint256 _doner_map_id,
         uint256 _requestor_map_id
     ) public {
-        require(doner_organ_map[_doner_organ_map_id].available, "Something");
+        require(doner_organ_map[_doner_organ_map_id].available);
         ORGAN_REQUEST_IDX++;
         organ_request_map[ORGAN_REQUEST_IDX].id = ORGAN_REQUEST_IDX;
         organ_request_map[ORGAN_REQUEST_IDX]
