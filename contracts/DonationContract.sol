@@ -3,24 +3,48 @@ pragma solidity >=0.4.22 <0.9.0;
 
 contract DonationContract {
     address admin;
+
+    // Restricted for only admin
     modifier restricted() {
-        require(msg.sender == admin, "This ");
+        require(msg.sender == admin);
         _;
     }
+
+    // This modifier check that the the mapping has any key value or not
     modifier checkAvailable(uint256 _IDX) {
-        require(_IDX > 0, "There");
+        require(_IDX > 0);
         _;
     }
 
-    // some return struct
+    // Contains all the organs with it's name and time
+    uint256 ORGAN_IDX = 0;
+    struct Organ {
+        uint256 id; // id
+        bytes32 organ_name; // Organ name i.e Kidney, Liver
+        uint256 valid_time; // Organ Available time in minuts
+    }
 
-    // requestorOrganMatch
+    // This structure is for the requestor helps to display the organ that maps to the corresponding
     struct RequestMatchOrgans {
         RequestorOrgans requestorOrgans;
         DonerOrgans[] matchOrgans;
         Hospital[] matchHospital;
     }
 
+    // contains all the organ that place by a doner and match by a requestor i.e organ placed table
+    // This map helps that a requesto conform a request for a matched organ
+    uint256 ORGAN_REQUEST_IDX = 0;
+    struct OrganRequest {
+        uint256 id; // id
+        uint256 requestor_organ_map_id; // The organs id that a request request
+        uint256 doner_organ_map_id; // The organ id that a doner donate
+        uint256 doner_map_id; // The doner id
+        uint256 requestor_map_id; // The requestor id
+    }
+
+    // Actual doner map/ table
+    // All the table has a idx that helps as a id of each data
+    // the idx is a incremental variable never decrement or duplicate
     uint256 DONER_IDX = 0;
     struct Doner {
         uint256 id;
@@ -45,22 +69,18 @@ contract DonationContract {
         uint256 demise_hospital_id;
     }
 
-    uint256 ORGAN_IDX = 0;
-    struct Organ {
+    // The organs that a doner donate
+    uint256 DONER_ORGANS_IDX = 0;
+    struct DonerOrgans {
         uint256 id;
-        bytes32 organ_name;
-        uint256 valid_time; // time in minuts
-    }
-
-    uint256 ORGAN_REQUEST_IDX = 0;
-    struct OrganRequest {
-        uint256 id;
-        uint256 requestor_organ_map_id;
-        uint256 doner_organ_map_id;
         uint256 doner_map_id;
-        uint256 requestor_map_id;
+        uint256 organ_map_id;
+        bytes32 blood_group;
+        uint256 time;
+        bool available;
     }
 
+    // Requestor structure
     uint256 REQUESTOR_IDX = 0;
     struct Requestor {
         uint256 id;
@@ -83,6 +103,19 @@ contract DonationContract {
         uint256 register_hospital_id;
     }
 
+    // the organs that a requestor request
+    uint256 REQUESTOR_ORGANS_IDX = 0;
+    struct RequestorOrgans {
+        uint256 id;
+        uint256 requestor_map_id;
+        uint256 organ_map_id;
+        bytes32 blood_group;
+        bool transplanted;
+    }
+
+    // This is the user structure that contains all the user and also admin with it's role
+    // if the user is admin that there is no connection for hospital otherwise the user id
+    // will store in the hospital map
     address[] USER_IDX_ARR; // store the inserted address
     struct User {
         address id;
@@ -94,24 +127,7 @@ contract DonationContract {
         uint256 hospital_id;
     }
 
-    uint256 DONER_ORGANS_IDX = 0;
-    struct DonerOrgans {
-        uint256 id;
-        uint256 doner_map_id;
-        uint256 organ_map_id;
-        bytes32 blood_group;
-        uint256 time;
-        bool available;
-    }
-
-    uint256 REQUESTOR_ORGANS_IDX = 0;
-    struct RequestorOrgans {
-        uint256 id;
-        uint256 requestor_map_id;
-        uint256 organ_map_id;
-        bytes32 blood_group;
-        bool transplanted;
-    }
+    // The hospital containing all the hospital data
     uint256 HOSPITAL_IDX = 0;
     struct Hospital {
         uint256 id;
@@ -126,19 +142,29 @@ contract DonationContract {
         bytes32 telephone; // 32 charecter
         bytes32 mobile; // 32 charecter
         bytes32 emergency_mobile; // 32 charecter
-        bytes32 longitude;
-        bytes32 latitude;
+        bytes32 longitude; // 32 charecter later converted into flote
+        bytes32 latitude; // 32 charecter later converted into flote
     }
 
-    mapping(address => User) user_map;
+    mapping(address => User) user_map; // actual user map
     mapping(uint256 => Doner) doner_map; // For mapping the doner
-    mapping(uint256 => Organ) organ_map; // For mapping the organs donated by the doner
-    mapping(uint256 => Requestor) requestor_map; //For mapping the requestor
-    mapping(uint256 => DonerOrgans) doner_organ_map; //
-    mapping(uint256 => RequestorOrgans) requestor_organ_map; //
-    mapping(uint256 => Hospital) hospital_map; //
-    mapping(uint256 => OrganRequest) organ_request_map; //
+    mapping(uint256 => Organ) organ_map; // All organs that are donatable
+    mapping(uint256 => Requestor) requestor_map; // For mapping the requestor
+    mapping(uint256 => DonerOrgans) doner_organ_map; // All the organs that a doner donetes
+    mapping(uint256 => RequestorOrgans) requestor_organ_map; // All the organs that a requestor requests
+    mapping(uint256 => Hospital) hospital_map; // All the hospitals
+    mapping(uint256 => OrganRequest) organ_request_map; // all the requested placed organs
 
+    /**
+     |------------------------------------------------------------------------------------------------
+     | This is the constructor that run only when the a user deploy the contract this constructor 
+     | take sone parameters that are,  
+     | @param name name of the admin
+     | @param email email of the admin
+     | @param mobile mobile number of the admin 
+     | All the paremetes are bytes32 if pass string not work
+     |------------------------------------------------------------------------------------------------
+    */
     constructor(
         bytes32 name,
         bytes32 email,
@@ -146,27 +172,28 @@ contract DonationContract {
     ) {
         admin = msg.sender;
         User memory user = User(admin, name, email, mobile, "admin", true, 0);
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Lung", 4); //Lung
+        // creating all the pre defined organs and its lifespan
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Lung", 4);
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Heart", 4); //Heart
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Heart", 4);
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Liver", 24); // Liver
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Liver", 24);
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Pancreas", 24); // Pancreas
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Pancreas", 24);
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Kidney", 72); // Kidney
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Kidney", 72);
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Cornea", 14 * 24); // Cornea
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Cornea", 14 * 24);
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Bones", 5 * 365 * 24); // Bones
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Bones", 5 * 365 * 24);
         ORGAN_IDX++;
-        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Skin", 5 * 365 * 24); // Skin
+        organ_map[ORGAN_IDX + 1] = Organ(ORGAN_IDX + 1, "Skin", 5 * 365 * 24);
         ORGAN_IDX++;
         organ_map[ORGAN_IDX + 1] = Organ(
             ORGAN_IDX + 1,
             "Heart Valves",
             10 * 365 * 24
-        ); // Heart Valves
+        );
         ORGAN_IDX++;
         USER_IDX_ARR.push(admin);
         user.id = admin;
@@ -180,6 +207,20 @@ contract DonationContract {
     event Register(DonerOrgans _donerOrgans);
     event Register(RequestorOrgans _requestorOrgans);
     event UserVerified(address _address);
+    event DonerDemise(
+        uint256[] _hospitals,
+        uint256[] _users,
+        Hospital[] _matchedHospitals,
+        Organ[] _matchedOrgans
+    );
+    event RequestForOrgan(OrganRequest _organ_request);
+
+    /**
+     |------------------------------------------------------------------------------------------------
+     | Helps to get all the hospitals and returns an array
+     | @return _hospital array of hospitals
+     |------------------------------------------------------------------------------------------------
+    */
 
     function getHospitals() public view returns (Hospital[] memory _hospital) {
         _hospital = new Hospital[](HOSPITAL_IDX);
@@ -190,7 +231,10 @@ contract DonationContract {
     }
 
     /**
-     * returns the list of organs from which organs are to be selected
+     |------------------------------------------------------------------------------------------------
+     | Helps to get all the prelisted organs and requrns an array
+     | @return organs array of prelisted organs
+     |------------------------------------------------------------------------------------------------
      */
     function getOrgans()
         public
@@ -205,7 +249,13 @@ contract DonationContract {
     }
 
     /**
-     * This function returns the matched organs which the requestor requested
+     |------------------------------------------------------------------------------------------------
+     | Helps to find the organs that match to a requestor with the doner with all the conditions
+     | for the particular doner. This function takes two parameters
+     | @param _id The id of the requestor
+     | @param _add The address 
+     | @return _requestMatchOrgans all the match organs array 
+     |------------------------------------------------------------------------------------------------
      */
     function getRequestorOrgans(uint256 _id, address _add)
         public
@@ -241,7 +291,9 @@ contract DonationContract {
                 // find the matching organs that available for the requestor organ
                 uint256 matchOrgansCount = 0; // count
                 for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
+                    // checking the organ is available
                     if (doner_organ_map[k].available) {
+                        // mathc for the compatibilaty
                         if (
                             (doner_organ_map[k].organ_map_id ==
                                 requestor_organ_map[i].organ_map_id) &&
@@ -258,9 +310,12 @@ contract DonationContract {
                 Hospital[] memory matchHospitals = new Hospital[](
                     matchOrgansCount
                 );
+                // checking the orgns matched or not
                 uint256 l = 0;
                 for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
+                    // checking the organ is available
                     if (doner_organ_map[k].available) {
+                        // mathc for the compatibilaty
                         if (
                             (doner_organ_map[k].organ_map_id ==
                                 requestor_organ_map[i].organ_map_id) &&
@@ -288,7 +343,12 @@ contract DonationContract {
     }
 
     /**
-     * This function register the organ requested by the requestor
+     |------------------------------------------------------------------------------------------------
+     | Helps to register a organ that a requestor want
+     | @param _requestor_id requestor map id
+     | @param _organ_id organ id
+     | This function emit a event and this event catch by the browser
+     |------------------------------------------------------------------------------------------------
      */
     function registerOrganForRequestor(uint256 _requestor_id, uint256 _organ_id)
         public
@@ -305,7 +365,11 @@ contract DonationContract {
     }
 
     /**
-     * returns an array of structure containing the Organs pledged by Doner
+     |------------------------------------------------------------------------------------------------
+     |  Helps to get the doner organs for a particular doner
+     |  @param _id doner id
+     |  @return _donerorgans array of doner organs
+     |------------------------------------------------------------------------------------------------
      */
     function getDonerOrgans(uint256 _id)
         public
@@ -326,7 +390,13 @@ contract DonationContract {
     }
 
     /**
-     * This function register the organs pledged by Doners
+     |------------------------------------------------------------------------------------------------
+     | Helps to register a organ for the requestor
+     | @param _doner_id doner map id
+     | @param _organ_id organ map id
+     | @param _time time in minute
+     | Fires an event 
+     |------------------------------------------------------------------------------------------------
      */
     function registerOrganForDoner(
         uint256 _doner_id,
@@ -347,9 +417,13 @@ contract DonationContract {
     }
 
     /**
-     * This function register the user
-     * add the user in the map
-     * also add the address in the USER_IDX_ARR
+     |------------------------------------------------------------------------------------------------
+     | Helps to register an user with its hsopital address, it also store the user and the hospital 
+     | in the map and store the user address in the hospital to reference the user
+     | @param _user user structure
+     | @param _hospital hospital structure
+     | Fires an event
+     |------------------------------------------------------------------------------------------------
      */
     function registerUser(User memory _user, Hospital memory _hospital) public {
         address user_address = msg.sender;
@@ -366,8 +440,11 @@ contract DonationContract {
     }
 
     /**
-     * This function call will verify the user
-     * user is identified by the address
+     |------------------------------------------------------------------------------------------------
+     | Helps to approved the user i.d set the verified flag to true for a user/hospital
+     | @param _address addredd of the user
+     | Fires an event helps to notify the verified user
+     |------------------------------------------------------------------------------------------------
      */
     function approveUser(address _address) public restricted {
         user_map[_address].verified = true;
@@ -375,7 +452,11 @@ contract DonationContract {
     }
 
     /**
-     * This function registers doners and adds it to the doner map
+     |------------------------------------------------------------------------------------------------
+     | Helps to register an doner 
+     | @param _doner doner structure
+     | Fires an event that help to return the doner id
+     |------------------------------------------------------------------------------------------------
      */
     function registerDoner(Doner memory _doner) public {
         _doner.id = ++DONER_IDX;
@@ -387,7 +468,10 @@ contract DonationContract {
     }
 
     /**
-     * returns an array of structure containing all doner info
+     |------------------------------------------------------------------------------------------------
+     | Helps to ge all the doner available
+     | @return doner array of doners
+     |------------------------------------------------------------------------------------------------
      */
     function getDoner()
         public
@@ -402,7 +486,11 @@ contract DonationContract {
     }
 
     /**
-     * returns doner info equal to the id
+     |------------------------------------------------------------------------------------------------
+     | Helps to get a doner information by it's id
+     | @param id doner id
+     | return _doner, register_hospital, demise_hospital
+     |------------------------------------------------------------------------------------------------
      */
     function getDonerById(uint256 id)
         public
@@ -425,25 +513,25 @@ contract DonationContract {
     }
 
     /**
-     * When the doner will die we will get the hospital id
-     * Make the organ donated available
+     |------------------------------------------------------------------------------------------------
+     | When a doner demise then this helps to register it's demise hospital and add the avilable to 
+     | for all organ.
+     | @param doner_id doner map id
+     | Fires an event that notify the matched hospital that organs is availeble
+     |------------------------------------------------------------------------------------------------
      */
-    event DonerDemise(
-        uint256[] _hospitals,
-        uint256[] _users,
-        Hospital[] _matchedHospitals,
-        Organ[] _matchedOrgans
-    );
-
     function donerDemise(uint256 doner_id) public {
+        // set that the doner is demise
         doner_map[doner_id].demise = true;
         doner_map[doner_id].demise_hospital_id = user_map[msg.sender]
             .hospital_id;
+        // set all organs availavle to true
         for (uint256 i = 1; i <= DONER_ORGANS_IDX; i++) {
             if (doner_organ_map[i].doner_map_id == doner_id) {
                 doner_organ_map[i].available = true;
             }
         }
+        // getting the count of matched hospitals
         uint256 counter = 0;
         for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
             for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
@@ -461,12 +549,16 @@ contract DonationContract {
                 }
             }
         }
-
+        // for matched hospitals id
         uint256[] memory _hospitals = new uint256[](counter);
+        // matched user id
         uint256[] memory _users = new uint256[](counter);
+        // matched hospital details
         Hospital[] memory _matchedHospitals = new Hospital[](counter);
+        // matched organ details
         Organ[] memory _matchedOrgans = new Organ[](counter);
 
+        // getting the match details
         uint256 j = 0;
         for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
             for (uint256 k = 1; k <= DONER_ORGANS_IDX; k++) {
@@ -499,7 +591,11 @@ contract DonationContract {
     }
 
     /**
-     * This function is for registering the Requestor
+     |------------------------------------------------------------------------------------------------
+     | Helps to register a requestor
+     | @param _requestor requestor structure
+     | Fires an event
+     |------------------------------------------------------------------------------------------------
      */
     function registerRequestor(Requestor memory _requestor) public {
         _requestor.id = ++REQUESTOR_IDX;
@@ -509,7 +605,11 @@ contract DonationContract {
     }
 
     /**
-     * returns an array of structure containing all requestor info
+     |------------------------------------------------------------------------------------------------
+     |  Helps to get the requestor 
+     |  @param _id requestor id
+     |  @return requestor array of requestor 
+     |------------------------------------------------------------------------------------------------
      */
     function getRequestor(address _id)
         public
@@ -517,13 +617,14 @@ contract DonationContract {
         checkAvailable(REQUESTOR_IDX)
         returns (Requestor[] memory)
     {
+        // find the count that match the _id
         uint256 counter = 0;
         for (uint256 i = 1; i <= REQUESTOR_IDX; i++) {
             Requestor memory _requestor = requestor_map[i];
             if (_requestor.register_hospital_id == user_map[_id].hospital_id)
                 counter++;
         }
-
+        // getting the data
         Requestor[] memory requestor = new Requestor[](counter);
         uint256 j = 0;
         for (uint256 i = 1; i <= REQUESTOR_IDX; i++) {
@@ -535,7 +636,11 @@ contract DonationContract {
     }
 
     /**
-     * returns requestor info equal to the specified id
+     |------------------------------------------------------------------------------------------------
+     | Helps to get a requestor information by it's id
+     | @param id requestor id
+     | return _requestor, register_hospital
+     |------------------------------------------------------------------------------------------------
      */
     function getRequestorById(uint256 id)
         public
@@ -548,7 +653,17 @@ contract DonationContract {
         return (_requestor, hospital_map[_requestor.register_hospital_id]);
     }
 
-    event RequestForOrgan(OrganRequest _organ_request);
+    /**
+     |------------------------------------------------------------------------------------------------
+     | Helps to place the organ i.e place order the organ that availavle and matched the doner and the
+     | requestor, this function take four parameters.
+     | @param _requestor_organ_map_id requestor organ id
+     | @param _doner_organ_map_id doner organ id
+     | @param _doner_map_id doner id
+     | @param _requestor_map_id requesor id
+     | Fires an event that notify the doner hospital that a organ is placed
+     |------------------------------------------------------------------------------------------------
+     */
 
     function requestForOrgan(
         uint256 _requestor_organ_map_id,
@@ -572,7 +687,12 @@ contract DonationContract {
         emit RequestForOrgan(organ_request_map[ORGAN_REQUEST_IDX]);
     }
 
-    //checkAvailable(ORGAN_REQUEST_IDX)
+    /**
+     |------------------------------------------------------------------------------------------------
+     | Helps to get the all request that are placed
+     | @return _organ_request all the requested organ
+     |------------------------------------------------------------------------------------------------
+     */
 
     function getOrganRequestor()
         public
@@ -588,12 +708,22 @@ contract DonationContract {
         return _organ_request;
     }
 
+    /**
+     |------------------------------------------------------------------------------------------------
+     | Helps to change the status transplanted
+     | @param _requestor_organ_map_id all the requested organ
+     |------------------------------------------------------------------------------------------------
+     */
+
     function transplanted(uint256 _requestor_organ_map_id) public {
         requestor_organ_map[_requestor_organ_map_id].transplanted = true;
     }
 
     /**
-     * This function return the current login user by its address
+     |------------------------------------------------------------------------------------------------
+     | Helps to get the user with the help of caller address
+     | return user, hospital
+     |------------------------------------------------------------------------------------------------
      */
     function getUser()
         public
@@ -606,8 +736,10 @@ contract DonationContract {
     }
 
     /**
-     * This function returns the unverified user
-     * user is agency or hospial
+     |------------------------------------------------------------------------------------------------
+     | Helps to get all the unverified user with it's hospital
+     | return user, hospital array
+     |------------------------------------------------------------------------------------------------
      */
     function getUnverifiedUser()
         public
@@ -615,13 +747,13 @@ contract DonationContract {
         restricted
         returns (User[] memory users, Hospital[] memory hospitals)
     {
+        // find the count for the users
         uint256 counter = 0;
-
         for (uint256 i = 0; i < USER_IDX_ARR.length; i++) {
             User memory item = user_map[USER_IDX_ARR[i]];
             if (!item.verified) counter++;
         }
-
+        // get the user
         users = new User[](counter);
         hospitals = new Hospital[](counter);
         uint256 j = 0;
@@ -635,6 +767,15 @@ contract DonationContract {
         }
         return (users, hospitals);
     }
+
+    /**
+     |------------------------------------------------------------------------------------------------
+     | Helps to compair two bye
+     | @param a first byte
+     | @param b second byte
+     | @return boolean
+     |------------------------------------------------------------------------------------------------
+     */
 
     function memcmp(bytes32 a, bytes32 b) internal pure returns (bool) {
         return (a.length == b.length) && (a == b);
