@@ -17,6 +17,7 @@ import Doner from "./Routes/Doner";
 import Requestors from "./Routes/Requestors";
 import Requestor from "./Routes/Requestor";
 import { distanceCalculate, toString } from "./utils/utils";
+import Report from "./Routes/Report";
 
 interface props {
     colorScheme: InitialThemeState;
@@ -161,6 +162,7 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                             <Route path="/requestors" element={<Requestors />} />
                             <Route path="/requestor/:requestorId" element={<Requestor />} />
                             <Route path="/register-doner" element={<RegisterDoner />} />
+                            <Route path="/report" element={<Report />} />
                         </Route>
                         <Route path="/register" element={<Register />} />
                         <Route path="/login" element={<Login />} />

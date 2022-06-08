@@ -98,12 +98,13 @@ const useStyles = createStyles((theme, _params, getRef) => {
 });
 
 const data = [
-    { link: "/", label: "Home", icon: Home },
-    { link: "/new-request", label: "Request", icon: NewSection },
-    { link: "/register-doner", label: "Register Doner", icon: BellRinging },
-    { link: "/donors", label: "Doners", icon: BellRinging },
-    { link: "/register-requestor", label: "Register Requestor", icon: Receipt2 },
-    { link: "/requestors", label: "Requestor", icon: Receipt2 },
+    { link: "/", label: "Home", icon: Home, access: ["admin", "user"] },
+    { link: "/new-request", label: "Request", icon: NewSection, access: ["admin", "user"] },
+    { link: "/register-doner", label: "Register Doner", icon: BellRinging, access: ["user"] },
+    { link: "/donors", label: "Doners", icon: BellRinging, access: ["user"] },
+    { link: "/register-requestor", label: "Register Requestor", icon: Receipt2, access: ["user"] },
+    { link: "/requestors", label: "Requestor", icon: Receipt2, access: ["user"] },
+    { link: "/report", label: "Report", icon: Receipt2, access: ["admin"] },
 ];
 
 interface props {
@@ -115,20 +116,22 @@ interface props {
 const SideNav: React.FC<props> = ({ setNavOpen, navOpen, user }) => {
     const { classes, cx } = useStyles();
 
-    const links = data.map((item) => (
-        <NavLink
-            className={(navData) =>
-                cx(classes.link, {
-                    [classes.linkActive]: navData.isActive,
-                })
-            }
-            to={item.link}
-            key={item.label}
-        >
-            <item.icon className={classes.linkIcon} />
-            <span>{item.label}</span>
-        </NavLink>
-    ));
+    const links = data
+        .filter((item) => item.access.includes(user?.role || ""))
+        .map((item) => (
+            <NavLink
+                className={(navData) =>
+                    cx(classes.link, {
+                        [classes.linkActive]: navData.isActive,
+                    })
+                }
+                to={item.link}
+                key={item.label}
+            >
+                <item.icon className={classes.linkIcon} />
+                <span>{item.label}</span>
+            </NavLink>
+        ));
 
     return (
         <Navbar p="xs" className={classes.navbar}>

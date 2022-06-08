@@ -147,13 +147,13 @@ contract DonationContract {
     }
 
     mapping(address => User) user_map; // actual user map
-    mapping(uint256 => Doner) doner_map; // For mapping the doner
-    mapping(uint256 => Organ) organ_map; // All organs that are donatable
-    mapping(uint256 => Requestor) requestor_map; // For mapping the requestor
-    mapping(uint256 => DonerOrgans) doner_organ_map; // All the organs that a doner donetes
-    mapping(uint256 => RequestorOrgans) requestor_organ_map; // All the organs that a requestor requests
-    mapping(uint256 => Hospital) hospital_map; // All the hospitals
-    mapping(uint256 => OrganRequest) organ_request_map; // all the requested placed organs
+    mapping(uint256 => Doner) doner_map; // For mapping the doner function : getDoner
+    mapping(uint256 => Organ) organ_map; // All organs that are donatable function : getDoner
+    mapping(uint256 => Requestor) requestor_map; // For mapping the requestor function : getRequestor
+    mapping(uint256 => DonerOrgans) doner_organ_map; // All the organs that a doner donetes function : getDonerOrgans
+    mapping(uint256 => RequestorOrgans) requestor_organ_map; // All the organs that a requestor requests function : getRequestorOrgans
+    mapping(uint256 => Hospital) hospital_map; // All the hospitals function : getHospitals
+    mapping(uint256 => OrganRequest) organ_request_map; // all the requested placed organs function : getOrganRequestor
 
     /**
      |------------------------------------------------------------------------------------------------
@@ -344,6 +344,27 @@ contract DonationContract {
 
     /**
      |------------------------------------------------------------------------------------------------
+     | Helps to get all the requestor organs for report
+     | @return _requestororgans all the match organs array 
+     |------------------------------------------------------------------------------------------------
+     */
+    function getRequestorOrgans()
+        public
+        view
+        returns (RequestorOrgans[] memory)
+    {
+        uint256 j = 0;
+        RequestorOrgans[] memory _requestororgans = new RequestorOrgans[](
+            REQUESTOR_ORGANS_IDX
+        );
+        for (uint256 i = 1; i <= REQUESTOR_ORGANS_IDX; i++) {
+            _requestororgans[j++] = requestor_organ_map[i];
+        }
+        return _requestororgans;
+    }
+
+    /**
+     |------------------------------------------------------------------------------------------------
      | Helps to register a organ that a requestor want
      | @param _requestor_id requestor map id
      | @param _organ_id organ id
@@ -385,6 +406,21 @@ contract DonationContract {
         for (uint256 i = 1; i <= DONER_ORGANS_IDX; i++) {
             if (doner_organ_map[i].doner_map_id == _id)
                 _donerorgans[j++] = doner_organ_map[i];
+        }
+        return _donerorgans;
+    }
+
+    /**
+     |------------------------------------------------------------------------------------------------
+     |  Helps to get all the doner organs for report
+     |  @return _donerorgans array of doner organs
+     |------------------------------------------------------------------------------------------------
+     */
+    function getDonerOrgans() public view returns (DonerOrgans[] memory) {
+        uint256 j = 0;
+        DonerOrgans[] memory _donerorgans = new DonerOrgans[](DONER_ORGANS_IDX);
+        for (uint256 i = 1; i <= DONER_ORGANS_IDX; i++) {
+            _donerorgans[j++] = doner_organ_map[i];
         }
         return _donerorgans;
     }
@@ -619,18 +655,30 @@ contract DonationContract {
     {
         // find the count that match the _id
         uint256 counter = 0;
-        for (uint256 i = 1; i <= REQUESTOR_IDX; i++) {
-            Requestor memory _requestor = requestor_map[i];
-            if (_requestor.register_hospital_id == user_map[_id].hospital_id)
-                counter++;
+        if (_id == admin) {
+            counter = REQUESTOR_IDX;
+        } else {
+            for (uint256 i = 1; i <= REQUESTOR_IDX; i++) {
+                Requestor memory _requestor = requestor_map[i];
+                if (
+                    _requestor.register_hospital_id == user_map[_id].hospital_id
+                ) counter++;
+            }
         }
         // getting the data
         Requestor[] memory requestor = new Requestor[](counter);
         uint256 j = 0;
-        for (uint256 i = 1; i <= REQUESTOR_IDX; i++) {
-            Requestor memory _requestor = requestor_map[i];
-            if (_requestor.register_hospital_id == user_map[_id].hospital_id)
-                requestor[j++] = _requestor;
+        if (_id == admin) {
+            for (uint256 i = 1; i <= DONER_IDX; i++) {
+                requestor[j++] = requestor_map[i];
+            }
+        } else {
+            for (uint256 i = 1; i <= REQUESTOR_IDX; i++) {
+                Requestor memory _requestor = requestor_map[i];
+                if (
+                    _requestor.register_hospital_id == user_map[_id].hospital_id
+                ) requestor[j++] = _requestor;
+            }
         }
         return requestor;
     }
