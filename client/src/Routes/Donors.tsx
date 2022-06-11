@@ -34,7 +34,7 @@ const Donors: React.FC<props> = ({ contract }) => {
             });
             try {
                 const donors = await contract?.methods.getDoner().call({ from: accounts[0] });
-                if (donors.length === 0) throw new Error("There is no doner available!");
+                if (donors.length === 0) throw new Error("There is no donor available!");
                 setData(donors);
                 setLoading(false);
             } catch (err: any) {
@@ -83,7 +83,7 @@ const Donors: React.FC<props> = ({ contract }) => {
                                                 <Button
                                                     size="xs"
                                                     leftIcon={<InfoCircle size={18} />}
-                                                    onClick={() => navigate("/doner/" + item["id"])}
+                                                    onClick={() => navigate("/donor/" + item["id"])}
                                                 >
                                                     Details
                                                 </Button>

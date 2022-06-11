@@ -133,7 +133,7 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                 }
             });
             DonerDemise.on("error", (err: any) => console.error("error " + err));
-            DonerDemise.on("connected", (str: any) => console.debug("Event connected (DonerDemise): " + str));
+            DonerDemise.on("connected", (str: any) => console.debug("Event connected (DonorDemise): " + str));
         }
         return () => {
             if (UserVerified) {
@@ -143,7 +143,7 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
             }
             if (DonerDemise) {
                 DonerDemise.unsubscribe((a: any) => {
-                    console.debug("Unsubscribe (DonerDemise) : " + a);
+                    console.debug("Unsubscribe (DonorDemise) : " + a);
                 });
             }
         };
@@ -158,10 +158,10 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                             <Route path="/register-requestor" element={<RegisterRequestor />} />
                             <Route path="/new-request" element={<JoinRequest />} />
                             <Route path="/donors" element={<Donors />} />
-                            <Route path="/doner/:donerId" element={<Doner />} />
+                            <Route path="/donor/:donorId" element={<Doner />} />
                             <Route path="/requestors" element={<Requestors />} />
                             <Route path="/requestor/:requestorId" element={<Requestor />} />
-                            <Route path="/register-doner" element={<RegisterDoner />} />
+                            <Route path="/register-donor" element={<RegisterDoner />} />
                             <Route path="/report" element={<Report />} />
                         </Route>
                         <Route path="/register" element={<Register />} />

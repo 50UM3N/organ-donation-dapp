@@ -99,9 +99,9 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
 const data = [
     { link: "/", label: "Home", icon: Home, access: ["admin", "user"] },
-    { link: "/new-request", label: "Request", icon: NewSection, access: ["admin", "user"] },
-    { link: "/register-doner", label: "Register Doner", icon: BellRinging, access: ["user"] },
-    { link: "/donors", label: "Doners", icon: BellRinging, access: ["user"] },
+    { link: "/new-request", label: "Request", icon: NewSection, access: ["admin"] },
+    { link: "/register-donor", label: "Register Donor", icon: BellRinging, access: ["user"] },
+    { link: "/donors", label: "Donors", icon: BellRinging, access: ["user"] },
     { link: "/register-requestor", label: "Register Requestor", icon: Receipt2, access: ["user"] },
     { link: "/requestors", label: "Requestor", icon: Receipt2, access: ["user"] },
     { link: "/report", label: "Report", icon: Receipt2, access: ["admin"] },

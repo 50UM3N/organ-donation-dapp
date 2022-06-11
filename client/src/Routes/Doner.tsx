@@ -28,7 +28,7 @@ interface props {
 }
 
 const Doner: React.FC<props> = ({ contract }) => {
-    const { donerId } = useParams();
+    const { donorId } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null | string>(null);
     const [data, setData] = useState<
@@ -42,7 +42,7 @@ const Doner: React.FC<props> = ({ contract }) => {
                 method: "eth_accounts",
             });
             try {
-                let doner = await contract?.methods.getDonerById(donerId).call({ from: accounts[0] });
+                let doner = await contract?.methods.getDonerById(donorId).call({ from: accounts[0] });
                 const _organs = await contract?.methods.getOrgans().call({ from: accounts[0] });
 
                 const _donatedOrgans = await contract?.methods
@@ -87,10 +87,10 @@ const Doner: React.FC<props> = ({ contract }) => {
                 demise_hospital.longitude = toString(demise_hospital.longitude);
                 demise_hospital.latitude = toString(demise_hospital.latitude);
 
-
                 doner = { ...doner._doner };
                 doner.fname = toString(doner.fname);
                 doner.lname = toString(doner.lname);
+                doner.dob = toString(doner.dob);
                 doner.email = toString(doner.email);
                 doner.blood_group = toString(doner.blood_group);
                 doner.gender = toString(doner.gender);
@@ -120,7 +120,7 @@ const Doner: React.FC<props> = ({ contract }) => {
                 setLoading(false);
             }
         })();
-    }, [contract?.methods, donerId]);
+    }, [contract?.methods, donorId]);
     const donerDemise = async (id: number) => {
         const accounts = await window.ethereum.request({
             method: "eth_accounts",
@@ -145,15 +145,21 @@ const Doner: React.FC<props> = ({ contract }) => {
                     <Container my="md">
                         <Paper withBorder p="md" mb="md">
                             <Group position="apart">
-                                <Title order={4}>Doner Details</Title>
-                                {data.demise?(<Text align="right" weight={500} color="red">This doner has passed</Text>):(<Button
-                                    size="xs"
-                                    variant="light"
-                                    color="red"
-                                    onClick={() => donerDemise(data.id)}
-                                >
-                                    Dead
-                                </Button>)}
+                                <Title order={4}>Donor Details</Title>
+                                {data.demise ? (
+                                    <Text align="right" weight={500} color="red">
+                                        This donor has passed
+                                    </Text>
+                                ) : (
+                                    <Button
+                                        size="xs"
+                                        variant="light"
+                                        color="red"
+                                        onClick={() => donerDemise(data.id)}
+                                    >
+                                        Dead
+                                    </Button>
+                                )}
                             </Group>
                             <Divider my="sm" />
                             <DonerDetails doner={data} />
@@ -163,7 +169,7 @@ const Doner: React.FC<props> = ({ contract }) => {
                         <Grid gutter="md">
                             <Col md={!data.demise ? 12 : 6}>
                                 <Paper withBorder p="md">
-                                    <Title order={4}>Doner Register Hospital Details</Title>
+                                    <Title order={4}>Donor Register Hospital Details</Title>
 
                                     <Divider my="sm" />
                                     <HospitalDetails hospital={data.registerHospital} />
@@ -172,7 +178,7 @@ const Doner: React.FC<props> = ({ contract }) => {
                             {data.demise && (
                                 <Col md={6}>
                                     <Paper withBorder p="md">
-                                        <Title order={4}>Doner Demise Hospital Details</Title>
+                                        <Title order={4}>Donor Demise Hospital Details</Title>
 
                                         <Divider my="sm" />
                                         <HospitalDetails hospital={data.demiseHospital} />
@@ -194,7 +200,7 @@ const Doner: React.FC<props> = ({ contract }) => {
                                             <th>ID</th>
                                             <th>Available</th>
                                             <th>Blood Group</th>
-                                            <th>Doner ID</th>
+                                            <th>Donor ID</th>
                                             <th>Organ ID</th>
                                             <th>Organ Name</th>
                                             <th>Time(Hr)</th>

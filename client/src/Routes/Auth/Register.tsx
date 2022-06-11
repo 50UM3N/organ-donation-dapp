@@ -39,46 +39,22 @@ const Register: React.FC<props> = ({ userAdd }) => {
     const [loading, setLoading] = useState(false);
     const { showNotification } = useNotifications();
     const [form, validator] = useValidate({
-        user_name: { value: faker.name.findName(), error: null, validate: "required" },
-        user_email: { value: faker.internet.email().toLowerCase(), error: null, validate: "required|email" },
-        user_phone: { value: faker.phone.phoneNumber("+91 98########"), error: null, validate: "required" },
-        hospital_name: { value: faker.name.findName(), error: null, validate: "required" },
-        hospital_type: { value: "Private", error: null, validate: "required" },
-        hospital_registration_number: { value: "EA123456789", error: null, validate: "required" },
-        hospital_address_line: {
-            value: faker.address.streetAddress(false),
-            error: null,
-            validate: "required",
-        },
-        hospital_state: { value: "Andaman and Nicobar Island (UT)", error: null, validate: "required" },
-        hospital_district: { value: "Nicobar", error: null, validate: "required" },
-        hospital_town: { value: faker.address.city(), error: null, validate: "required" },
-        hospital_pincode: { value: faker.address.zipCode(), error: null, validate: "required|number" },
-        hospital_telephone: {
-            value: faker.phone.phoneNumber("033 28######"),
-            error: null,
-            validate: "required",
-        },
-        hospital_mobile: {
-            value: faker.phone.phoneNumber("+91 98########"),
-            error: null,
-            validate: "required",
-        },
-        hospital_emergency_mobile: {
-            value: faker.phone.phoneNumber("+91 98########"),
-            error: null,
-            validate: "required",
-        },
-        hospital_longitude: {
-            value: faker.address.longitude(),
-            error: null,
-            validate: "required",
-        },
-        hospital_latitude: {
-            value: faker.address.latitude(),
-            error: null,
-            validate: "required",
-        },
+        user_name: { value: "", error: null, validate: "required" },
+        user_email: { value: "", error: null, validate: "required|email" },
+        user_phone: { value: "", error: null, validate: "required" },
+        hospital_name: { value: "", error: null, validate: "required" },
+        hospital_type: { value: "", error: null, validate: "required" },
+        hospital_registration_number: { value: "", error: null, validate: "required" },
+        hospital_address_line: { value: "", error: null, validate: "required" },
+        hospital_state: { value: "", error: null, validate: "required" },
+        hospital_district: { value: "", error: null, validate: "required" },
+        hospital_town: { value: "", error: null, validate: "required" },
+        hospital_pincode: { value: "", error: null, validate: "required|number" },
+        hospital_telephone: { value: "", error: null, validate: "required" },
+        hospital_mobile: { value: "", error: null, validate: "required" },
+        hospital_emergency_mobile: { value: "", error: null, validate: "required" },
+        hospital_longitude: { value: "", error: null, validate: "required" },
+        hospital_latitude: { value: "", error: null, validate: "required" },
     });
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);

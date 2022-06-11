@@ -90,6 +90,7 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                 requestors = { ...requestors._requestor };
                 requestors.fname = toString(requestors.fname);
                 requestors.lname = toString(requestors.lname);
+                requestors.dob = toString(requestors.dob);
                 requestors.email = toString(requestors.email);
                 requestors.blood_group = toString(requestors.blood_group);
                 requestors.gender = toString(requestors.gender);
@@ -414,7 +415,7 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
                                                     {requestOrgans
                                                         ?.filter(
                                                             (item: RequestOrganList) =>
-                                                                item.requestorId === Number(data.id)
+                                                                item.requestorOrganId === Number(organ.id)
                                                         )
                                                         .map((item100: RequestOrganList) => (
                                                             <Paper

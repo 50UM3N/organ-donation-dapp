@@ -28,7 +28,7 @@ const DetailsModal: React.FC<{
                 let doner = await contract?.methods
                     .getDonerById(detailsModal.selected.donerId)
                     .call({ from: accounts[0] });
-                if (doner.length === 0) throw new Error("There is no doner available!");
+                if (doner.length === 0) throw new Error("There is no donor available!");
                 let register_hospital = doner._request_hospital;
                 let demise_hospital = doner._demise_hospital;
                 register_hospital = { ...register_hospital };
@@ -61,6 +61,7 @@ const DetailsModal: React.FC<{
 
                 doner = { ...doner._doner };
                 doner.fname = toString(doner.fname);
+                doner.dob = toString(doner.dob);
                 doner.lname = toString(doner.lname);
                 doner.email = toString(doner.email);
                 doner.blood_group = toString(doner.blood_group);
@@ -92,7 +93,7 @@ const DetailsModal: React.FC<{
                 <>
                     <Paper withBorder p="md" mb="md">
                         <Group position="apart">
-                            <Title order={4}>Doner Details</Title>
+                            <Title order={4}>Donor Details</Title>
                         </Group>
                         <Divider my="sm" />
                         <DonerDetails doner={data} />
@@ -100,7 +101,7 @@ const DetailsModal: React.FC<{
                     <Grid gutter="md">
                         <Col md={!data.demise ? 12 : 6}>
                             <Paper withBorder p="md">
-                                <Title order={4}>Doner Register Hospital Details</Title>
+                                <Title order={4}>Donor Register Hospital Details</Title>
 
                                 <Divider my="sm" />
                                 <HospitalDetails hospital={data.registerHospital} />
@@ -109,7 +110,7 @@ const DetailsModal: React.FC<{
                         {data.demise && (
                             <Col md={6}>
                                 <Paper withBorder p="md">
-                                    <Title order={4}>Doner Demise Hospital Details</Title>
+                                    <Title order={4}>Donor Demise Hospital Details</Title>
 
                                     <Divider my="sm" />
                                     <HospitalDetails hospital={data.demiseHospital} />

@@ -14,34 +14,37 @@ import {
     Select,
     Button,
     Container,
+    Text,
 } from "@mantine/core";
 import { useState } from "react";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
 import { toByte32 } from "../../utils/utils";
-import { faker } from "@faker-js/faker";
+import { useModals } from "@mantine/modals";
+
 interface props {
     contract: Contract;
 }
 const RegisterRequestor: React.FC<props> = ({ contract }) => {
     const [loading, setLoading] = useState(false);
     const { showNotification } = useNotifications();
+    const modals = useModals();
     const [form, validator] = useValidate({
-        fname: { value: faker.name.firstName(), validate: "required", error: "" },
-        lname: { value: faker.name.lastName(), validate: "required", error: "" },
-        email: { value: faker.internet.email().toLowerCase(), validate: "required", error: "" },
-        dob: { value: new Date("2018"), validate: "required", error: "" },
-        mobile: { value: faker.phone.phoneNumber("98########"), validate: "required", error: "" },
-        uidai: { value: faker.phone.phoneNumber("############"), validate: "required", error: "" },
-        weight: { value: 56, validate: "required", error: "" },
-        height: { value: 52, validate: "required", error: "" },
-        bmi: { value: 541, validate: "required", error: "" },
-        blood_group: { value: "A+", validate: "required", error: "" },
-        gender: { value: "male", validate: "required", error: "" },
-        state: { value: faker.address.city(), validate: "required", error: "" },
-        district: { value: faker.address.county(), validate: "required", error: "" },
-        postal_code: { value: faker.address.zipCode(), validate: "required", error: "" },
-        address_line: { value: faker.address.streetAddress(false), validate: "required", error: "" },
+        fname: { value: "", validate: "required", error: "" },
+        lname: { value: "", validate: "required", error: "" },
+        email: { value: "", validate: "required|email", error: "" },
+        dob: { value: "", validate: "required", error: "" },
+        mobile: { value: "", validate: "required", error: "" },
+        uidai: { value: "", validate: "required", error: "" },
+        weight: { value: null, validate: "required", error: "" },
+        height: { value: null, validate: "required", error: "" },
+        bmi: { value: null, validate: "required", error: "" },
+        blood_group: { value: "", validate: "required", error: "" },
+        gender: { value: "", validate: "required", error: "" },
+        state: { value: "", validate: "required", error: "" },
+        district: { value: "", validate: "required", error: "" },
+        postal_code: { value: "", validate: "required", error: "" },
+        address_line: { value: "", validate: "required", error: "" },
     });
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);
@@ -70,7 +73,7 @@ const RegisterRequestor: React.FC<props> = ({ contract }) => {
             method: "eth_accounts",
         });
         const data: any = validator.generalize();
-        data.dob = date;
+        data.dob = toByte32(String(date));
         data.age = age;
         data.id = 0;
         data.fname = toByte32(data.fname);
@@ -84,11 +87,20 @@ const RegisterRequestor: React.FC<props> = ({ contract }) => {
         data.postal_code = toByte32(data.postal_code);
         data.register_hospital_id = 0;
         try {
-            await contract?.methods.registerRequestor(data).send({ from: accounts[0] });
-            showNotification({
-                title: "Success",
-                autoClose: false,
-                message: "Requestor registration successful",
+            const res = await contract?.methods.registerRequestor(data).send({ from: accounts[0] });
+            const requestorId = res.events.Register.returnValues._requestor.id;
+            const modalId = modals.openModal({
+                title: "Register Requestor",
+                children: (
+                    <>
+                        <Text mb="xs">Requestor registration successful</Text>
+                        <Text mb="xs">The Requestor ID: {requestorId}</Text>
+
+                        <Button fullWidth onClick={() => modals.closeModal(modalId)} mt="md">
+                            Close
+                        </Button>
+                    </>
+                ),
             });
         } catch (err: any) {
             showNotification({

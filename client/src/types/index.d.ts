@@ -34,7 +34,7 @@ interface Hospital {
     telephone: string;
     mobile: string;
     emergency_mobile: string;
-    longitude: string; 
+    longitude: string;
     latitude: string;
 }
 
@@ -58,6 +58,7 @@ interface Doner {
     register_hospital_id: number;
     demise_hospital_id: number;
     demise: boolean;
+    uidai: string;
 }
 
 interface Requestor {
@@ -78,6 +79,7 @@ interface Requestor {
     district: string;
     postal_code: string;
     register_hospital_id: number;
+    uidai: string;
 }
 interface DonerOrgans {
     id: number;

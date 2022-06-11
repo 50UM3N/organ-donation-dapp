@@ -14,12 +14,13 @@ import {
     Select,
     Button,
     Container,
+    Text,
 } from "@mantine/core";
 import { useState } from "react";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
 import { toByte32 } from "../../utils/utils";
-import { faker } from "@faker-js/faker";
+import { useModals } from "@mantine/modals";
 interface props {
     contract: Contract;
 }
@@ -27,22 +28,23 @@ interface props {
 const RegisterDonner: React.FC<props> = ({ contract }) => {
     const [loading, setLoading] = useState(false);
     const { showNotification } = useNotifications();
+    const modals = useModals();
     const [form, validator] = useValidate({
-        fname: { value: faker.name.findName(), validate: "required", error: "" },
-        lname: { value: faker.name.lastName(), validate: "required", error: "" },
-        email: { value: faker.internet.email().toLowerCase(), validate: "required", error: "" },
-        dob: { value: new Date("2018"), validate: "required", error: "" },
-        mobile: { value: faker.phone.phoneNumber("98########"), validate: "required", error: "" },
-        uidai: { value: faker.phone.phoneNumber("############"), validate: "required", error: "" },
-        weight: { value: 56, validate: "required", error: "" },
-        height: { value: 52, validate: "required", error: "" },
-        bmi: { value: 541, validate: "required", error: "" },
-        blood_group: { value: "A+", validate: "required", error: "" },
-        gender: { value: "male", validate: "required", error: "" },
-        state: { value: faker.address.city(), validate: "required", error: "" },
-        district: { value: faker.address.county(), validate: "required", error: "" },
-        postal_code: { value: faker.address.zipCode(), validate: "required", error: "" },
-        address_line: { value: faker.address.streetAddress(false), validate: "required", error: "" },
+        fname: { value: "", validate: "required", error: "" },
+        lname: { value: "", validate: "required", error: "" },
+        email: { value: "", validate: "required|email", error: "" },
+        dob: { value: "", validate: "required", error: "" },
+        mobile: { value: "", validate: "required", error: "" },
+        uidai: { value: "", validate: "required", error: "" },
+        weight: { value: null, validate: "required", error: "" },
+        height: { value: null, validate: "required", error: "" },
+        bmi: { value: null, validate: "required", error: "" },
+        blood_group: { value: "", validate: "required", error: "" },
+        gender: { value: "", validate: "required", error: "" },
+        state: { value: "", validate: "required", error: "" },
+        district: { value: "", validate: "required", error: "" },
+        postal_code: { value: "", validate: "required", error: "" },
+        address_line: { value: "", validate: "required", error: "" },
     });
     const handleChange = (evt: { name: string; value: any }) => {
         validator.validOnChange(evt);
@@ -72,7 +74,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
             method: "eth_accounts",
         });
         const data: any = validator.generalize();
-        data.dob = date;
+        data.dob = toByte32(String(date));
         data.age = age;
         data.id = 0;
         data.fname = toByte32(data.fname);
@@ -87,11 +89,20 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
         data.register_hospital_id = 0;
         data.demise_hospital_id = 0;
         try {
-            await contract?.methods.registerDoner(data).send({ from: accounts[0] });
-            showNotification({
-                title: "Success",
-                autoClose: false,
-                message: "Doner registration successful",
+            const res = await contract?.methods.registerDoner(data).send({ from: accounts[0] });
+            const donerId = res.events.Register.returnValues._doner.id;
+            const modalId = modals.openModal({
+                title: "Register Doner",
+                children: (
+                    <>
+                        <Text mb="xs">Donor registration successful</Text>
+                        <Text mb="xs">The Doner ID: {donerId}</Text>
+
+                        <Button fullWidth onClick={() => modals.closeModal(modalId)} mt="md">
+                            Close
+                        </Button>
+                    </>
+                ),
             });
         } catch (err: any) {
             showNotification({
@@ -107,7 +118,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
         <Nav>
             <Container>
                 <Paper withBorder p={"md"}>
-                    <Title order={4}>Add new donner</Title>
+                    <Title order={4}>Register a new donor</Title>
                     <Divider my={"sm"} />
                     <form onSubmit={handleSubmit}>
                         <Grid gutter={"sm"}>
@@ -115,7 +126,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <TextInput
                                     placeholder="First name"
                                     required
-                                    label="Donner First Name"
+                                    label="Donor First Name"
                                     onChange={(e) => handleChange(e.currentTarget)}
                                     value={form.fname.value}
                                     name="fname"
@@ -126,7 +137,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <TextInput
                                     placeholder="Last name"
                                     required
-                                    label="Donner Last Name"
+                                    label="Donor Last Name"
                                     onChange={(e) => handleChange(e.currentTarget)}
                                     value={form.lname.value}
                                     name="lname"
@@ -135,9 +146,9 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                             </Col>
                             <Col md={6}>
                                 <TextInput
-                                    placeholder="Donner email"
+                                    placeholder="Donor email"
                                     required
-                                    label="Donner Email Address"
+                                    label="Donor Email Address"
                                     onChange={(e) => handleChange(e.currentTarget)}
                                     value={form.email.value}
                                     name="email"
@@ -149,7 +160,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <DatePicker
                                     placeholder="Pick date"
                                     required
-                                    label="Donner date of birth"
+                                    label="Donor date of birth"
                                     onChange={(val) =>
                                         handleChange({
                                             name: "dob",
@@ -164,7 +175,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <TextInput
                                     placeholder="Mobile number"
                                     required
-                                    label="Donner Mobile Number"
+                                    label="Donor Mobile Number"
                                     onChange={(e) => handleChange(e.currentTarget)}
                                     value={form.mobile.value}
                                     name="mobile"
@@ -175,7 +186,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <TextInput
                                     placeholder="UIDAI no"
                                     required
-                                    label="Donner UIDAI No"
+                                    label="Donor UIDAI No"
                                     onChange={(e) => handleChange(e.currentTarget)}
                                     value={form.uidai.value}
                                     name="uidai"
@@ -187,7 +198,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <NumberInput
                                     placeholder="Weight"
                                     required
-                                    label="Donner Weight"
+                                    label="Donor Weight"
                                     onChange={(val) =>
                                         handleChange({
                                             name: "weight",
@@ -203,7 +214,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <NumberInput
                                     placeholder="Height"
                                     required
-                                    label="Donner Height"
+                                    label="Donor Height"
                                     onChange={(val) =>
                                         handleChange({
                                             name: "height",
@@ -219,7 +230,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <NumberInput
                                     placeholder="BMI"
                                     required
-                                    label="Donner BMI"
+                                    label="Donor BMI"
                                     onChange={(val) =>
                                         handleChange({
                                             name: "bmi",
@@ -235,7 +246,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <Select
                                     placeholder="Blood group"
                                     required
-                                    label="Donner Blood Group"
+                                    label="Donor Blood Group"
                                     onChange={(val) =>
                                         handleChange({
                                             name: "blood_group",
@@ -251,7 +262,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <Select
                                     placeholder="Gender"
                                     required
-                                    label="Donner Gender"
+                                    label="Donor Gender"
                                     onChange={(val) =>
                                         handleChange({
                                             name: "gender",
@@ -271,7 +282,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <TextInput
                                     placeholder="State"
                                     required
-                                    label="Donner State"
+                                    label="Donor State"
                                     onChange={(e) => handleChange(e.currentTarget)}
                                     value={form.state.value}
                                     name="state"
@@ -282,7 +293,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <TextInput
                                     placeholder="District"
                                     required
-                                    label="Donner District"
+                                    label="Donor District"
                                     onChange={(e) => handleChange(e.currentTarget)}
                                     value={form.district.value}
                                     name="district"
@@ -293,7 +304,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <TextInput
                                     placeholder="Postal code"
                                     required
-                                    label="Donner Postal Code"
+                                    label="Donor Postal Code"
                                     onChange={(e) => handleChange(e.currentTarget)}
                                     name="postal_code"
                                     value={form.postal_code.value}
@@ -305,7 +316,7 @@ const RegisterDonner: React.FC<props> = ({ contract }) => {
                                 <TextInput
                                     placeholder="Address line"
                                     required
-                                    label="Donner Address Line"
+                                    label="Donor Address Line"
                                     onChange={(e) => handleChange(e.currentTarget)}
                                     value={form.address_line.value}
                                     name="address_line"
