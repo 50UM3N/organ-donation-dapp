@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import React, { useEffect, useState } from "react";
 import Nav from "../Components/Navigation/Nav";
-import { Center, Container, Divider, Loader, Paper, Text, Title } from "@mantine/core";
+import { Center, Container, Divider, Loader, Paper, ScrollArea, Table, Text, Title } from "@mantine/core";
 import { toString } from "../utils/utils";
 import { handleRPCError } from "../utils/handleError";
 
@@ -223,10 +223,316 @@ const Report: React.FC<props> = ({ contract }) => {
                 {error && <Text color="orange">{error}</Text>}
                 {donatedOrgans && (
                     <>
-                        {console.log(donerOrgansAvailable)}
                         <Paper p="sm" withBorder my="xs">
                             <Title order={4}>All organs that are donated</Title>
-                            <Divider />
+                            <Divider my="xs" />
+                            <ScrollArea type="auto" style={{ width: "100%" }}>
+                                <Table
+                                    mb="xl"
+                                    sx={{
+                                        ".top-header > th": {
+                                            textAlign: "left",
+                                        },
+                                    }}
+                                >
+                                    <thead>
+                                        <tr className="top-header">
+                                            <th colSpan={1}></th>
+                                            <th colSpan={1}></th>
+                                            <th colSpan={17}>Donor</th>
+                                            <th colSpan={14}>Donor Register Hospital</th>
+                                            <th colSpan={14}>Donor Demise Hospital</th>
+                                            <th colSpan={17}>Requestor</th>
+                                            <th colSpan={14}>Requestor Hospital</th>
+                                        </tr>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Organ Name</th>
+
+                                            <th>Id</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>DOB</th>
+                                            <th>Mobile</th>
+                                            <th>UIDAI</th>
+                                            <th>Age</th>
+                                            <th>Weight</th>
+                                            <th>Height</th>
+                                            <th>BMI</th>
+                                            <th>Blood Group</th>
+                                            <th>Gender</th>
+                                            <th>Address Line</th>
+                                            <th>State</th>
+                                            <th>District</th>
+                                            <th>Postal Code</th>
+
+                                            <th>Hospital Id</th>
+                                            <th>Hospital Name</th>
+                                            <th>Hospital Type</th>
+                                            <th>Registration Number</th>
+                                            <th>Address Line</th>
+                                            <th>State</th>
+                                            <th>District</th>
+                                            <th>Town</th>
+                                            <th>Pin Code</th>
+                                            <th>Telephone Number</th>
+                                            <th>Mobile Number</th>
+                                            <th>Emergency Mobile Number</th>
+                                            <th>Longitude</th>
+                                            <th>Latitude</th>
+
+                                            <th>Hospital Id</th>
+                                            <th>Hospital Name</th>
+                                            <th>Hospital Type</th>
+                                            <th>Registration Number</th>
+                                            <th>Address Line</th>
+                                            <th>State</th>
+                                            <th>District</th>
+                                            <th>Town</th>
+                                            <th>Pin Code</th>
+                                            <th>Telephone Number</th>
+                                            <th>Mobile Number</th>
+                                            <th>Emergency Mobile Number</th>
+                                            <th>Longitude</th>
+                                            <th>Latitude</th>
+
+                                            <th>Id</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>DOB</th>
+                                            <th>Mobile</th>
+                                            <th>UIDAI</th>
+                                            <th>Age</th>
+                                            <th>Weight</th>
+                                            <th>Height</th>
+                                            <th>BMI</th>
+                                            <th>Blood Group</th>
+                                            <th>Gender</th>
+                                            <th>Address Line</th>
+                                            <th>State</th>
+                                            <th>District</th>
+                                            <th>Postal Code</th>
+
+                                            <th>Hospital Id</th>
+                                            <th>Hospital Name</th>
+                                            <th>Hospital Type</th>
+                                            <th>Registration Number</th>
+                                            <th>Address Line</th>
+                                            <th>State</th>
+                                            <th>District</th>
+                                            <th>Town</th>
+                                            <th>Pin Code</th>
+                                            <th>Telephone Number</th>
+                                            <th>Mobile Number</th>
+                                            <th>Emergency Mobile Number</th>
+                                            <th>Longitude</th>
+                                            <th>Latitude</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {donatedOrgans.map((item: any, index: number) => (
+                                            <tr key={Math.random()}>
+                                                <td>{index}</td>
+                                                <td>{item.organ.organ}</td>
+
+                                                <td>{item.doner.id}</td>
+                                                <td>{item.doner.fname}</td>
+                                                <td>{item.doner.lname}</td>
+                                                <td>{item.doner.email}</td>
+                                                <td>{item.doner.dob}</td>
+                                                <td>{item.doner.mobile}</td>
+                                                <td>{item.doner.uidai}</td>
+                                                <td>{item.doner.age}</td>
+                                                <td>{item.doner.weight}</td>
+                                                <td>{item.doner.height}</td>
+                                                <td>{item.doner.bmi}</td>
+                                                <td>{item.doner.blood_group}</td>
+                                                <td>{item.doner.gender}</td>
+                                                <td>{item.doner.address_line}</td>
+                                                <td>{item.doner.state}</td>
+                                                <td>{item.doner.district}</td>
+                                                <td>{item.doner.postal_code}</td>
+
+                                                <td>{item.doner_register_hospital.id}</td>
+                                                <td>{item.doner_register_hospital.name}</td>
+                                                <td>{item.doner_register_hospital.hospital_type}</td>
+                                                <td>{item.doner_register_hospital.registration_number}</td>
+                                                <td>{item.doner_register_hospital.address_line}</td>
+                                                <td>{item.doner_register_hospital.state}</td>
+                                                <td>{item.doner_register_hospital.district}</td>
+                                                <td>{item.doner_register_hospital.town}</td>
+                                                <td>{item.doner_register_hospital.pincode}</td>
+                                                <td>{item.doner_register_hospital.telephone}</td>
+                                                <td>{item.doner_register_hospital.mobile}</td>
+                                                <td>{item.doner_register_hospital.emergency_mobile}</td>
+                                                <td>{item.doner_register_hospital.longitude}</td>
+                                                <td>{item.doner_register_hospital.latitude}</td>
+
+                                                <td>{item.doner_demise_hospital.id}</td>
+                                                <td>{item.doner_demise_hospital.name}</td>
+                                                <td>{item.doner_demise_hospital.hospital_type}</td>
+                                                <td>{item.doner_demise_hospital.registration_number}</td>
+                                                <td>{item.doner_demise_hospital.address_line}</td>
+                                                <td>{item.doner_demise_hospital.state}</td>
+                                                <td>{item.doner_demise_hospital.district}</td>
+                                                <td>{item.doner_demise_hospital.town}</td>
+                                                <td>{item.doner_demise_hospital.pincode}</td>
+                                                <td>{item.doner_demise_hospital.telephone}</td>
+                                                <td>{item.doner_demise_hospital.mobile}</td>
+                                                <td>{item.doner_demise_hospital.emergency_mobile}</td>
+                                                <td>{item.doner_demise_hospital.longitude}</td>
+                                                <td>{item.doner_demise_hospital.latitude}</td>
+
+                                                <td>{item.requestor.id}</td>
+                                                <td>{item.requestor.fname}</td>
+                                                <td>{item.requestor.lname}</td>
+                                                <td>{item.requestor.email}</td>
+                                                <td>{item.requestor.dob}</td>
+                                                <td>{item.requestor.mobile}</td>
+                                                <td>{item.requestor.uidai}</td>
+                                                <td>{item.requestor.age}</td>
+                                                <td>{item.requestor.weight}</td>
+                                                <td>{item.requestor.height}</td>
+                                                <td>{item.requestor.bmi}</td>
+                                                <td>{item.requestor.blood_group}</td>
+                                                <td>{item.requestor.gender}</td>
+                                                <td>{item.requestor.address_line}</td>
+                                                <td>{item.requestor.state}</td>
+                                                <td>{item.requestor.district}</td>
+                                                <td>{item.requestor.postal_code}</td>
+
+                                                <td>{item.requestor_register_hospital.id}</td>
+                                                <td>{item.requestor_register_hospital.name}</td>
+                                                <td>{item.requestor_register_hospital.hospital_type}</td>
+                                                <td>
+                                                    {item.requestor_register_hospital.registration_number}
+                                                </td>
+                                                <td>{item.requestor_register_hospital.address_line}</td>
+                                                <td>{item.requestor_register_hospital.state}</td>
+                                                <td>{item.requestor_register_hospital.district}</td>
+                                                <td>{item.requestor_register_hospital.town}</td>
+                                                <td>{item.requestor_register_hospital.pincode}</td>
+                                                <td>{item.requestor_register_hospital.telephone}</td>
+                                                <td>{item.requestor_register_hospital.mobile}</td>
+                                                <td>{item.requestor_register_hospital.emergency_mobile}</td>
+                                                <td>{item.requestor_register_hospital.longitude}</td>
+                                                <td>{item.requestor_register_hospital.latitude}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Paper>
+                    </>
+                )}
+
+                {requestorOrganAvailable && (
+                    <>
+                        {console.log(requestorOrganAvailable)}
+                        <Paper p="sm" withBorder my="xs">
+                            <Title order={4}>All organs that are donated</Title>
+                            <Divider my="xs" />
+                            <ScrollArea type="auto" style={{ width: "100%" }}>
+                                <Table
+                                    mb="xl"
+                                    sx={{
+                                        ".top-header > th": {
+                                            textAlign: "left",
+                                        },
+                                    }}
+                                >
+                                    <thead>
+                                        <tr className="top-header">
+                                            <th colSpan={1}></th>
+                                            <th colSpan={1}></th>
+                                            <th colSpan={17}>Requestor </th>
+                                            <th colSpan={14}>Requestor Register Hospital</th>
+                                        </tr>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Organ Name</th>
+
+                                            <th>Id</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>DOB</th>
+                                            <th>Mobile</th>
+                                            <th>UIDAI</th>
+                                            <th>Age</th>
+                                            <th>Weight</th>
+                                            <th>Height</th>
+                                            <th>BMI</th>
+                                            <th>Blood Group</th>
+                                            <th>Gender</th>
+                                            <th>Address Line</th>
+                                            <th>State</th>
+                                            <th>District</th>
+                                            <th>Postal Code</th>
+
+                                            <th>Hospital Id</th>
+                                            <th>Hospital Name</th>
+                                            <th>Hospital Type</th>
+                                            <th>Registration Number</th>
+                                            <th>Address Line</th>
+                                            <th>State</th>
+                                            <th>District</th>
+                                            <th>Town</th>
+                                            <th>Pin Code</th>
+                                            <th>Telephone Number</th>
+                                            <th>Mobile Number</th>
+                                            <th>Emergency Mobile Number</th>
+                                            <th>Longitude</th>
+                                            <th>Latitude</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {donatedOrgans.map((item: any, index: number) => (
+                                            <tr key={Math.random()}>
+                                                <td>{index}</td>
+                                                <td>{item.organ.organ}</td>
+
+                                                <td>{item.requestor.id}</td>
+                                                <td>{item.requestor.fname}</td>
+                                                <td>{item.requestor.lname}</td>
+                                                <td>{item.requestor.email}</td>
+                                                <td>{item.requestor.dob}</td>
+                                                <td>{item.requestor.mobile}</td>
+                                                <td>{item.requestor.uidai}</td>
+                                                <td>{item.requestor.age}</td>
+                                                <td>{item.requestor.weight}</td>
+                                                <td>{item.requestor.height}</td>
+                                                <td>{item.requestor.bmi}</td>
+                                                <td>{item.requestor.blood_group}</td>
+                                                <td>{item.requestor.gender}</td>
+                                                <td>{item.requestor.address_line}</td>
+                                                <td>{item.requestor.state}</td>
+                                                <td>{item.requestor.district}</td>
+                                                <td>{item.requestor.postal_code}</td>
+
+                                                <td>{item.requestor_register_hospital.id}</td>
+                                                <td>{item.requestor_register_hospital.name}</td>
+                                                <td>{item.requestor_register_hospital.hospital_type}</td>
+                                                <td>
+                                                    {item.requestor_register_hospital.registration_number}
+                                                </td>
+                                                <td>{item.requestor_register_hospital.address_line}</td>
+                                                <td>{item.requestor_register_hospital.state}</td>
+                                                <td>{item.requestor_register_hospital.district}</td>
+                                                <td>{item.requestor_register_hospital.town}</td>
+                                                <td>{item.requestor_register_hospital.pincode}</td>
+                                                <td>{item.requestor_register_hospital.telephone}</td>
+                                                <td>{item.requestor_register_hospital.mobile}</td>
+                                                <td>{item.requestor_register_hospital.emergency_mobile}</td>
+                                                <td>{item.requestor_register_hospital.longitude}</td>
+                                                <td>{item.requestor_register_hospital.latitude}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </ScrollArea>
                         </Paper>
                     </>
                 )}
