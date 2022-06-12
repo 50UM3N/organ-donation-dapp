@@ -23,7 +23,6 @@ import { handleRPCError } from "../../utils/handleError";
 import { toByte32, toString } from "../../utils/utils";
 import StateSelect from "../../Components/Select/StateSelect";
 import DistrictSelect from "../../Components/Select/DistricSelect";
-import faker from "@faker-js/faker";
 import provider from "../../utils/provider";
 interface props {
     userAdd: (user: User) => void;
