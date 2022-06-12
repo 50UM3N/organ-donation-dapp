@@ -105,7 +105,6 @@ const Register: React.FC<props> = ({ userAdd }) => {
                 message: "Registration successful waiting for conformation",
             });
             nextStep();
-            // console.log(response.events.Register.returnValues);
         } catch (err: any) {
             showNotification({
                 color: "red",

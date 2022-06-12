@@ -76,8 +76,6 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
 
             DonerDemise = contract?.events.DonerDemise(options);
             DonerDemise.on("data", async (event: any) => {
-                const allHospitals = await contract.methods.getHospitals().call();
-                console.log(allHospitals);
                 const hospitals = event.returnValues._hospitals.map((item: string) => Number(item));
                 const matchedHospitals = event.returnValues._matchedHospitals.map((item: any) => ({
                     longitude: Number(toString(item.longitude)),
@@ -93,12 +91,6 @@ const App: React.FC<props> = ({ colorScheme, contract, user }) => {
                     map[Number(element)].push(users[index]);
                 });
                 const idSet = new Set(hospitals);
-                console.log(allHospitals);
-                console.log(hospitals);
-                console.log(matchedHospitals);
-                console.log(matchedOrgans);
-                const filteredHospitals = hospitals.filter((item: any) => item === user?.hospital?.id);
-                console.log(filteredHospitals);
                 if (idSet.has(user?.hospital?.id)) {
                     const d: any[] = [];
                     hospitals.forEach((item: number, index: number) => {

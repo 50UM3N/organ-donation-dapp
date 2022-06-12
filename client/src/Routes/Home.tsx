@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { AlertCircle } from "tabler-icons-react";
 
 const Home: React.FC<{ user: UserState }> = ({ user }) => {
-    console.log(user)
     return (
         <Nav>
             <Container>

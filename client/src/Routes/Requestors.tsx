@@ -24,7 +24,6 @@ interface props {
 }
 
 const Requestors: React.FC<props> = ({ contract, user }) => {
-    console.log(user);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null | string>(null);

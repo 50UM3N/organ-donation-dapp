@@ -44,8 +44,6 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
         selected: null,
     });
 
-    // console.log(requestorOrgans);
-
     useEffect(() => {
         (async () => {
             const accounts = await window.ethereum.request({
@@ -165,15 +163,13 @@ const Requestor: React.FC<props> = ({ contract, user }) => {
         doner_organ_id: number,
         requestor_organ_id: number
     ) => {
-        console.log(doner_id, requestor_id, doner_organ_id, requestor_organ_id);
         const accounts = await window.ethereum.request({
             method: "eth_accounts",
         });
         try {
-            const res = await contract?.methods
+            await contract?.methods
                 .requestForOrgan(requestor_organ_id, doner_organ_id, doner_id, requestor_id)
                 .send({ from: accounts[0] });
-            console.log(res);
         } catch (err: any) {
             console.log(err);
         }

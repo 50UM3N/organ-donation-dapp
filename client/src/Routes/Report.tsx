@@ -116,6 +116,7 @@ const Report: React.FC<props> = ({ contract }) => {
                     transplanted: item.transplanted,
                     requestor_map_id: Number(item.requestor_map_id),
                     organ_map_id: Number(item.organ_map_id),
+                    organ: _organs.filter((it: any) => it.id === Number(item.organ_map_id))[0].organ_name,
                     blood_group: toString(item.blood_group),
                 }));
 
@@ -430,7 +431,6 @@ const Report: React.FC<props> = ({ contract }) => {
 
                 {donerOrgansAvailable && (
                     <>
-                        {/* {console.log(donerOrgansAvailable)} */}
                         <Paper p="sm" withBorder my="xs">
                             <Title order={4}>All organs that are available</Title>
                             <Divider my="xs" />
@@ -484,7 +484,6 @@ const Report: React.FC<props> = ({ contract }) => {
                                     <tbody>
                                         {donerOrgansAvailable.map((item: any, index: number) => (
                                             <tr key={index}>
-                                                {console.log(item)}
                                                 <td>{index + 1}</td>
                                                 <td>{item.organ.organ}</td>
 
@@ -531,9 +530,8 @@ const Report: React.FC<props> = ({ contract }) => {
 
                 {requestorOrganAvailable && (
                     <>
-                        {console.log(requestorOrganAvailable)}
                         <Paper p="sm" withBorder my="xs">
-                            <Title order={4}>All organs that are donated</Title>
+                            <Title order={4}>All requested organs</Title>
                             <Divider my="xs" />
                             <ScrollArea type="auto" style={{ width: "100%" }}>
                                 <Table
@@ -590,7 +588,7 @@ const Report: React.FC<props> = ({ contract }) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {donatedOrgans.map((item: any, index: number) => (
+                                        {requestorOrganAvailable.map((item: any, index: number) => (
                                             <tr key={Math.random()}>
                                                 <td>{index}</td>
                                                 <td>{item.organ.organ}</td>
