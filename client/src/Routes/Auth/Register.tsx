@@ -11,7 +11,7 @@ import {
     Title,
     Select,
 } from "@mantine/core";
-import { useValidate } from "pangolin-hooks";
+import useValidate from "../../hooks/useValidate";
 import { connect } from "react-redux";
 import { useNotifications } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";

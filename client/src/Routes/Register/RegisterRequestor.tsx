@@ -1,8 +1,7 @@
 import React from "react";
 import { At } from "tabler-icons-react";
 import Nav from "../../Components/Navigation/Nav";
-import { DatePicker } from "@mantine/dates";
-import { useValidate } from "pangolin-hooks";
+import useValidate from "../../hooks/useValidate";
 import {
     Col,
     Divider,
@@ -15,6 +14,8 @@ import {
     Button,
     Container,
     Text,
+    Input,
+    InputWrapper,
 } from "@mantine/core";
 import { useState } from "react";
 import { connect } from "react-redux";
@@ -163,19 +164,19 @@ const RegisterRequestor: React.FC<props> = ({ contract }) => {
                                 />
                             </Col>
                             <Col md={6}>
-                                <DatePicker
-                                    placeholder="Pick date"
-                                    required
-                                    label="Requestor date of birth"
-                                    onChange={(val) =>
-                                        handleChange({
-                                            name: "dob",
-                                            value: val,
-                                        })
-                                    }
-                                    value={form.dob.value}
-                                    error={form.dob.error}
-                                />
+                                <InputWrapper label="Requestor date of birth" error={form.dob.error}>
+                                    <Input
+                                        placeholder="Pick date"
+                                        required
+                                        onChange={(e: any) =>
+                                            handleChange({
+                                                name: "dob",
+                                                value: e.currentTarget.value,
+                                            })
+                                        }
+                                        value={form.dob.value}
+                                    />
+                                </InputWrapper>
                             </Col>
                             <Col md={6}>
                                 <TextInput

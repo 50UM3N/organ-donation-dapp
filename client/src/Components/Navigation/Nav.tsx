@@ -1,42 +1,43 @@
 import { Container, createStyles } from "@mantine/core";
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import SideNav from "./SideNav";
 import TopNav from "./TopNav";
 
-const Nav: React.FC = ({ children }) => {
-    const useStyles = createStyles((theme) => ({
-        closeSideBar: {
-            left: "-300px !important",
+const useStyles = createStyles((theme) => ({
+    closeSideBar: {
+        left: "-300px !important",
+    },
+    layout: {
+        overflow: "hidden",
+        position: "relative",
+        height: "100%",
+        width: "100%",
+    },
+    sideBar: {
+        height: "100%",
+        transition: "all 0.2s linear",
+        position: "absolute",
+        left: 0,
+        top: 0,
+        zIndex: 200,
+    },
+    main: {
+        overflow: "auto",
+        height: "100%",
+        transition: "margin 0.2s linear",
+        [theme.fn.largerThan("md")]: {
+            marginLeft: "300px",
         },
-        layout: {
-            overflow: "hidden",
-            position: "relative",
-            height: "100%",
-            width: "100%",
-        },
-        sideBar: {
-            height: "100%",
-            transition: "all 0.2s linear",
-            position: "absolute",
-            left: "0",
-            top: "0",
-            zIndex: "200",
-        },
-        main: {
-            overflow: "auto",
-            height: "100%",
-            transition: "margin 0.2s linear",
-            [theme.fn.largerThan("md")]: {
-                marginLeft: "300px",
-            },
-        },
-        closeSideBarMain: {
-            marginLeft: "0px",
-        },
-        mainBackground: {
-            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
-        },
-    }));
+    },
+    closeSideBarMain: {
+        marginLeft: "0px",
+    },
+    mainBackground: {
+        backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+    },
+}));
+
+const Nav: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { classes, theme } = useStyles();
     const [navOpen, setNavOpen] = useState(window.innerWidth <= theme.breakpoints.md ? true : false);
     return (

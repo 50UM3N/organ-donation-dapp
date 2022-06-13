@@ -77,7 +77,8 @@ const AuthProvider: React.FC<props> = ({
     if (loading) {
         return <Loader />;
     } else if (web3.error) {
-        return <Text color="orange">{web3.error}</Text>;
+        // @ts-ignore
+        return <Text color="orange">{web3?.error}</Text>;
     } else if (web3.web3) {
         if (user) {
             return <Outlet />;

@@ -23,8 +23,6 @@ export default defineConfig(({ mode }) => {
         resolve: {
             alias: {
                 "@": path.resolve(__dirname, "/src"),
-                "~bootstrap": "bootstrap",
-                web3: path.resolve(__dirname, "./node_modules/web3/dist/web3.min.js"),
             },
         },
         css: {

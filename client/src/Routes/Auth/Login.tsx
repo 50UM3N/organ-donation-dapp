@@ -111,7 +111,13 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: ThunkDispatch<RootState, any, AnyAction>) => {
     return {
         setWeb3: () =>
-            dispatch(setWeb3(eVotingArtifact.abi as AbiItem[], eVotingArtifact.networks[5777].address)),
+            dispatch(
+                setWeb3(
+                    eVotingArtifact.abi as AbiItem[],
+                    // @ts-ignore
+                    eVotingArtifact.networks[process.env.NETWORK_ID || 5777].address
+                )
+            ),
 
         setTheme: (theme: "dark" | "light") => dispatch(toggleTheme(theme)),
     };

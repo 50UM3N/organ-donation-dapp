@@ -1,6 +1,7 @@
 interface Window {
     ethereum: any;
     web3: any;
+    Web3: any;
 }
 
 interface RequestOrganList {
@@ -18,7 +19,7 @@ interface User {
     email: string;
     mobile: string;
     verified: boolean;
-    hospital: null | Hospital;
+    hospital: any | null | Hospital;
 }
 
 interface Hospital {

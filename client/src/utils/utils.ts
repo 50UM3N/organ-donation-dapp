@@ -1,5 +1,4 @@
-import Web3 from "web3";
-
+const Web3 = window.Web3;
 export const distanceCalculate = (hlongitude: any, hLatitude: any, rlongitude: any, rlatitude: any) => {
     const p = 0.017453292519943295; // Math.PI / 180
     const c = Math.cos;

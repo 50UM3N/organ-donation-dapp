@@ -1,18 +1,39 @@
 import { connect } from "react-redux";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Nav from "../Components/Navigation/Nav";
-import { Center, Container, Divider, Loader, Paper, ScrollArea, Table, Text, Title } from "@mantine/core";
+import {
+    Button,
+    Center,
+    Container,
+    Divider,
+    Group,
+    Loader,
+    Paper,
+    ScrollArea,
+    Table,
+    Text,
+    Title,
+} from "@mantine/core";
 import { toString } from "../utils/utils";
 import { handleRPCError } from "../utils/handleError";
+import { saveAs } from "file-saver";
 
 interface props {
     contract: Contract;
 }
 
 const Report: React.FC<props> = ({ contract }) => {
+    const donatedOrgansRef = useRef(null);
+    const donerOrgansAvailableRef = useRef(null);
+    const requestorOrganAvailableRef = useRef(null);
+    const doneesRef = useRef(null);
+    const requestorsRef = useRef(null);
+
     const [donatedOrgans, setDonatedOrgans] = useState<any>(null);
     const [donerOrgansAvailable, setDonerOrgansAvailable] = useState<any>(null);
     const [requestorOrganAvailable, setRequestorOrganAvailable] = useState<any>(null);
+    const [donees, setDonees] = useState<any>(null);
+    const [requestors, setRequestors] = useState<any>(null);
     const [pending, setPending] = useState(true);
     const [error, setError] = useState<null | string>(null);
 
@@ -53,7 +74,7 @@ const Report: React.FC<props> = ({ contract }) => {
                     uidai: item.uidai,
                     weight: Number(item.weight),
                 }));
-
+                setDonees(_doner);
                 let _requestor = await contract?.methods
                     ?.getRequestor(accounts[0])
                     .call({ from: accounts[0] });
@@ -78,7 +99,7 @@ const Report: React.FC<props> = ({ contract }) => {
                     uidai: item.uidai,
                     weight: Number(item.weight),
                 }));
-
+                setRequestors(_requestor);
                 let _hospital = await contract?.methods?.getHospitals().call({ from: accounts[0] });
                 _hospital = _hospital.map((item: Hospital) => ({
                     id: Number(item.id),
@@ -213,6 +234,18 @@ const Report: React.FC<props> = ({ contract }) => {
         })();
     }, [contract]);
 
+    const exportCSV = (fileName: string, ref: any) => {
+        const csv = [];
+        const rows = ref.current.querySelectorAll("tr");
+        for (const row of rows.values()) {
+            const cells = row.querySelectorAll("td, th");
+            const rowText = Array.from(cells).map((cell: any) => cell?.innerText);
+            csv.push(rowText.join(","));
+        }
+        const csvFile = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+        saveAs(csvFile, fileName + ".csv");
+    };
+
     return (
         <Nav>
             <Container>
@@ -225,10 +258,20 @@ const Report: React.FC<props> = ({ contract }) => {
                 {donerOrgansAvailable && (
                     <>
                         <Paper p="sm" withBorder my="xs">
-                            <Title order={4}>All organs that are donated</Title>
+                            <Group position="apart">
+                                <Title order={4}>All organs that are donated</Title>
+
+                                <Button
+                                    onClick={() => exportCSV("organs_donated", donatedOrgansRef)}
+                                    size="xs"
+                                >
+                                    Export excel
+                                </Button>
+                            </Group>
                             <Divider my="xs" />
                             <ScrollArea type="auto" style={{ width: "100%" }}>
                                 <Table
+                                    ref={donatedOrgansRef}
                                     mb="xl"
                                     sx={{
                                         ".top-header > th": {
@@ -428,14 +471,23 @@ const Report: React.FC<props> = ({ contract }) => {
                         </Paper>
                     </>
                 )}
-
                 {donerOrgansAvailable && (
                     <>
                         <Paper p="sm" withBorder my="xs">
-                            <Title order={4}>All organs that are available</Title>
+                            <Group position="apart">
+                                <Title order={4}>All organs that are available</Title>
+
+                                <Button
+                                    onClick={() => exportCSV("organs_available", donerOrgansAvailableRef)}
+                                    size="xs"
+                                >
+                                    Export CSV
+                                </Button>
+                            </Group>
+
                             <Divider my="xs" />
                             <ScrollArea type="auto" style={{ width: "100%" }}>
-                                <Table mb="xl">
+                                <Table ref={donerOrgansAvailableRef} mb="xl">
                                     <thead>
                                         <tr className="top-header">
                                             <th colSpan={1}></th>
@@ -527,14 +579,23 @@ const Report: React.FC<props> = ({ contract }) => {
                         </Paper>
                     </>
                 )}
-
                 {requestorOrganAvailable && (
                     <>
                         <Paper p="sm" withBorder my="xs">
-                            <Title order={4}>All requested organs</Title>
+                            <Group position="apart">
+                                <Title order={4}>All requested organs</Title>
+
+                                <Button
+                                    onClick={() => exportCSV("requested_organs", requestorOrganAvailableRef)}
+                                    size="xs"
+                                >
+                                    Export CSV
+                                </Button>
+                            </Group>
                             <Divider my="xs" />
                             <ScrollArea type="auto" style={{ width: "100%" }}>
                                 <Table
+                                    ref={requestorOrganAvailableRef}
                                     mb="xl"
                                     sx={{
                                         ".top-header > th": {
@@ -627,6 +688,148 @@ const Report: React.FC<props> = ({ contract }) => {
                                                 <td>{item.requestor_register_hospital.emergency_mobile}</td>
                                                 <td>{item.requestor_register_hospital.longitude}</td>
                                                 <td>{item.requestor_register_hospital.latitude}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Paper>
+                    </>
+                )}
+                {donees && (
+                    <>
+                        <Paper p="sm" withBorder my="xs">
+                            <Group position="apart">
+                                <Title order={4}>All donors that are registered</Title>
+
+                                <Button onClick={() => exportCSV("donors", doneesRef)} size="xs">
+                                    Export CSV
+                                </Button>
+                            </Group>
+                            <Divider my="xs" />
+                            <ScrollArea type="auto" style={{ width: "100%" }}>
+                                <Table
+                                    ref={doneesRef}
+                                    mb="xl"
+                                    sx={{
+                                        ".top-header > th": {
+                                            textAlign: "left",
+                                        },
+                                    }}
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>DOB</th>
+                                            <th>Mobile</th>
+                                            <th>UIDAI</th>
+                                            <th>Age</th>
+                                            <th>Weight</th>
+                                            <th>Height</th>
+                                            <th>BMI</th>
+                                            <th>Blood Group</th>
+                                            <th>Gender</th>
+                                            <th>Address Line</th>
+                                            <th>State</th>
+                                            <th>District</th>
+                                            <th>Postal Code</th>
+                                            <th>Demise</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {donees.map((item: any, index: number) => (
+                                            <tr key={Math.random()}>
+                                                <td>{item.id}</td>
+                                                <td>{item.fname}</td>
+                                                <td>{item.lname}</td>
+                                                <td>{item.email}</td>
+                                                <td>{item.dob}</td>
+                                                <td>{item.mobile}</td>
+                                                <td>{item.uidai}</td>
+                                                <td>{item.age}</td>
+                                                <td>{item.weight}</td>
+                                                <td>{item.height}</td>
+                                                <td>{item.bmi}</td>
+                                                <td>{item.blood_group}</td>
+                                                <td>{item.gender}</td>
+                                                <td>{item.address_line}</td>
+                                                <td>{item.state}</td>
+                                                <td>{item.district}</td>
+                                                <td>{item.postal_code}</td>
+                                                <td>{item.demise ? "Yes" : "No"}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Paper>
+                    </>
+                )}
+                {requestors && (
+                    <>
+                        <Paper p="sm" withBorder my="xs">
+                            <Group position="apart">
+                                <Title order={4}>All Requestors that are registered</Title>
+
+                                <Button onClick={() => exportCSV("requestors", requestorsRef)} size="xs">
+                                    Export CSV
+                                </Button>
+                            </Group>
+                            <Divider my="xs" />
+                            <ScrollArea type="auto" style={{ width: "100%" }}>
+                                <Table
+                                    ref={requestorsRef}
+                                    mb="xl"
+                                    sx={{
+                                        ".top-header > th": {
+                                            textAlign: "left",
+                                        },
+                                    }}
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>DOB</th>
+                                            <th>Mobile</th>
+                                            <th>UIDAI</th>
+                                            <th>Age</th>
+                                            <th>Weight</th>
+                                            <th>Height</th>
+                                            <th>BMI</th>
+                                            <th>Blood Group</th>
+                                            <th>Gender</th>
+                                            <th>Address Line</th>
+                                            <th>State</th>
+                                            <th>District</th>
+                                            <th>Postal Code</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {requestors.map((item: any, index: number) => (
+                                            <tr key={Math.random()}>
+                                                <td>{item.id}</td>
+                                                <td>{item.fname}</td>
+                                                <td>{item.lname}</td>
+                                                <td>{item.email}</td>
+                                                <td>{item.dob}</td>
+                                                <td>{item.mobile}</td>
+                                                <td>{item.uidai}</td>
+                                                <td>{item.age}</td>
+                                                <td>{item.weight}</td>
+                                                <td>{item.height}</td>
+                                                <td>{item.bmi}</td>
+                                                <td>{item.blood_group}</td>
+                                                <td>{item.gender}</td>
+                                                <td>{item.address_line}</td>
+                                                <td>{item.state}</td>
+                                                <td>{item.district}</td>
+                                                <td>{item.postal_code}</td>
                                             </tr>
                                         ))}
                                     </tbody>

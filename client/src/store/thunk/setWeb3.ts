@@ -1,6 +1,5 @@
 import { web3Loading, web3Error, web3Success } from "../actions/web3-action";
 import { contractSuccess } from "../actions/contract-action";
-import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
@@ -9,6 +8,7 @@ import { userAdd } from "../actions";
 
 export const setWeb3 = (abi: AbiItem | AbiItem[], address?: string | undefined) => {
     return async (dispatch: ThunkDispatch<any, any, AnyAction>) => {
+        const Web3 = window.Web3;
         dispatch(web3Loading());
         let web3 = null;
         if (window.ethereum)
